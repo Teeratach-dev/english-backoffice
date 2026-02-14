@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
     }
 
     const decoded = await verifyToken(token);
-    const userId = (decoded as any).userId;
+    const userId = (decoded as any).id;
 
     const body = await req.json();
     const { currentPassword, newPassword } = changePasswordSchema.parse(body);

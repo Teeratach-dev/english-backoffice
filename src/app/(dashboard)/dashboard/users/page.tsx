@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { UserTable } from "@/components/features/users/user-table";
@@ -19,9 +19,26 @@ export default function UsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedUser, setSelectedUser] = useState<any>(null);
+  const [currentUserRole, setCurrentUserRole] = useState<string | undefined>(
+    undefined,
+  );
 
   // @ts-ignore
-  const currentUser = useSelector((state: RootState) => state.auth.user);
+  const reduxUser = useSelector((state: RootState) => state.auth.user);
+
+  useEffect(() => {
+    if (reduxUser?.role) {
+      setCurrentUserRole(reduxUser.role);
+    } else {
+      // Fetch from API when Redux state is lost (e.g. after refresh)
+      fetch("/api/auth/me")
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.role) setCurrentUserRole(data.role);
+        })
+        .catch(() => {});
+    }
+  }, [reduxUser]);
 
   function handleSuccess() {
     setIsDialogOpen(false);
@@ -73,7 +90,7 @@ export default function UsersPage() {
 
       <UserTable
         key={refreshKey}
-        currentUserRole={currentUser?.role}
+        currentUserRole={currentUserRole}
         onEdit={handleEdit}
       />
     </div>
