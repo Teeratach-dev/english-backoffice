@@ -17,10 +17,11 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const session = await sessionDetailService.getSessionById(params.id);
+    const { id } = await params;
+    const session = await sessionDetailService.getSessionById(id);
     if (!session) {
       return NextResponse.json(
         { message: "Session not found" },
@@ -38,9 +39,10 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -50,7 +52,7 @@ export async function PUT(
     const validatedData = SessionDetailZodSchema.partial().parse(body);
 
     const session = await sessionDetailService.updateSession(
-      params.id,
+      id,
       validatedData,
       userId,
     );
@@ -77,15 +79,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const session = await sessionDetailService.deleteSession(params.id);
+    const session = await sessionDetailService.deleteSession(id);
     if (!session) {
       return NextResponse.json(
         { message: "Session not found" },

@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { TopicZodSchema, TopicInput } from "@/models/Topic";
+import { TopicZodSchema, TopicInput } from "@/schemas/topic.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +27,7 @@ export function TopicForm({ unitId, initialData, onSuccess }: TopicFormProps) {
     watch,
     formState: { errors },
   } = useForm<TopicInput>({
-    resolver: zodResolver(TopicZodSchema),
+    resolver: zodResolver(TopicZodSchema) as any,
     defaultValues: initialData || {
       unitId,
       name: "",

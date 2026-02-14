@@ -18,9 +18,6 @@ import { buttonVariants } from "@/components/ui/button";
 const sidebarItems = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Courses", href: "/dashboard/courses", icon: BookOpen },
-  { name: "Units", href: "/dashboard/units", icon: Layers },
-  { name: "Topics", href: "/dashboard/topics", icon: FileText },
-  { name: "Session Groups", href: "/dashboard/session-groups", icon: Folder },
   {
     name: "Session Templates",
     href: "/dashboard/session-templates",

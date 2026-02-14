@@ -7,13 +7,7 @@ import { GripVertical, Edit, Trash, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface Session {
-  _id: string;
-  name: string;
-  type: string;
-  cefrLevel: string;
-  isActive: boolean;
-}
+import { LocalSession } from "@/types/local.types";
 
 export function SortableSessionItem({
   session,
@@ -24,12 +18,12 @@ export function SortableSessionItem({
   onEdit,
   onDelete,
 }: {
-  session: Session;
+  session: LocalSession;
   courseId: string;
   unitId: string;
   topicId: string;
   groupId: string;
-  onEdit: (session: Session) => void;
+  onEdit: (session: LocalSession) => void;
   onDelete: (id: string) => void;
 }) {
   const {

@@ -18,20 +18,14 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableTopicItem } from "./sortable-topic-item";
 import { toast } from "sonner";
-
-interface Topic {
-  _id: string;
-  name: string;
-  isActive: boolean;
-  sequence: number;
-}
+import { LocalTopic } from "@/types/local.types";
 
 interface TopicSortableListProps {
   courseId: string;
   unitId: string;
-  topics: Topic[];
-  onReorder: (newTopics: Topic[]) => void;
-  onEdit: (topic: Topic) => void;
+  topics: LocalTopic[];
+  onReorder: (newTopics: LocalTopic[]) => void;
+  onEdit: (topic: LocalTopic) => void;
   onDelete: (id: string) => void;
 }
 
@@ -43,7 +37,7 @@ export function TopicSortableList({
   onEdit,
   onDelete,
 }: TopicSortableListProps) {
-  const [items, setItems] = useState<Topic[]>(topics);
+  const [items, setItems] = useState<LocalTopic[]>(topics);
 
   useEffect(() => {
     setItems(topics);

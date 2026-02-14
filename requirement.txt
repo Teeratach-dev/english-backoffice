@@ -31,6 +31,14 @@
 18. global state management ให้ใช้ redux toolkit หรือ context provider ได้
 19. แต่ละหน้าเมื่อมีการยิง API หรือ loading ต้องแสดง skeleton ได้ด้วย ให้ใช้ animation เป็น Wave/Sweep
 20. แยกไฟล์ แยก folder ให้เป็นระบบตามหลัก SOLID
+21. ถ้าจะสร้าง session detail ก็ต้องเลือก session group ของมันด้วย
+22. ถ้าจะสร้าง session group ก็ต้องเลือก topic ของมันด้วย
+23. ถ้าจะสร้าง topic ก็ต้องเลือก unit ของมันด้วย
+24. ถ้าจะสร้าง unit ก็ต้องเลือก course ของมันด้วย
+25. course list อยากให้แสดง field purchaseable เพิ่มด้วย
+26. unit, topic, session group, session detail อยากให้แสดง parent name ของมันด้วย เช่น ในหน้า session detail อยากให้แสดง session group name ของมันด้วย
+    โดยให้ความกว้างไม่มากจนเกินไป ถ้าข้อความล้น ก็ให้ตัดเป็น ...
+
 
 Course
         - id: objectId

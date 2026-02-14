@@ -7,11 +7,7 @@ import { GripVertical, Edit, Trash, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface Topic {
-  _id: string;
-  name: string;
-  isActive: boolean;
-}
+import { LocalTopic } from "@/types/local.types";
 
 export function SortableTopicItem({
   topic,
@@ -20,10 +16,10 @@ export function SortableTopicItem({
   onEdit,
   onDelete,
 }: {
-  topic: Topic;
+  topic: LocalTopic;
   courseId: string;
   unitId: string;
-  onEdit: (topic: Topic) => void;
+  onEdit: (topic: LocalTopic) => void;
   onDelete: (id: string) => void;
 }) {
   const {

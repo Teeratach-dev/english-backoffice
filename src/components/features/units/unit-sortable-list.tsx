@@ -18,19 +18,13 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableUnitItem } from "./sortable-unit-item";
 import { toast } from "sonner";
-
-interface Unit {
-  _id: string;
-  name: string;
-  isActive: boolean;
-  sequence: number;
-}
+import { LocalUnit } from "@/types/local.types";
 
 interface UnitSortableListProps {
   courseId: string;
-  units: Unit[];
-  onReorder: (newUnits: Unit[]) => void;
-  onEdit: (unit: Unit) => void;
+  units: LocalUnit[];
+  onReorder: (newUnits: LocalUnit[]) => void;
+  onEdit: (unit: LocalUnit) => void;
   onDelete: (id: string) => void;
 }
 
@@ -41,7 +35,7 @@ export function UnitSortableList({
   onEdit,
   onDelete,
 }: UnitSortableListProps) {
-  const [items, setItems] = useState<Unit[]>(units);
+  const [items, setItems] = useState<LocalUnit[]>(units);
 
   useEffect(() => {
     setItems(units);

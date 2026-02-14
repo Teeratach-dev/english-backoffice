@@ -5,29 +5,24 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   SessionDetailZodSchema,
   SessionDetailInput,
-} from "@/models/SessionDetail";
+} from "@/schemas/session-detail.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useState } from "react";
+import {
+  SESSION_TYPES,
+  SESSION_TYPE_LABELS,
+  CEFR_LEVELS,
+} from "@/types/action.types";
 
 interface SessionFormProps {
   groupId: string;
   initialData?: any;
   onSuccess: () => void;
 }
-
-const SESSION_TYPES = [
-  { value: "ActionSelection", label: "Action Selection" },
-  { value: "Reading", label: "Reading" },
-  { value: "Writing", label: "Writing" },
-  { value: "Listening", label: "Listening" },
-  { value: "Speaking", label: "Speaking" },
-];
-
-const CEFR_LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
 
 export function SessionForm({
   groupId,
@@ -43,11 +38,11 @@ export function SessionForm({
     watch,
     formState: { errors },
   } = useForm<SessionDetailInput>({
-    resolver: zodResolver(SessionDetailZodSchema),
+    resolver: zodResolver(SessionDetailZodSchema) as any,
     defaultValues: initialData || {
       sessionGroupId: groupId,
       name: "",
-      type: "ActionSelection",
+      type: "reading",
       cefrLevel: "A1",
       isActive: true,
       screens: [],
@@ -109,8 +104,8 @@ export function SessionForm({
             disabled={isLoading}
           >
             {SESSION_TYPES.map((t) => (
-              <option key={t.value} value={t.value}>
-                {t.label}
+              <option key={t} value={t}>
+                {SESSION_TYPE_LABELS[t]}
               </option>
             ))}
           </select>

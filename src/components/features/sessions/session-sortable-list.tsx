@@ -18,24 +18,16 @@ import {
 } from "@dnd-kit/sortable";
 import { SortableSessionItem } from "./sortable-session-item";
 import { toast } from "sonner";
-
-interface Session {
-  _id: string;
-  name: string;
-  type: string;
-  cefrLevel: string;
-  isActive: boolean;
-  sequence: number;
-}
+import { LocalSession } from "@/types/local.types";
 
 interface SessionSortableListProps {
   courseId: string;
   unitId: string;
   topicId: string;
   groupId: string;
-  sessions: Session[];
-  onReorder: (newSessions: Session[]) => void;
-  onEdit: (session: Session) => void;
+  sessions: LocalSession[];
+  onReorder: (newSessions: LocalSession[]) => void;
+  onEdit: (session: LocalSession) => void;
   onDelete: (id: string) => void;
 }
 
@@ -49,7 +41,7 @@ export function SessionSortableList({
   onEdit,
   onDelete,
 }: SessionSortableListProps) {
-  const [items, setItems] = useState<Session[]>(sessions);
+  const [items, setItems] = useState<LocalSession[]>(sessions);
 
   useEffect(() => {
     setItems(sessions);

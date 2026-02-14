@@ -7,11 +7,7 @@ import { GripVertical, Edit, Trash, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface Unit {
-  _id: string;
-  name: string;
-  isActive: boolean;
-}
+import { LocalUnit } from "@/types/local.types";
 
 export function SortableUnitItem({
   unit,
@@ -19,9 +15,9 @@ export function SortableUnitItem({
   onEdit,
   onDelete,
 }: {
-  unit: Unit;
+  unit: LocalUnit;
   courseId: string;
-  onEdit: (unit: Unit) => void;
+  onEdit: (unit: LocalUnit) => void;
   onDelete: (id: string) => void;
 }) {
   const {

@@ -16,7 +16,17 @@ export async function middleware(req: NextRequest) {
   }
 
   // Check for token
-  if (!token) {
+  let tokenToVerify = token;
+
+  // Requirement 3 & 5: APIs must check Bearer Token
+  if (pathname.startsWith("/api") && !tokenToVerify) {
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      tokenToVerify = authHeader.substring(7);
+    }
+  }
+
+  if (!tokenToVerify) {
     if (pathname.startsWith("/api")) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -24,7 +34,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    await verifyToken(token);
+    await verifyToken(tokenToVerify);
     return NextResponse.next();
   } catch (error) {
     if (pathname.startsWith("/api")) {

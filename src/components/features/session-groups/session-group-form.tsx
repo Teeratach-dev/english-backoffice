@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   SessionGroupZodSchema,
   SessionGroupInput,
-} from "@/models/SessionGroup";
+} from "@/schemas/session-group.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,7 +34,7 @@ export function SessionGroupForm({
     watch,
     formState: { errors },
   } = useForm<SessionGroupInput>({
-    resolver: zodResolver(SessionGroupZodSchema),
+    resolver: zodResolver(SessionGroupZodSchema) as any,
     defaultValues: initialData || {
       topicId,
       name: "",

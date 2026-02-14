@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
     const course = await courseService.createCourse(validatedData, userId);
     return NextResponse.json(course, { status: 201 });
   } catch (error) {
+    console.error("POST /api/courses error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { message: "Validation error", errors: error.errors },

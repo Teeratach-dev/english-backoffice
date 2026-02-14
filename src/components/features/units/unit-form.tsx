@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UnitZodSchema, UnitInput } from "@/models/Unit";
+import { UnitZodSchema, UnitInput } from "@/schemas/unit.schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +27,7 @@ export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
     watch,
     formState: { errors },
   } = useForm<UnitInput>({
-    resolver: zodResolver(UnitZodSchema),
+    resolver: zodResolver(UnitZodSchema) as any,
     defaultValues: initialData || {
       courseId,
       name: "",

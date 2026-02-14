@@ -7,11 +7,7 @@ import { GripVertical, Edit, Trash, LayoutPanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-interface SessionGroup {
-  _id: string;
-  name: string;
-  isActive: boolean;
-}
+import { LocalSessionGroup } from "@/types/local.types";
 
 export function SortableSessionGroupItem({
   group,
@@ -21,11 +17,11 @@ export function SortableSessionGroupItem({
   onEdit,
   onDelete,
 }: {
-  group: SessionGroup;
+  group: LocalSessionGroup;
   courseId: string;
   unitId: string;
   topicId: string;
-  onEdit: (group: SessionGroup) => void;
+  onEdit: (group: LocalSessionGroup) => void;
   onDelete: (id: string) => void;
 }) {
   const {

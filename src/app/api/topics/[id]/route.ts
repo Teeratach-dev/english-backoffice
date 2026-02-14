@@ -17,9 +17,10 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -28,11 +29,7 @@ export async function PUT(
     const body = await req.json();
     const validatedData = TopicZodSchema.partial().parse(body);
 
-    const topic = await topicService.updateTopic(
-      params.id,
-      validatedData,
-      userId,
-    );
+    const topic = await topicService.updateTopic(id, validatedData, userId);
     if (!topic) {
       return NextResponse.json({ message: "Topic not found" }, { status: 404 });
     }
@@ -53,15 +50,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const topic = await topicService.deleteTopic(params.id);
+    const topic = await topicService.deleteTopic(id);
     if (!topic) {
       return NextResponse.json({ message: "Topic not found" }, { status: 404 });
     }

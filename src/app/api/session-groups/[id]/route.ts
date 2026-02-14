@@ -17,9 +17,10 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -29,7 +30,7 @@ export async function PUT(
     const validatedData = SessionGroupZodSchema.partial().parse(body);
 
     const group = await sessionGroupService.updateGroup(
-      params.id,
+      id,
       validatedData,
       userId,
     );
@@ -53,15 +54,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const group = await sessionGroupService.deleteGroup(params.id);
+    const group = await sessionGroupService.deleteGroup(id);
     if (!group) {
       return NextResponse.json({ message: "Group not found" }, { status: 404 });
     }

@@ -1,0 +1,15 @@
+﻿src/app/(dashboard)/dashboard/courses/[courseId]/units/[unitId]/topics/[topicId]/groups/[groupId]/sessions/[sessionId]/builder/page.tsx(79,32): error TS2339: Property 'id' does not exist on type 'Action'.
+  Property 'id' does not exist on type 'ExplainAction'.
+src/components/features/session-groups/session-group-sortable-list.tsx(109,15): error TS2719: Type '(group: LocalSessionGroup) => void' is not assignable to type '(group: LocalSessionGroup) => void'. Two different types with this name exist, but they are unrelated.
+  Types of parameters 'group' and 'group' are incompatible.
+    Property 'sequence' is missing in type 'LocalSessionGroup' but required in type 'LocalSessionGroup'.
+src/components/features/sessions/session-sortable-list.tsx(114,15): error TS2719: Type '(session: LocalSession) => void' is not assignable to type '(session: LocalSession) => void'. Two different types with this name exist, but they are unrelated.
+  Types of parameters 'session' and 'session' are incompatible.
+    Property 'sequence' is missing in type 'LocalSession' but required in type 'LocalSession'.
+src/components/features/topics/topic-sortable-list.tsx(106,15): error TS2719: Type '(topic: LocalTopic) => void' is not assignable to type '(topic: LocalTopic) => void'. Two different types with this name exist, but they are unrelated.
+  Types of parameters 'topic' and 'topic' are incompatible.
+    Property 'sequence' is missing in type 'LocalTopic' but required in type 'LocalTopic'.
+src/components/features/units/unit-sortable-list.tsx(103,15): error TS2719: Type '(unit: LocalUnit) => void' is not assignable to type '(unit: LocalUnit) => void'. Two different types with this name exist, but they are unrelated.
+  Types of parameters 'unit' and 'unit' are incompatible.
+    Property 'sequence' is missing in type 'LocalUnit' but required in type 'LocalUnit'.
+src/components/ui/scroll-area.tsx(4,38): error TS2307: Cannot find module '@radix-ui/react-scroll-area' or its corresponding type declarations.

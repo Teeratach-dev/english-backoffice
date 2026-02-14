@@ -17,9 +17,10 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -28,7 +29,7 @@ export async function PUT(
     const body = await req.json();
     const validatedData = UnitZodSchema.partial().parse(body);
 
-    const unit = await unitService.updateUnit(params.id, validatedData, userId);
+    const unit = await unitService.updateUnit(id, validatedData, userId);
     if (!unit) {
       return NextResponse.json({ message: "Unit not found" }, { status: 404 });
     }
@@ -49,15 +50,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const unit = await unitService.deleteUnit(params.id);
+    const unit = await unitService.deleteUnit(id);
     if (!unit) {
       return NextResponse.json({ message: "Unit not found" }, { status: 404 });
     }

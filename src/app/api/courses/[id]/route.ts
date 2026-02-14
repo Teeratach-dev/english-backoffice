@@ -17,10 +17,11 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const course = await courseService.getCourseById(params.id);
+    const { id } = await params;
+    const course = await courseService.getCourseById(id);
     if (!course) {
       return NextResponse.json(
         { message: "Course not found" },
@@ -38,9 +39,10 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -49,11 +51,7 @@ export async function PUT(
     const body = await req.json();
     const validatedData = CourseZodSchema.partial().parse(body);
 
-    const course = await courseService.updateCourse(
-      params.id,
-      validatedData,
-      userId,
-    );
+    const course = await courseService.updateCourse(id, validatedData, userId);
     if (!course) {
       return NextResponse.json(
         { message: "Course not found" },
@@ -77,15 +75,16 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
+    const { id } = await params;
     const userId = await getUserIdFromRequest(req);
     if (!userId) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const course = await courseService.deleteCourse(params.id);
+    const course = await courseService.deleteCourse(id);
     if (!course) {
       return NextResponse.json(
         { message: "Course not found" },

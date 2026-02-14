@@ -14,7 +14,7 @@ async function testConn() {
       console.log("SUCCESS: Connected to MongoDB");
       await mongoose.disconnect();
       return;
-    } catch (err) {
+    } catch (err: any) {
       console.error(`FAILED: ${err.message}`);
     }
   }

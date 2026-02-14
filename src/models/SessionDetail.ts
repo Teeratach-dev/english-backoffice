@@ -1,24 +1,21 @@
 import mongoose from "mongoose";
-import { z } from "zod";
+import { ACTION_TYPE_VALUES } from "@/types/action.types";
+
+// Re-export Zod schema for server-side use
+export {
+  SessionDetailZodSchema,
+  type SessionDetailInput,
+} from "@/schemas/session-detail.schema";
 
 // Action Schema
 const ActionSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: [
-      "Reading",
-      "Writing",
-      "Listening",
-      "Speaking",
-      "Gamification",
-      "Grammar",
-      "Vocabulary",
-      "ActionSelection",
-    ],
+    enum: ACTION_TYPE_VALUES,
     required: true,
   },
   content: {
-    type: mongoose.Schema.Types.Mixed, // flexible content based on type
+    type: mongoose.Schema.Types.Mixed,
   },
   sequence: {
     type: Number,
@@ -53,8 +50,8 @@ const SessionDetailSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["ActionSelection", "Reading", "Writing", "Listening", "Speaking"],
-      default: "ActionSelection",
+      enum: ["reading", "vocab", "listening", "grammar", "example", "test"],
+      default: "reading",
     },
     cefrLevel: {
       type: String,
@@ -83,38 +80,6 @@ const SessionDetailSchema = new mongoose.Schema(
     timestamps: true,
   },
 );
-
-// Zod Schema for Validation
-export const SessionDetailZodSchema = z.object({
-  sessionGroupId: z.string().min(1),
-  name: z.string().min(1),
-  type: z.enum([
-    "ActionSelection",
-    "Reading",
-    "Writing",
-    "Listening",
-    "Speaking",
-  ]),
-  cefrLevel: z.enum(["A1", "A2", "B1", "B2", "C1", "C2"]),
-  screens: z
-    .array(
-      z.object({
-        sequence: z.number(),
-        templateId: z.string().optional(),
-        actions: z.array(
-          z.object({
-            type: z.string(),
-            content: z.any(),
-            sequence: z.number(),
-          }),
-        ),
-      }),
-    )
-    .default([]),
-  isActive: z.boolean().default(true),
-});
-
-export type SessionDetailInput = z.infer<typeof SessionDetailZodSchema>;
 
 export default mongoose.models.SessionDetail ||
   mongoose.model("SessionDetail", SessionDetailSchema);

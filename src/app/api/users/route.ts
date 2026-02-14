@@ -8,7 +8,7 @@ const createUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
   name: z.string().min(1),
-  role: z.enum(["admin", "user"]).optional(),
+  role: z.enum(["admin", "superadmin"]).optional(),
 });
 
 export async function POST(req: NextRequest) {
