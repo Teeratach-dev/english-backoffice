@@ -154,7 +154,7 @@ export default function UnitsListPage() {
                   onClick={() => {
                     if (unit.courseId) {
                       router.push(
-                        `/dashboard/courses/${unit.courseId}/units/${unit._id}/topics`,
+                        `/courses/${unit.courseId}/units/${unit._id}/topics`,
                       );
                     }
                   }}

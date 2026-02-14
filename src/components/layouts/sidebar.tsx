@@ -19,18 +19,18 @@ import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 const sidebarItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Courses", href: "/dashboard/courses", icon: BookOpen },
-  { name: "Units", href: "/dashboard/units", icon: Layers },
-  { name: "Topics", href: "/dashboard/topics", icon: FileText },
-  { name: "Session Groups", href: "/dashboard/session-groups", icon: Folder },
-  { name: "Session Details", href: "/dashboard/sessions", icon: ListChecks },
+  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Courses", href: "/courses", icon: BookOpen },
+  { name: "Units", href: "/units", icon: Layers },
+  { name: "Topics", href: "/topics", icon: FileText },
+  { name: "Session Groups", href: "/session-groups", icon: Folder },
+  { name: "Session Details", href: "/sessions", icon: ListChecks },
   {
     name: "Session Templates",
-    href: "/dashboard/session-templates",
+    href: "/session-templates",
     icon: Settings,
   },
-  { name: "Users", href: "/dashboard/users", icon: Users },
+  { name: "Users", href: "/users", icon: Users },
 ];
 
 export function Sidebar({ className }: { className?: string }) {
@@ -71,8 +71,7 @@ export function Sidebar({ className }: { className?: string }) {
                   buttonVariants({
                     variant:
                       pathname === item.href ||
-                      (item.href !== "/dashboard" &&
-                        pathname.startsWith(item.href))
+                      (item.href !== "/" && pathname.startsWith(item.href))
                         ? "secondary"
                         : "ghost",
                   }),

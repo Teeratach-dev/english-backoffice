@@ -36,9 +36,6 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
       for (const segment of segments) {
         currentPath += `/${segment}`;
 
-        // Skip "dashboard" as first item — use Home icon instead
-        if (segment === "dashboard") continue;
-
         // Skip MongoDB ObjectId-like segments (24 hex chars)
         if (/^[0-9a-fA-F]{24}$/.test(segment)) continue;
 
@@ -62,7 +59,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
       )}
     >
       <Link
-        href="/dashboard"
+        href="/"
         className="flex items-center hover:text-foreground transition-colors"
       >
         <Home className="h-4 w-4" />

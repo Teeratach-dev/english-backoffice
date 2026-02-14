@@ -145,7 +145,7 @@ export default function SessionsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/dashboard/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
+                        `/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
                       )
                     }
                   >

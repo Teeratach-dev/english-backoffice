@@ -55,7 +55,7 @@ export function UserNav() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/change-password">Change Password</Link>
+            <Link href="/change-password">Change Password</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             Settings

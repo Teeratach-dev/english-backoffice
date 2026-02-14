@@ -75,7 +75,7 @@ export function SortableSessionGroupItem({
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
           <Link
-            href={`/dashboard/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${group._id}/sessions`}
+            href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${group._id}/sessions`}
           >
             <LayoutPanelLeft className="h-4 w-4" />
           </Link>

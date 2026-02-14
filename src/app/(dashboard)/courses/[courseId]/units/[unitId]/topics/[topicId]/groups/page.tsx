@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { SessionSortableList } from "@/components/features/sessions/session-sortable-list";
-import { SessionForm } from "@/components/features/sessions/session-form";
+import { SessionGroupSortableList } from "@/components/features/session-groups/session-group-sortable-list";
+import { SessionGroupForm } from "@/components/features/session-groups/session-group-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -16,41 +16,36 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
-export default function SessionsPage({
+export default function SessionGroupsPage({
   params,
 }: {
-  params: Promise<{
-    courseId: string;
-    unitId: string;
-    topicId: string;
-    groupId: string;
-  }>;
+  params: Promise<{ courseId: string; unitId: string; topicId: string }>;
 }) {
-  const { courseId, unitId, topicId, groupId } = use(params);
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [group, setGroup] = useState<any>(null);
+  const { courseId, unitId, topicId } = use(params);
+  const [groups, setGroups] = useState<any[]>([]);
+  const [topic, setTopic] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [selectedGroup, setSelectedGroup] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [sessionsRes, groupRes] = await Promise.all([
-        fetch(`/api/sessions?sessionGroupId=${groupId}`),
-        fetch(`/api/session-groups/${groupId}`),
+      const [groupsRes, topicRes] = await Promise.all([
+        fetch(`/api/session-groups?topicId=${topicId}`),
+        fetch(`/api/topics/${topicId}`),
       ]);
 
-      if (!sessionsRes.ok || !groupRes.ok)
+      if (!groupsRes.ok || !topicRes.ok)
         throw new Error("Failed to fetch data");
 
-      const [sessionsData, groupData] = await Promise.all([
-        sessionsRes.json(),
-        groupRes.json(),
+      const [groupsData, topicData] = await Promise.all([
+        groupsRes.json(),
+        topicRes.json(),
       ]);
 
-      setSessions(sessionsData);
-      setGroup(groupData);
+      setGroups(groupsData);
+      setTopic(topicData);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -60,31 +55,33 @@ export default function SessionsPage({
 
   useEffect(() => {
     fetchData();
-  }, [groupId]);
+  }, [topicId]);
 
   function handleAdd() {
-    setSelectedSession(null);
+    setSelectedGroup(null);
     setIsDialogOpen(true);
   }
 
-  function handleEdit(session: any) {
-    setSelectedSession(session);
+  function handleEdit(group: any) {
+    setSelectedGroup(group);
     setIsDialogOpen(true);
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/session-groups/${id}`, {
+        method: "DELETE",
+      });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Session deleted");
+      toast.success("Group deleted");
       fetchData();
     } catch (error) {
       toast.error("Error deleting");
     }
   }
 
-  if (loading && !group) {
+  if (loading && !topic) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-1/4" />
@@ -98,47 +95,40 @@ export default function SessionsPage({
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/dashboard/courses" },
-          { label: "Units", href: `/dashboard/courses/${courseId}/units` },
+          { label: "Courses", href: "/courses" },
+          { label: "Units", href: `/courses/${courseId}/units` },
           {
             label: "Topics",
-            href: `/dashboard/courses/${courseId}/units/${unitId}/topics`,
+            href: `/courses/${courseId}/units/${unitId}/topics`,
           },
-          {
-            label: "Groups",
-            href: `/dashboard/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          },
-          { label: `Sessions: ${group?.name || ""}`, href: "#" },
+          { label: `Groups: ${topic?.name || ""}`, href: "#" },
         ]}
       />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link
-            href={`/dashboard/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`}
-          >
+          <Link href={`/courses/${courseId}/units/${unitId}/topics`}>
             <ChevronLeft className="h-4 w-4" />
           </Link>
         </Button>
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
-            Sessions: {group?.name}
+            Session Groups: {topic?.name}
           </h1>
           <p className="text-muted-foreground">
-            Manage sessions and builder configurations.
+            Manage session groups for this topic.
           </p>
         </div>
         <Button className="ml-auto" onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" /> Add Session
+          <Plus className="mr-2 h-4 w-4" /> Add Group
         </Button>
       </div>
 
-      <SessionSortableList
+      <SessionGroupSortableList
         courseId={courseId}
         unitId={unitId}
         topicId={topicId}
-        groupId={groupId}
-        sessions={sessions}
-        onReorder={(newItems) => setSessions(newItems)}
+        groups={groups}
+        onReorder={(newItems) => setGroups(newItems)}
         onEdit={handleEdit}
         onDelete={handleDelete}
       />
@@ -147,12 +137,12 @@ export default function SessionsPage({
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedSession ? "Edit Session" : "Add New Session"}
+              {selectedGroup ? "Edit Group" : "Add New Group"}
             </DialogTitle>
           </DialogHeader>
-          <SessionForm
-            groupId={groupId}
-            initialData={selectedSession}
+          <SessionGroupForm
+            topicId={topicId}
+            initialData={selectedGroup}
             onSuccess={() => {
               setIsDialogOpen(false);
               fetchData();

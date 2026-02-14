@@ -142,7 +142,7 @@ export default function SessionGroupsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/dashboard/topics/${group.topicId}/groups/${group._id}/sessions`,
+                        `/topics/${group.topicId}/groups/${group._id}/sessions`,
                       )
                     }
                   >

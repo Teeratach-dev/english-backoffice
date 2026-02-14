@@ -37,7 +37,7 @@ export function SessionBuilderHeader({
     <div className="border-b px-6 py-4 flex items-center gap-4 bg-muted/20 shrink-0">
       <Button variant="ghost" size="icon" asChild>
         <Link
-          href={`/dashboard/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`}
+          href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`}
         >
           <ChevronLeft className="h-4 w-4" />
         </Link>

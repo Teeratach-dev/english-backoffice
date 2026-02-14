@@ -114,9 +114,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
                 <TableRow
                   key={course._id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() =>
-                    router.push(`/dashboard/courses/${course._id}/units`)
-                  }
+                  onClick={() => router.push(`/courses/${course._id}/units`)}
                 >
                   <TableCell className="font-medium">{course.name}</TableCell>
                   <TableCell>

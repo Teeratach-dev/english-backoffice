@@ -73,7 +73,7 @@ export function SortableTopicItem({
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
           <Link
-            href={`/dashboard/courses/${courseId}/units/${unitId}/topics/${topic._id}/groups`}
+            href={`/courses/${courseId}/units/${unitId}/topics/${topic._id}/groups`}
           >
             <FolderOpen className="h-4 w-4" />
           </Link>

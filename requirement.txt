@@ -50,9 +50,13 @@
 
 
 ------ Email & Password ------
+role: superadmin
 email: teeratach@english.com
 password: @TeN123456
 
+role: admin
+email: putcharee.kruesri@gmail.com
+password: 123456
 
 ------ model & schema & type -----
 

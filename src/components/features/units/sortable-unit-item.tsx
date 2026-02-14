@@ -70,9 +70,7 @@ export function SortableUnitItem({
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link
-            href={`/dashboard/courses/${courseId}/units/${unit._id}/topics`}
-          >
+          <Link href={`/courses/${courseId}/units/${unit._id}/topics`}>
             <Layers className="h-4 w-4" />
           </Link>
         </Button>

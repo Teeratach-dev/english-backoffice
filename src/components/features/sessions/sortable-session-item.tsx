@@ -85,7 +85,7 @@ export function SortableSessionItem({
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" asChild>
           <Link
-            href={`/dashboard/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions/${session._id}/builder`}
+            href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions/${session._id}/builder`}
           >
             <PenTool className="h-4 w-4 mr-2" /> Builder
           </Link>

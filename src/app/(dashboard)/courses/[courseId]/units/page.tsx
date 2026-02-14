@@ -93,13 +93,13 @@ export default function UnitsPage({
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/dashboard/courses" },
+          { label: "Courses", href: "/courses" },
           { label: `Units: ${course?.name || ""}`, href: "#" },
         ]}
       />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href="/dashboard/courses">
+          <Link href="/courses">
             <ChevronLeft className="h-4 w-4" />
           </Link>
         </Button>

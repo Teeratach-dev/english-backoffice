@@ -92,14 +92,14 @@ export default function TopicsPage({
     <div className="space-y-6">
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/dashboard/courses" },
-          { label: "Units", href: `/dashboard/courses/${courseId}/units` },
+          { label: "Courses", href: "/courses" },
+          { label: "Units", href: `/courses/${courseId}/units` },
           { label: `Topics: ${unit?.name || ""}`, href: "#" },
         ]}
       />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/dashboard/courses/${courseId}/units`}>
+          <Link href={`/courses/${courseId}/units`}>
             <ChevronLeft className="h-4 w-4" />
           </Link>
         </Button>

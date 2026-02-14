@@ -145,7 +145,7 @@ export default function TopicsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/dashboard/units/${topic.unitId}/topics/${topic._id}/groups`,
+                        `/units/${topic.unitId}/topics/${topic._id}/groups`,
                       )
                     }
                   >

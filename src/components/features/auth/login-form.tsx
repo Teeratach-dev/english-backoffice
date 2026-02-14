@@ -62,7 +62,7 @@ export function LoginForm() {
       dispatch(setCredentials({ user: responseData.user, token: "" }));
 
       toast.success("Login successful");
-      router.push("/dashboard");
+      router.push("/");
       router.refresh();
     } catch (error) {
       toast.error(
