@@ -1,0 +1,67 @@
+import { NextRequest, NextResponse } from "next/server";
+import SessionTemplate, {
+  SessionTemplateZodSchema,
+} from "@/models/SessionTemplate";
+import dbConnect from "@/lib/db";
+import { verifyToken } from "@/lib/jwt";
+import { z } from "zod";
+
+async function getUserIdFromRequest(req: NextRequest) {
+  const token = req.cookies.get("token")?.value;
+  if (!token) return null;
+  try {
+    const payload = await verifyToken(token);
+    return payload.id as string;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    await dbConnect();
+    const { searchParams } = new URL(req.url);
+    const type = searchParams.get("type");
+
+    const query = type ? { type } : {};
+    const templates = await SessionTemplate.find(query).sort({ createdAt: -1 });
+    return NextResponse.json(templates);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const userId = await getUserIdFromRequest(req);
+    if (!userId) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const validatedData = SessionTemplateZodSchema.parse(body);
+
+    await dbConnect();
+    const template = await SessionTemplate.create({
+      ...validatedData,
+      createdBy: userId,
+      updatedBy: userId,
+    });
+
+    return NextResponse.json(template, { status: 201 });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { message: "Validation error", errors: error.errors },
+        { status: 400 },
+      );
+    }
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}

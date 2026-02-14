@@ -1,0 +1,251 @@
+
+1. ให้สร้าง Project Backoffice ขึ้นมาโดยใช้ NextJS เป้นทั้ง API + Frontend
+    วัตถุประสงค์จะสร้าง backoffce ในการ settings เนื้อหาเรียน
+2. รองรับระบบ Login, change password, Create admin ยังไม่ต้องเชคสิทธิ admin ในการเข้าถึงหน้าต่างๆ
+3. ทุก APIs หลังจาก login ต้องทำการเชค Bearer Token ถ้าผ่านถึงจะใช้งานได้
+4. มีระบบ CRUD สำหรับ Course, Unit, Topic, Session Group, Session Detail
+5. มีระบบ CRUD สำหรับ Session Template โดยมี Action ให้เลือกตอนสร้าง แก้ไข Session Template
+6. Action เป็นแค่ Type ที่ fix hard code ไว้ ไม่ต้องทำ CRUD สำหรับ Action
+7. เมื่อจะสร้าง Session Detail ในส่วนของ screen จะสามารถเลือก Session Template หรือ Action Type ได้
+    โดยจะมี action list ให้ลากเข้ามาใช้ประกอบในแต่ละ screen
+    ถ้าเลือก session templete จะมี screen list โดยที่แต่ละ screen มี action ให้พร้อมกรอกข้อมูลเลย แต่ยังคงแก้ไขปรับเปลี่ยน action ได้เสมอ
+    ถ้าไม่เลือก session templete จะต้องสร้าง screen เอง + เพิ่ม screen ได้ โดยแต่ละ screen จะเลือก action มาประกอบกันเป็น screen
+8. ในหน้า session detail จะมีปุ่มให้ save to templete ให้ทำการเชคด้วยว่ามี session templete ลักษณะเดียวกันมั้ย ถ้าไม่มีค่อยสร้างใหม่ ถ้ามีอยู่เเล้ว ก็แสดง toast error
+9. สำหรับ child element ต้อง drag drop  เรียง sequence ได้
+   หน้า course detail ต้องเรียง sequence ของ unit detail ได้
+   หน้า unit detail ต้องเรียง sequence ของ topic detail ได้
+   หน้า topic detail ต้องเรียง sequence ของ session group detail ได้
+   หน้า session group detail ต้องเรียง ของ session detail detail ได้
+   หน้า session detail ต้องเรียง sequence ของ screen ได้
+   หน้า session detail ในส่วนของแต่ละ screen ต้องแต่ Aation ได้
+10. ในหน้า Session detail เมื่อได้ action ในแต่ละ screen มาเเล้ว
+    ต้องแสดงเป็น form action ที่มี place holder ให้กรอกข้อมูลตาม field action นั้นๆ
+    ถ้ากรอกไม่ครบต้องขึ้น this field ... is required ด้วย
+11. อยากได้ โทนสี modern รองรับ theme light, dark ได้
+12. ต้องทำ design token เพื่อใช้ทั้ง project ห้ามใช้ hard code ใน project
+13. ต้องการแยกไฟล์ component เป็นส่วนเล็กๆ ไม่ต้องการ super component ที่ยาวหลายพันบรรทัด
+14. ให้ใช้ database เป็น mongodb โดยให้ setup เป็น docker-compose ขึ้นมา + persist volumn ให้ด้วย
+15. ให้สร้าง super admin ด้วย email = 'teeratach@english.com', password = '@TeN123456'
+16. form validation ให้ใช้ zod
+17. css ให้ใช้ tailwind แต่ให้รองรับ design token ได้
+18. global state management ให้ใช้ redux toolkit หรือ context provider ได้
+19. แต่ละหน้าเมื่อมีการยิง API หรือ loading ต้องแสดง skeleton ได้ด้วย ให้ใช้ animation เป็น Wave/Sweep
+20. แยกไฟล์ แยก folder ให้เป็นระบบตามหลัก SOLID
+
+Course
+        - id: objectId
+        - name: string
+        - description // richtext
+        - price: number
+        - isActive: boolean
+        - purchaseable: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+
+    Unit // บทเรียน
+        - id: objectId
+        - courseId: objectId
+        - name: string
+        - description // richtext
+        - sequence: number
+        - isActive: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+    
+    Topic // หัวข้อ
+        - id: objectId
+        - unitId: objectId
+        - name: string
+        - description // richtext
+        - sequence: number
+        - isActive: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+    
+    Session Group // หัวข้อย่อย
+        - id: objectId
+        - topicId: objectId
+        - name: string
+        - description // richtext
+        - sequence: number
+        - isActive: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+
+    Session Detail // เกมส์แต่ละ session ที่จะเล่นจบ 1 - 3 นาที
+        - id: objectId
+        - sessionGroupId: objectId
+        - name: string
+        - type: 'reading' | 'vocab' | 'listening' | 'grammar' | 'example' | 'test' // แยกไปทำ enum ด้วย
+        - ceftLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+        - screens: Screen[]
+        - sequence: number
+        - isActive: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+    
+    Session Template
+        - id: objectId
+        - name: string
+        - type: 'reading' | 'vocab' | 'listening' | 'grammar' | 'example' | 'test'
+        - screens: {sequence: number, actionTypes: ActionType[]}
+        - isActive: boolean
+        - createdAt: Date
+        - createdBy: objectId
+        - updatedAt: Date
+        - updatedBy: objectId
+
+    export type Screen = {
+        id: string
+        sequence: number
+        actions: Action[]
+    }
+
+    export type Word = {
+      text: string
+      translation: string[]
+      isBlank: boolean
+      audioUrl?: string
+      bold?: boolean
+      italian?: boolean
+      underline?: boolean
+      highlight?: boolean
+    }
+
+    export type Action =
+      | ExplainAction
+      | ReadingAction
+      | AudioAction
+      | ChatAction
+      | ImageAction
+      | ColumnAction
+      | ChoiceAction
+      | ReorderAction
+      | MatchCardAction
+      | FillSentenceByTypingAction
+      | FillSentenceWithChoiceAction
+      | WriteSentenceAction
+      | WriteSentenceInChatAction
+    
+    export enum ActionType = {
+      Explain = 'explain',
+      Reading = 'reading',
+      Audio = 'audio',
+      Chat = 'chat',
+      Image = 'image',
+      Column = 'column',
+      Choice = 'choice',
+      Reorder = 'reorder',
+      MatchCard = 'match_card',
+      FillSentenceByTyping = 'fill_sentence_by_typing',
+      FillSentenceWithChoice = 'fill_sentence_with_choice',
+      WriteSentence = 'write_sentence',
+      WriteSentenceInChat = 'write_sentence_in_chat',
+    }
+
+    export type ExplainAction = {
+      type: 'explain'
+      text: Word[]
+      alignment: 'left' | 'center' | 'right'
+      size: number
+    }
+
+    export type ReadingAction = {
+      type: 'reading'
+      text: Word[]
+      audioUrl?: string
+      isHide: boolean
+      isReadable: boolean
+    }
+
+    export type AudioAction = {
+      type: 'audio'
+      audio: string
+    }
+
+    export type ChatAction = {
+      type: 'chat'
+      sender: { name: string, imageUrl: string }
+      poistion: 'left' | 'right'
+      text: Word[]
+      audioUrl: string
+      isDisplay: bool
+      isReadable: bool
+    }
+
+    export type ImageAction = {
+      type: 'image'
+      url: string
+    }
+
+    export type ColumnAction = {
+      type: 'column'
+      actions: Array<
+        ImageAction |
+        ReadingAction |
+        AudioAction
+      >
+    }
+
+    export type ChoiceAction = {
+      type: 'choice'
+      items: { 
+        text: Word,
+        isCorrect: bool 
+      }[]
+    }
+
+    export type ReorderAction = {
+      type: 'reorder'
+      items: items: { 
+        text: Word, 
+        sequence: number 
+      }[]
+    }
+
+    export type MatchCardAction = {
+      type: 'match_card'
+      items: items: {
+        left: { text?: string, audioUrl?: string },
+        right: { text?: string, audioUrl?: string }
+      }[]
+    }
+
+    export type FillSentenceByTyping = {
+      type: 'fill_sentence_by_typing'
+      sentence: {
+        text: string,
+        isBlank: bool,
+      }[]
+    }
+
+    export type FillSentenceWithChoice = {
+      type: 'fill_sentence_with_choice'
+      sentence: {
+        text: string,
+        isBlank: bool,
+        choice?: Word[]
+      }[]
+    }
+
+    export type WriteSentence = {
+      type: 'write_sentence'
+      sentence: string[]
+    }
+
+    export type WriteSentenceInChat = {
+      type: 'write_sentence_in_chat'
+      sentence: string[]
+      position: 'left' | 'right'
+    }
+
