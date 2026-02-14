@@ -11,10 +11,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Search, BookOpen } from "lucide-react";
+import { Edit, Trash, Plus, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Course {
   _id: string;
@@ -31,14 +32,15 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const router = useRouter();
 
   async function fetchCourses() {
     setLoading(true);
     try {
-      const res = await fetch("/api/courses");
+      const res = await fetch("/api/courses?limit=100");
       if (!res.ok) throw new Error("Failed to fetch courses");
-      const data = await res.json();
-      setCourses(data);
+      const result = await res.json();
+      setCourses(result.data || []);
     } catch (error) {
       toast.error("Error loading courses");
     } finally {
@@ -109,7 +111,13 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
               </TableRow>
             ) : (
               filteredCourses.map((course) => (
-                <TableRow key={course._id}>
+                <TableRow
+                  key={course._id}
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() =>
+                    router.push(`/dashboard/courses/${course._id}/units`)
+                  }
+                >
                   <TableCell className="font-medium">{course.name}</TableCell>
                   <TableCell>
                     <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
@@ -142,12 +150,10 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
                   <TableCell>
                     {new Date(course.createdAt).toLocaleDateString()}
                   </TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button variant="ghost" size="icon" asChild>
-                      <Link href={`/dashboard/courses/${course._id}/units`}>
-                        <BookOpen className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                  <TableCell
+                    className="text-right space-x-2"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <Button
                       variant="ghost"
                       size="icon"

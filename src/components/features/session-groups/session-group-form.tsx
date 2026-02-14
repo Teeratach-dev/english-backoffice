@@ -13,15 +13,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useState } from "react";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 interface SessionGroupFormProps {
-  topicId: string;
+  topicId?: string;
   initialData?: any;
   onSuccess: () => void;
 }
 
 export function SessionGroupForm({
-  topicId,
+  topicId: initialTopicId,
   initialData,
   onSuccess,
 }: SessionGroupFormProps) {
@@ -36,7 +37,7 @@ export function SessionGroupForm({
   } = useForm<SessionGroupInput>({
     resolver: zodResolver(SessionGroupZodSchema) as any,
     defaultValues: initialData || {
-      topicId,
+      topicId: initialTopicId || "",
       name: "",
       description: "",
       isActive: true,
@@ -44,6 +45,18 @@ export function SessionGroupForm({
   });
 
   const isActive = watch("isActive");
+  const currentTopicId = watch("topicId");
+
+  async function fetchTopics(search: string, page: number) {
+    const res = await fetch(
+      `/api/topics?search=${encodeURIComponent(search)}&page=${page}&limit=15`,
+    );
+    const result = await res.json();
+    return {
+      data: result.data.map((t: any) => ({ value: t._id, label: t.name })),
+      hasMore: result.pagination.page < result.pagination.pages,
+    };
+  }
 
   async function onSubmit(data: SessionGroupInput) {
     setIsLoading(true);
@@ -56,7 +69,7 @@ export function SessionGroupForm({
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, topicId }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -77,6 +90,22 @@ export function SessionGroupForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {!initialTopicId && (
+        <div className="space-y-2">
+          <Label>Select Topic</Label>
+          <SearchableSelect
+            value={currentTopicId}
+            onValueChange={(val) => setValue("topicId", val)}
+            placeholder="Search and select a topic..."
+            fetchOptions={fetchTopics}
+            disabled={isLoading || !!initialData?._id}
+          />
+          {errors.topicId && (
+            <p className="text-sm text-destructive">{errors.topicId.message}</p>
+          )}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="name">Group Name</Label>
         <Input id="name" {...register("name")} disabled={isLoading} />

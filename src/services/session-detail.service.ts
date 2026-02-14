@@ -2,18 +2,40 @@ import dbConnect from "@/lib/db";
 import SessionDetail, { SessionDetailInput } from "@/models/SessionDetail";
 
 export class SessionDetailService {
-  async getAllSessions() {
+  async getAllSessions(
+    params: { page?: number; limit?: number; search?: string } = {},
+  ) {
     await dbConnect();
-    const sessions = await SessionDetail.find({})
+    const page = params.page || 1;
+    const limit = params.limit || 100;
+    const search = params.search || "";
+
+    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+    const sessions = await SessionDetail.find(query)
       .populate("sessionGroupId", "name")
       .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .lean();
 
-    return sessions.map((s: any) => ({
+    const total = await SessionDetail.countDocuments(query);
+
+    const result = sessions.map((s: any) => ({
       ...s,
       sessionGroupId: s.sessionGroupId?._id?.toString() || s.sessionGroupId,
       sessionGroupName: s.sessionGroupId?.name,
     }));
+
+    return {
+      data: result,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getSessionsByGroupId(sessionGroupId: string) {

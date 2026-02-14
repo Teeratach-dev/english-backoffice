@@ -19,11 +19,17 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams.get("courseId");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "100");
+    const search = searchParams.get("search") || "";
 
-    const units = courseId
-      ? await unitService.getUnitsByCourseId(courseId)
-      : await unitService.getAllUnits();
-    return NextResponse.json(units);
+    if (courseId) {
+      const units = await unitService.getUnitsByCourseId(courseId);
+      return NextResponse.json(units);
+    }
+
+    const result = await unitService.getAllUnits({ page, limit, search });
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

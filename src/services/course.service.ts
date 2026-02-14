@@ -3,9 +3,23 @@ import Course, { CourseInput } from "@/models/Course";
 import Unit from "@/models/Unit";
 
 export class CourseService {
-  async getAllCourses() {
+  async getAllCourses(
+    params: { page?: number; limit?: number; search?: string } = {},
+  ) {
     await dbConnect();
-    const courses = await Course.find({}).sort({ createdAt: -1 }).lean();
+    const page = params.page || 1;
+    const limit = params.limit || 100;
+    const search = params.search || "";
+
+    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+    const courses = await Course.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    const total = await Course.countDocuments(query);
 
     // Aggregate unitCount for each course
     const courseIds = courses.map((c: any) => c._id);
@@ -17,10 +31,20 @@ export class CourseService {
       counts.map((c: any) => [c._id.toString(), c.count]),
     );
 
-    return courses.map((c: any) => ({
+    const result = courses.map((c: any) => ({
       ...c,
       unitCount: countMap.get(c._id.toString()) || 0,
     }));
+
+    return {
+      data: result,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getCourseById(id: string) {

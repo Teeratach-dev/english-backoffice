@@ -19,11 +19,22 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const sessionGroupId = searchParams.get("sessionGroupId");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "100");
+    const search = searchParams.get("search") || "";
 
-    const sessions = sessionGroupId
-      ? await sessionDetailService.getSessionsByGroupId(sessionGroupId)
-      : await sessionDetailService.getAllSessions();
-    return NextResponse.json(sessions);
+    if (sessionGroupId) {
+      const sessions =
+        await sessionDetailService.getSessionsByGroupId(sessionGroupId);
+      return NextResponse.json(sessions);
+    }
+
+    const result = await sessionDetailService.getAllSessions({
+      page,
+      limit,
+      search,
+    });
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

@@ -17,15 +17,16 @@ import {
   SESSION_TYPE_LABELS,
   CEFR_LEVELS,
 } from "@/types/action.types";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 interface SessionFormProps {
-  groupId: string;
+  groupId?: string;
   initialData?: any;
   onSuccess: () => void;
 }
 
 export function SessionForm({
-  groupId,
+  groupId: initialGroupId,
   initialData,
   onSuccess,
 }: SessionFormProps) {
@@ -40,7 +41,7 @@ export function SessionForm({
   } = useForm<SessionDetailInput>({
     resolver: zodResolver(SessionDetailZodSchema) as any,
     defaultValues: initialData || {
-      sessionGroupId: groupId,
+      sessionGroupId: initialGroupId || "",
       name: "",
       type: "reading",
       cefrLevel: "A1",
@@ -52,6 +53,18 @@ export function SessionForm({
   const isActive = watch("isActive");
   const type = watch("type");
   const cefrLevel = watch("cefrLevel");
+  const currentGroupId = watch("sessionGroupId");
+
+  async function fetchGroups(search: string, page: number) {
+    const res = await fetch(
+      `/api/session-groups?search=${encodeURIComponent(search)}&page=${page}&limit=15`,
+    );
+    const result = await res.json();
+    return {
+      data: result.data.map((g: any) => ({ value: g._id, label: g.name })),
+      hasMore: result.pagination.page < result.pagination.pages,
+    };
+  }
 
   async function onSubmit(data: SessionDetailInput) {
     setIsLoading(true);
@@ -64,7 +77,7 @@ export function SessionForm({
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, sessionGroupId: groupId }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -85,6 +98,24 @@ export function SessionForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {!initialGroupId && (
+        <div className="space-y-2">
+          <Label>Select Group</Label>
+          <SearchableSelect
+            value={currentGroupId}
+            onValueChange={(val) => setValue("sessionGroupId", val)}
+            placeholder="Search and select a group..."
+            fetchOptions={fetchGroups}
+            disabled={isLoading || !!initialData?._id}
+          />
+          {errors.sessionGroupId && (
+            <p className="text-sm text-destructive">
+              {errors.sessionGroupId.message}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="name">Session Name</Label>
         <Input id="name" {...register("name")} disabled={isLoading} />

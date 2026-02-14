@@ -3,12 +3,24 @@ import SessionGroup, { SessionGroupInput } from "@/models/SessionGroup";
 import SessionDetail from "@/models/SessionDetail";
 
 export class SessionGroupService {
-  async getAllGroups() {
+  async getAllGroups(
+    params: { page?: number; limit?: number; search?: string } = {},
+  ) {
     await dbConnect();
-    const groups = await SessionGroup.find({})
+    const page = params.page || 1;
+    const limit = params.limit || 100;
+    const search = params.search || "";
+
+    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+    const groups = await SessionGroup.find(query)
       .populate("topicId", "name")
       .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .lean();
+
+    const total = await SessionGroup.countDocuments(query);
 
     const groupIds = groups.map((g: any) => g._id);
     const counts = await SessionDetail.aggregate([
@@ -19,12 +31,22 @@ export class SessionGroupService {
       counts.map((c: any) => [c._id.toString(), c.count]),
     );
 
-    return groups.map((g: any) => ({
+    const result = groups.map((g: any) => ({
       ...g,
       topicId: g.topicId?._id?.toString() || g.topicId,
       topicName: g.topicId?.name,
       sessionCount: countMap.get(g._id.toString()) || 0,
     }));
+
+    return {
+      data: result,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getGroupsByTopicId(topicId: string) {

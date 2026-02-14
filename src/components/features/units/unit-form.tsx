@@ -10,14 +10,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useState } from "react";
+import { SearchableSelect } from "@/components/ui/searchable-select";
 
 interface UnitFormProps {
-  courseId: string;
+  courseId?: string;
   initialData?: any;
   onSuccess: () => void;
 }
 
-export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
+export function UnitForm({
+  courseId: initialCourseId,
+  initialData,
+  onSuccess,
+}: UnitFormProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const {
@@ -29,7 +34,7 @@ export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
   } = useForm<UnitInput>({
     resolver: zodResolver(UnitZodSchema) as any,
     defaultValues: initialData || {
-      courseId,
+      courseId: initialCourseId || "",
       name: "",
       description: "",
       isActive: true,
@@ -37,6 +42,18 @@ export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
   });
 
   const isActive = watch("isActive");
+  const currentCourseId = watch("courseId");
+
+  async function fetchCourses(search: string, page: number) {
+    const res = await fetch(
+      `/api/courses?search=${encodeURIComponent(search)}&page=${page}&limit=15`,
+    );
+    const result = await res.json();
+    return {
+      data: result.data.map((c: any) => ({ value: c._id, label: c.name })),
+      hasMore: result.pagination.page < result.pagination.pages,
+    };
+  }
 
   async function onSubmit(data: UnitInput) {
     setIsLoading(true);
@@ -49,7 +66,7 @@ export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, courseId }),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
@@ -70,6 +87,24 @@ export function UnitForm({ courseId, initialData, onSuccess }: UnitFormProps) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      {!initialCourseId && (
+        <div className="space-y-2">
+          <Label>Select Course</Label>
+          <SearchableSelect
+            value={currentCourseId}
+            onValueChange={(val) => setValue("courseId", val)}
+            placeholder="Search and select a course..."
+            fetchOptions={fetchCourses}
+            disabled={isLoading || !!initialData?._id}
+          />
+          {errors.courseId && (
+            <p className="text-sm text-destructive">
+              {errors.courseId.message}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="space-y-2">
         <Label htmlFor="name">Unit Name</Label>
         <Input id="name" {...register("name")} disabled={isLoading} />

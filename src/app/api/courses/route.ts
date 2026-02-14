@@ -17,8 +17,13 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const courses = await courseService.getAllCourses();
-    return NextResponse.json(courses);
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "100");
+    const search = searchParams.get("search") || "";
+
+    const result = await courseService.getAllCourses({ page, limit, search });
+    return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

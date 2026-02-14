@@ -3,12 +3,24 @@ import Unit, { UnitInput } from "@/models/Unit";
 import Topic from "@/models/Topic";
 
 export class UnitService {
-  async getAllUnits() {
+  async getAllUnits(
+    params: { page?: number; limit?: number; search?: string } = {},
+  ) {
     await dbConnect();
-    const units = await Unit.find({})
+    const page = params.page || 1;
+    const limit = params.limit || 100;
+    const search = params.search || "";
+
+    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+
+    const units = await Unit.find(query)
       .populate("courseId", "name")
       .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
       .lean();
+
+    const total = await Unit.countDocuments(query);
 
     const unitIds = units.map((u: any) => u._id);
     const counts = await Topic.aggregate([
@@ -19,12 +31,22 @@ export class UnitService {
       counts.map((c: any) => [c._id.toString(), c.count]),
     );
 
-    return units.map((u: any) => ({
+    const result = units.map((u: any) => ({
       ...u,
       courseId: u.courseId?._id?.toString() || u.courseId,
       courseName: u.courseId?.name,
       topicCount: countMap.get(u._id.toString()) || 0,
     }));
+
+    return {
+      data: result,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    };
   }
 
   async getUnitsByCourseId(courseId: string) {
