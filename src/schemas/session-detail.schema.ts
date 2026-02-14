@@ -26,6 +26,7 @@ export const SessionDetailZodSchema = z.object({
       }),
     )
     .default([]),
+  sequence: z.number().optional(),
   isActive: z.boolean(),
 });
 

@@ -57,7 +57,7 @@ export function SortableSessionGroupItem({
       <div className="flex-1 min-w-0">
         <h4 className="font-medium truncate">{group.name}</h4>
         {group.topicName && (
-          <p className="text-xs text-muted-foreground truncate">
+          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
             Topic: {group.topicName}
           </p>
         )}

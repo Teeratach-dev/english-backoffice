@@ -20,14 +20,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const unitId = searchParams.get("unitId");
 
-    if (!unitId) {
-      return NextResponse.json(
-        { message: "Unit ID is required" },
-        { status: 400 },
-      );
-    }
-
-    const topics = await topicService.getTopicsByUnitId(unitId);
+    const topics = unitId
+      ? await topicService.getTopicsByUnitId(unitId)
+      : await topicService.getAllTopics();
     return NextResponse.json(topics);
   } catch (error) {
     return NextResponse.json(

@@ -55,7 +55,7 @@ export function SortableTopicItem({
       <div className="flex-1 min-w-0">
         <h4 className="font-medium truncate">{topic.name}</h4>
         {topic.unitName && (
-          <p className="text-xs text-muted-foreground truncate">
+          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
             Unit: {topic.unitName}
           </p>
         )}

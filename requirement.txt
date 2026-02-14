@@ -35,9 +35,13 @@
 22. ถ้าจะสร้าง session group ก็ต้องเลือก topic ของมันด้วย
 23. ถ้าจะสร้าง topic ก็ต้องเลือก unit ของมันด้วย
 24. ถ้าจะสร้าง unit ก็ต้องเลือก course ของมันด้วย
-25. course list อยากให้แสดง field purchaseable เพิ่มด้วย
-26. unit, topic, session group, session detail อยากให้แสดง parent name ของมันด้วย เช่น ในหน้า session detail อยากให้แสดง session group name ของมันด้วย
+25. หน้า course list อยากให้แสดง field purchaseable เพิ่มด้วย
+26. หน้า detail ของหน้าต่อไปนี้ unit, topic, session group, session detail อยากให้แสดง parent name ของมันด้วย เช่น ในหน้า session detail อยากให้แสดง session group name ของมันด้วย
     โดยให้ความกว้างไม่มากจนเกินไป ถ้าข้อความล้น ก็ให้ตัดเป็น ...
+27. หน้าต่อไปนี้ course list, unit list,  topic list, session group list อยากให้แสดงจำนวน child ของมันด้วย เช่น ในหน้า course list ก็แสดงจำนวน unit ทั้งหมดของ course นี้ เป็นต้น
+28. side bar ต้องแสดง dashboard, courses, units, topics, session groups, session detail list, session templates menu ด้วย ต้อง filter ได้ด้วย
+29. toast ต้องแบ่งตาม status success, warning, dangerous, info
+30. ชื่อ table บน database ให้ใช้ "-" คั่นแต่ละคำ และใช้พิมพ์เล็กทั้งหมด
 
 ------ Typescript rule ------
 ทุกไฟล์ให้เชคด้วย ห้ามมีไฟล์ไหน error typescript

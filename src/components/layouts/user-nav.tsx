@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/store";
+import Link from "next/link";
 
 export function UserNav() {
   const dispatch = useDispatch();
@@ -53,9 +54,8 @@ export function UserNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            Profile
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/change-password">Change Password</Link>
           </DropdownMenuItem>
           <DropdownMenuItem>
             Settings

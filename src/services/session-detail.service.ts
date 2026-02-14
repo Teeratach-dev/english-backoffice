@@ -2,9 +2,30 @@ import dbConnect from "@/lib/db";
 import SessionDetail, { SessionDetailInput } from "@/models/SessionDetail";
 
 export class SessionDetailService {
+  async getAllSessions() {
+    await dbConnect();
+    const sessions = await SessionDetail.find({})
+      .populate("sessionGroupId", "name")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return sessions.map((s: any) => ({
+      ...s,
+      sessionGroupName: s.sessionGroupId?.name,
+    }));
+  }
+
   async getSessionsByGroupId(sessionGroupId: string) {
     await dbConnect();
-    return SessionDetail.find({ sessionGroupId }).sort({ sequence: 1 });
+    const sessions = await SessionDetail.find({ sessionGroupId })
+      .populate("sessionGroupId", "name")
+      .sort({ sequence: 1 })
+      .lean();
+
+    return sessions.map((s: any) => ({
+      ...s,
+      sessionGroupName: s.sessionGroupId?.name,
+    }));
   }
 
   async getSessionById(id: string) {

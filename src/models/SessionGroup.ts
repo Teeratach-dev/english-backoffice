@@ -43,4 +43,4 @@ const SessionGroupSchema = new mongoose.Schema(
 );
 
 export default mongoose.models.SessionGroup ||
-  mongoose.model("SessionGroup", SessionGroupSchema);
+  mongoose.model("SessionGroup", SessionGroupSchema, "session-groups");

@@ -30,4 +30,5 @@ export interface LocalSession {
   isActive: boolean;
   sequence: number;
   groupName?: string;
+  sessionGroupName?: string;
 }

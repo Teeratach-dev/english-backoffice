@@ -7,22 +7,25 @@ export {
   type SessionDetailInput,
 } from "@/schemas/session-detail.schema";
 
-// Action Schema
-const ActionSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: false,
+// Action Schema — strict: false เพื่อเก็บ dynamic content ของแต่ละ action type
+const ActionSchema = new mongoose.Schema(
+  {
+    id: {
+      type: String,
+      required: false,
+    },
+    type: {
+      type: String,
+      enum: ACTION_TYPE_VALUES,
+      required: true,
+    },
+    sequence: {
+      type: Number,
+      required: true,
+    },
   },
-  type: {
-    type: String,
-    enum: ACTION_TYPE_VALUES,
-    required: true,
-  },
-  sequence: {
-    type: Number,
-    required: true,
-  },
-});
+  { strict: false },
+);
 
 // Screen Schema
 const ScreenSchema = new mongoose.Schema({
@@ -87,4 +90,4 @@ const SessionDetailSchema = new mongoose.Schema(
 );
 
 export default mongoose.models.SessionDetail ||
-  mongoose.model("SessionDetail", SessionDetailSchema);
+  mongoose.model("SessionDetail", SessionDetailSchema, "session-details");

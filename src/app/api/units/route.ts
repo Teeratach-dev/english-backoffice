@@ -20,14 +20,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const courseId = searchParams.get("courseId");
 
-    if (!courseId) {
-      return NextResponse.json(
-        { message: "Course ID is required" },
-        { status: 400 },
-      );
-    }
-
-    const units = await unitService.getUnitsByCourseId(courseId);
+    const units = courseId
+      ? await unitService.getUnitsByCourseId(courseId)
+      : await unitService.getAllUnits();
     return NextResponse.json(units);
   } catch (error) {
     return NextResponse.json(

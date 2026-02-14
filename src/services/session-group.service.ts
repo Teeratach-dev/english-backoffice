@@ -1,10 +1,52 @@
 import dbConnect from "@/lib/db";
 import SessionGroup, { SessionGroupInput } from "@/models/SessionGroup";
+import SessionDetail from "@/models/SessionDetail";
 
 export class SessionGroupService {
+  async getAllGroups() {
+    await dbConnect();
+    const groups = await SessionGroup.find({})
+      .populate("topicId", "name")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const groupIds = groups.map((g: any) => g._id);
+    const counts = await SessionDetail.aggregate([
+      { $match: { sessionGroupId: { $in: groupIds } } },
+      { $group: { _id: "$sessionGroupId", count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(
+      counts.map((c: any) => [c._id.toString(), c.count]),
+    );
+
+    return groups.map((g: any) => ({
+      ...g,
+      topicName: g.topicId?.name,
+      sessionCount: countMap.get(g._id.toString()) || 0,
+    }));
+  }
+
   async getGroupsByTopicId(topicId: string) {
     await dbConnect();
-    return SessionGroup.find({ topicId }).sort({ sequence: 1 });
+    const groups = await SessionGroup.find({ topicId })
+      .populate("topicId", "name")
+      .sort({ sequence: 1 })
+      .lean();
+
+    const groupIds = groups.map((g: any) => g._id);
+    const counts = await SessionDetail.aggregate([
+      { $match: { sessionGroupId: { $in: groupIds } } },
+      { $group: { _id: "$sessionGroupId", count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(
+      counts.map((c: any) => [c._id.toString(), c.count]),
+    );
+
+    return groups.map((g: any) => ({
+      ...g,
+      topicName: g.topicId?.name,
+      sessionCount: countMap.get(g._id.toString()) || 0,
+    }));
   }
 
   async getGroupById(id: string) {

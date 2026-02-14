@@ -20,15 +20,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const sessionGroupId = searchParams.get("sessionGroupId");
 
-    if (!sessionGroupId) {
-      return NextResponse.json(
-        { message: "Session Group ID is required" },
-        { status: 400 },
-      );
-    }
-
-    const sessions =
-      await sessionDetailService.getSessionsByGroupId(sessionGroupId);
+    const sessions = sessionGroupId
+      ? await sessionDetailService.getSessionsByGroupId(sessionGroupId)
+      : await sessionDetailService.getAllSessions();
     return NextResponse.json(sessions);
   } catch (error) {
     return NextResponse.json(

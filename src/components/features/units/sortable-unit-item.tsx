@@ -53,7 +53,7 @@ export function SortableUnitItem({
       <div className="flex-1 min-w-0">
         <h4 className="font-medium truncate">{unit.name}</h4>
         {unit.courseName && (
-          <p className="text-xs text-muted-foreground truncate">
+          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
             Course: {unit.courseName}
           </p>
         )}

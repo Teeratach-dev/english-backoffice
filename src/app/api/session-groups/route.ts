@@ -20,14 +20,9 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const topicId = searchParams.get("topicId");
 
-    if (!topicId) {
-      return NextResponse.json(
-        { message: "Topic ID is required" },
-        { status: 400 },
-      );
-    }
-
-    const groups = await sessionGroupService.getGroupsByTopicId(topicId);
+    const groups = topicId
+      ? await sessionGroupService.getGroupsByTopicId(topicId)
+      : await sessionGroupService.getAllGroups();
     return NextResponse.json(groups);
   } catch (error) {
     return NextResponse.json(

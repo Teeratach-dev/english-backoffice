@@ -69,3 +69,16 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    await dbConnect();
+    const users = await User.find({}, { password: 0 }).sort({ createdAt: -1 });
+    return NextResponse.json(users);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}

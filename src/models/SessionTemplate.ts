@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
-import { z } from "zod";
 import { ACTION_TYPE_VALUES, SESSION_TYPES } from "@/types/action.types";
+
+// Re-export Zod schema for server-side use
+export {
+  SessionTemplateZodSchema,
+  type SessionTemplateInput,
+} from "@/schemas/session-template.schema";
 
 const TemplateScreenSchema = new mongoose.Schema({
   sequence: {
@@ -45,23 +50,5 @@ const SessionTemplateSchema = new mongoose.Schema(
   },
 );
 
-export const SessionTemplateZodSchema = z.object({
-  name: z.string().min(1),
-  type: z.enum(SESSION_TYPES),
-  screens: z
-    .array(
-      z.object({
-        sequence: z.number(),
-        actionTypes: z.array(
-          z.enum(ACTION_TYPE_VALUES as [string, ...string[]]),
-        ),
-      }),
-    )
-    .default([]),
-  isActive: z.boolean().default(true),
-});
-
-export type SessionTemplateInput = z.infer<typeof SessionTemplateZodSchema>;
-
 export default mongoose.models.SessionTemplate ||
-  mongoose.model("SessionTemplate", SessionTemplateSchema);
+  mongoose.model("SessionTemplate", SessionTemplateSchema, "session-templates");

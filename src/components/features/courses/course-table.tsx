@@ -23,6 +23,7 @@ interface Course {
   price: number;
   isActive: boolean;
   purchaseable: boolean;
+  unitCount: number;
   createdAt: string;
 }
 
@@ -91,6 +92,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
+              <TableHead>Units</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Purchaseable</TableHead>
@@ -101,7 +103,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
           <TableBody>
             {filteredCourses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={7} className="h-24 text-center">
                   No courses found.
                 </TableCell>
               </TableRow>
@@ -109,6 +111,11 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
               filteredCourses.map((course) => (
                 <TableRow key={course._id}>
                   <TableCell className="font-medium">{course.name}</TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                      {course.unitCount || 0}
+                    </span>
+                  </TableCell>
                   <TableCell>{course.price.toLocaleString()} THB</TableCell>
                   <TableCell>
                     <span
