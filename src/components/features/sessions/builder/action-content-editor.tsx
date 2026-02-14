@@ -17,8 +17,9 @@ export function ActionContentEditor({
   action,
   onChange,
 }: ActionContentEditorProps) {
-  const updateContent = (updates: any) => {
-    onChange({ content: { ...action.content, ...updates } });
+  const updateAction = (updates: Partial<Action>) => {
+    const updatedAction = { ...action, ...updates } as Action;
+    onChange(updatedAction);
   };
 
   switch (action.type) {
@@ -29,8 +30,8 @@ export function ActionContentEditor({
             <div className="space-y-1">
               <Label className="text-xs">Alignment</Label>
               <select
-                value={action.content.alignment || "left"}
-                onChange={(e) => updateContent({ alignment: e.target.value })}
+                value={action.alignment || "left"}
+                onChange={(e) => updateAction({ alignment: e.target.value as "left" | "center" | "right" })}
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -42,17 +43,17 @@ export function ActionContentEditor({
               <Label className="text-xs">Font Size</Label>
               <Input
                 type="number"
-                value={action.content.size || 16}
+                value={action.size || 16}
                 onChange={(e) =>
-                  updateContent({ size: parseInt(e.target.value) })
-                }
+                  updateAction({ size: parseInt(e.target.value) })
+                  }
                 className="h-8 text-xs"
               />
             </div>
           </div>
           <WordEditor
-            words={action.content.text || []}
-            onChange={(words) => updateContent({ text: words })}
+            words={action.text || []}
+            onChange={(words) => updateAction({ text: words })}
           />
         </div>
       );
@@ -64,8 +65,8 @@ export function ActionContentEditor({
             <div className="flex items-center space-x-2">
               <Switch
                 id="isHide"
-                checked={action.content.isHide}
-                onCheckedChange={(c) => updateContent({ isHide: c })}
+                checked={action.isHide}
+                onCheckedChange={(c) => updateAction({ isHide: c })}
               />
               <Label htmlFor="isHide" className="text-xs font-normal">
                 Hidden
@@ -74,8 +75,8 @@ export function ActionContentEditor({
             <div className="flex items-center space-x-2">
               <Switch
                 id="isReadable"
-                checked={action.content.isReadable}
-                onCheckedChange={(c) => updateContent({ isReadable: c })}
+                checked={action.isReadable}
+                onCheckedChange={(c) => updateAction({ isReadable: c })}
               />
               <Label htmlFor="isReadable" className="text-xs font-normal">
                 Readable
@@ -84,15 +85,15 @@ export function ActionContentEditor({
             <div className="flex-1">
               <Input
                 placeholder="Background Audio URL"
-                value={action.content.audioUrl || ""}
-                onChange={(e) => updateContent({ audioUrl: e.target.value })}
+                value={action.audioUrl || ""}
+                onChange={(e) => updateAction({ audioUrl: e.target.value })}
                 className="h-8 text-xs"
               />
             </div>
           </div>
           <WordEditor
-            words={action.content.text || []}
-            onChange={(words) => updateContent({ text: words })}
+            words={action.text || []}
+            onChange={(words) => updateAction({ text: words })}
           />
         </div>
       );
@@ -102,8 +103,8 @@ export function ActionContentEditor({
         <div className="space-y-2">
           <Label className="text-xs">Audio URL</Label>
           <Input
-            value={action.content.audio || ""}
-            onChange={(e) => updateContent({ audio: e.target.value })}
+            value={action.audio || ""}
+            onChange={(e) => updateAction({ audio: e.target.value })}
             placeholder="https://example.com/audio.mp3"
           />
         </div>
@@ -114,8 +115,8 @@ export function ActionContentEditor({
         <div className="space-y-2">
           <Label className="text-xs">Image URL</Label>
           <Input
-            value={action.content.url || ""}
-            onChange={(e) => updateContent({ url: e.target.value })}
+            value={action.url || ""}
+            onChange={(e) => updateAction({ url: e.target.value })}
             placeholder="https://example.com/image.png"
           />
         </div>
@@ -128,10 +129,10 @@ export function ActionContentEditor({
             <div className="space-y-1">
               <Label className="text-xs">Sender Name</Label>
               <Input
-                value={action.content.sender?.name || ""}
+                value={action.sender?.name || ""}
                 onChange={(e) =>
-                  updateContent({
-                    sender: { ...action.content.sender, name: e.target.value },
+                  updateAction({
+                    sender: { ...action.sender, name: e.target.value },
                   })
                 }
               />
@@ -139,11 +140,11 @@ export function ActionContentEditor({
             <div className="space-y-1">
               <Label className="text-xs">Sender Image URL</Label>
               <Input
-                value={action.content.sender?.imageUrl || ""}
+                value={action.sender?.imageUrl || ""}
                 onChange={(e) =>
-                  updateContent({
+                  updateAction({
                     sender: {
-                      ...action.content.sender,
+                      ...action.sender,
                       imageUrl: e.target.value,
                     },
                   })
@@ -153,8 +154,8 @@ export function ActionContentEditor({
             <div className="space-y-1">
               <Label className="text-xs">Position</Label>
               <select
-                value={action.content.position || "left"}
-                onChange={(e) => updateContent({ position: e.target.value })}
+                value={action.position || "left"}
+                onChange={(e) => updateAction({ position: e.target.value as "left" | "right" })}
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -164,23 +165,23 @@ export function ActionContentEditor({
             <div className="space-y-1 flex items-end gap-4 pb-1">
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={action.content.isDisplay}
-                  onCheckedChange={(c) => updateContent({ isDisplay: c })}
+                  checked={action.isDisplay}
+                  onCheckedChange={(c) => updateAction({ isDisplay: c })}
                 />
                 <Label className="text-xs font-normal">Display</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
-                  checked={action.content.isReadable}
-                  onCheckedChange={(c) => updateContent({ isReadable: c })}
+                  checked={action.isReadable}
+                  onCheckedChange={(c) => updateAction({ isReadable: c })}
                 />
                 <Label className="text-xs font-normal">Readable</Label>
               </div>
             </div>
           </div>
           <WordEditor
-            words={action.content.text || []}
-            onChange={(words) => updateContent({ text: words })}
+            words={action.text || []}
+            onChange={(words) => updateAction({ text: words })}
           />
         </div>
       );
@@ -196,9 +197,9 @@ export function ActionContentEditor({
               size="sm"
               variant="outline"
               onClick={() =>
-                updateContent({
+                updateAction({
                   items: [
-                    ...(action.content.items || []),
+                    ...(action.items || []),
                     {
                       text: { text: "", translation: [], isBlank: false },
                       isCorrect: false,
@@ -210,7 +211,7 @@ export function ActionContentEditor({
               <Plus className="h-4 w-4 mr-1" /> Add Option
             </Button>
           </div>
-          {action.content.items?.map((item: any, idx: number) => (
+          {action.items?.map((item: any, idx: number) => (
             <div
               key={idx}
               className="flex items-center gap-4 bg-muted/20 p-2 rounded"
@@ -218,12 +219,12 @@ export function ActionContentEditor({
               <Input
                 value={item.text?.text || ""}
                 onChange={(e) => {
-                  const items = [...action.content.items];
+                  const items = [...action.items];
                   items[idx].text = {
                     ...items[idx].text,
                     text: e.target.value,
                   };
-                  updateContent({ items });
+                  updateAction({ items });
                 }}
                 className="flex-1"
                 placeholder="Option text"
@@ -232,9 +233,9 @@ export function ActionContentEditor({
                 <Switch
                   checked={item.isCorrect}
                   onCheckedChange={(c) => {
-                    const items = [...action.content.items];
+                    const items = [...action.items];
                     items[idx].isCorrect = c;
-                    updateContent({ items });
+                    updateAction({ items });
                   }}
                 />
                 <Label className="text-xs font-normal">Correct</Label>
@@ -244,10 +245,10 @@ export function ActionContentEditor({
                 variant="ghost"
                 className="text-destructive"
                 onClick={() => {
-                  const items = action.content.items.filter(
+                  const items = action.items.filter(
                     (_: any, i: number) => i !== idx,
                   );
-                  updateContent({ items });
+                  updateAction({ items });
                 }}
               >
                 <Trash className="h-4 w-4" />
@@ -268,9 +269,9 @@ export function ActionContentEditor({
               size="sm"
               variant="outline"
               onClick={() =>
-                updateContent({
+                updateAction({
                   items: [
-                    ...(action.content.items || []),
+                    ...(action.items || []),
                     { left: { text: "" }, right: { text: "" } },
                   ],
                 })
@@ -279,7 +280,7 @@ export function ActionContentEditor({
               <Plus className="h-4 w-4 mr-1" /> Add Pair
             </Button>
           </div>
-          {action.content.items?.map((item: any, idx: number) => (
+          {action.items?.map((item: any, idx: number) => (
             <div
               key={idx}
               className="grid grid-cols-2 gap-4 bg-muted/20 p-3 rounded items-center"
@@ -289,12 +290,12 @@ export function ActionContentEditor({
                 <Input
                   value={item.left?.text || ""}
                   onChange={(e) => {
-                    const items = [...action.content.items];
+                    const items = [...action.items];
                     items[idx].left = {
                       ...items[idx].left,
                       text: e.target.value,
                     };
-                    updateContent({ items });
+                    updateAction({ items });
                   }}
                   placeholder="Text or Audio URL"
                 />
@@ -304,12 +305,12 @@ export function ActionContentEditor({
                 <Input
                   value={item.right?.text || ""}
                   onChange={(e) => {
-                    const items = [...action.content.items];
+                    const items = [...action.items];
                     items[idx].right = {
                       ...items[idx].right,
                       text: e.target.value,
                     };
-                    updateContent({ items });
+                    updateAction({ items });
                   }}
                   placeholder="Text or Audio URL"
                 />
@@ -318,10 +319,10 @@ export function ActionContentEditor({
                   variant="ghost"
                   className="text-destructive absolute bottom-0 -right-2 h-10"
                   onClick={() => {
-                    const items = action.content.items.filter(
+                    const items = action.items.filter(
                       (_: any, i: number) => i !== idx,
                     );
-                    updateContent({ items });
+                    updateAction({ items });
                   }}
                 >
                   <Trash className="h-4 w-4" />
@@ -340,8 +341,8 @@ export function ActionContentEditor({
             <div className="space-y-1">
               <Label className="text-xs">Position</Label>
               <select
-                value={action.content.position || "left"}
-                onChange={(e) => updateContent({ position: e.target.value })}
+                value={action.position || "left"}
+                onChange={(e) => updateAction({ position: e.target.value as "left" | "right" })}
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -354,9 +355,9 @@ export function ActionContentEditor({
               Sentences (comma separated variations)
             </Label>
             <Input
-              value={action.content.sentence?.join(", ") || ""}
+              value={action.sentence?.join(", ") || ""}
               onChange={(e) =>
-                updateContent({
+                updateAction({
                   sentence: e.target.value.split(",").map((s) => s.trim()),
                 })
               }
@@ -378,9 +379,9 @@ export function ActionContentEditor({
               size="sm"
               variant="outline"
               onClick={() =>
-                updateContent({
+                updateAction({
                   sentence: [
-                    ...(action.content.sentence || []),
+                    ...(action.sentence || []),
                     { text: "", isBlank: false },
                   ],
                 })
@@ -389,15 +390,15 @@ export function ActionContentEditor({
               <Plus className="h-4 w-4 mr-1" /> Add Segment
             </Button>
           </div>
-          {action.content.sentence?.map((seg: any, idx: number) => (
+          {action.sentence?.map((seg: any, idx: number) => (
             <div key={idx} className="space-y-2 bg-muted/20 p-2 rounded">
               <div className="flex items-center gap-3">
                 <Input
                   value={seg.text}
                   onChange={(e) => {
-                    const sentence = [...action.content.sentence];
+                    const sentence = [...action.sentence];
                     sentence[idx].text = e.target.value;
-                    updateContent({ sentence });
+                    updateAction({ sentence });
                   }}
                   className="flex-1"
                   placeholder="Segment text"
@@ -406,9 +407,9 @@ export function ActionContentEditor({
                   <Switch
                     checked={seg.isBlank}
                     onCheckedChange={(c) => {
-                      const sentence = [...action.content.sentence];
+                      const sentence = [...action.sentence];
                       sentence[idx].isBlank = c;
-                      updateContent({ sentence });
+                      updateAction({ sentence });
                     }}
                   />
                   <Label className="text-xs font-normal">Blank</Label>
@@ -418,10 +419,10 @@ export function ActionContentEditor({
                   variant="ghost"
                   className="text-destructive"
                   onClick={() => {
-                    const sentence = action.content.sentence.filter(
+                    const sentence = action.sentence.filter(
                       (_: any, i: number) => i !== idx,
                     );
-                    updateContent({ sentence });
+                    updateAction({ sentence });
                   }}
                 >
                   <Trash className="h-4 w-4" />
@@ -438,7 +439,7 @@ export function ActionContentEditor({
                         seg.choice?.map((w: any) => w.text).join(", ") || ""
                       }
                       onChange={(e) => {
-                        const sentence = [...action.content.sentence];
+                        const sentence = [...action.sentence];
                         sentence[idx].choice = e.target.value
                           .split(",")
                           .map((t) => ({
@@ -446,7 +447,7 @@ export function ActionContentEditor({
                             translation: [],
                             isBlank: false,
                           }));
-                        updateContent({ sentence });
+                        updateAction({ sentence });
                       }}
                       placeholder="Choice A, Choice B..."
                       className="h-8 text-xs"

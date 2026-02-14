@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { unitService } from "@/services/unit.service";
-import { UnitZodSchema } from "@/models/Unit";
+import SessionTemplate, {
+  SessionTemplateZodSchema,
+} from "@/models/SessionTemplate";
+import dbConnect from "@/lib/db";
 import { verifyToken } from "@/lib/jwt";
 import { z } from "zod";
 
@@ -12,6 +14,30 @@ async function getUserIdFromRequest(req: NextRequest) {
     return payload.id as string;
   } catch (error) {
     return null;
+  }
+}
+
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const { params } = context;
+  try {
+    const { id } = await params;
+    await dbConnect();
+    const template = await SessionTemplate.findById(id);
+    if (!template) {
+      return NextResponse.json(
+        { message: "Template not found" },
+        { status: 404 },
+      );
+    }
+    return NextResponse.json(template);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
 
@@ -28,13 +54,22 @@ export async function PUT(
     }
 
     const body = await req.json();
-    const validatedData = UnitZodSchema.partial().parse(body);
+    const validatedData = SessionTemplateZodSchema.partial().parse(body);
 
-    const unit = await unitService.updateUnit(id, validatedData, userId);
-    if (!unit) {
-      return NextResponse.json({ message: "Unit not found" }, { status: 404 });
+    await dbConnect();
+    const template = await SessionTemplate.findByIdAndUpdate(
+      id,
+      { ...validatedData, updatedBy: userId },
+      { new: true, runValidators: true },
+    );
+
+    if (!template) {
+      return NextResponse.json(
+        { message: "Template not found" },
+        { status: 404 },
+      );
     }
-    return NextResponse.json(unit);
+    return NextResponse.json(template);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -61,11 +96,15 @@ export async function DELETE(
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const unit = await unitService.deleteUnit(id);
-    if (!unit) {
-      return NextResponse.json({ message: "Unit not found" }, { status: 404 });
+    await dbConnect();
+    const template = await SessionTemplate.findByIdAndDelete(id);
+    if (!template) {
+      return NextResponse.json(
+        { message: "Template not found" },
+        { status: 404 },
+      );
     }
-    return NextResponse.json({ message: "Unit deleted successfully" });
+    return NextResponse.json({ message: "Template deleted successfully" });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

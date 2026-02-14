@@ -93,6 +93,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
               <TableHead>Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Purchaseable</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -100,7 +101,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
           <TableBody>
             {filteredCourses.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No courses found.
                 </TableCell>
               </TableRow>
@@ -113,11 +114,22 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                         course.isActive
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                          ? "bg-success text-success-foreground"
+                          : "bg-error text-error-foreground"
                       }`}
                     >
                       {course.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                        course.purchaseable
+                          ? "bg-info text-info-foreground"
+                          : "bg-neutral text-neutral-foreground"
+                      }`}
+                    >
+                      {course.purchaseable ? "Yes" : "No"}
                     </span>
                   </TableCell>
                   <TableCell>

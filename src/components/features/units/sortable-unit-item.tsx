@@ -50,13 +50,18 @@ export function SortableUnitItem({
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
-      <div className="flex-1">
-        <h4 className="font-medium">{unit.name}</h4>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium truncate">{unit.name}</h4>
+        {unit.courseName && (
+          <p className="text-xs text-muted-foreground truncate">
+            Course: {unit.courseName}
+          </p>
+        )}
         <span
           className={`text-xs px-2 py-0.5 rounded-full ${
             unit.isActive
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-success text-success-foreground"
+              : "bg-error text-error-foreground"
           }`}
         >
           {unit.isActive ? "Active" : "Inactive"}

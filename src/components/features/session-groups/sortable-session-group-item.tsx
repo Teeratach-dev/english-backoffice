@@ -54,13 +54,18 @@ export function SortableSessionGroupItem({
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
-      <div className="flex-1">
-        <h4 className="font-medium">{group.name}</h4>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium truncate">{group.name}</h4>
+        {group.topicName && (
+          <p className="text-xs text-muted-foreground truncate">
+            Topic: {group.topicName}
+          </p>
+        )}
         <span
           className={`text-xs px-2 py-0.5 rounded-full ${
             group.isActive
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-success text-success-foreground"
+              : "bg-error text-error-foreground"
           }`}
         >
           {group.isActive ? "Active" : "Inactive"}

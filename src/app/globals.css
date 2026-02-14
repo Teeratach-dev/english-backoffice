@@ -30,6 +30,17 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-error: hsl(var(--error));
+  --color-error-foreground: hsl(var(--error-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-neutral: hsl(var(--neutral));
+  --color-neutral-foreground: hsl(var(--neutral-foreground));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -94,6 +105,17 @@
   --input: 214.3 31.8% 91.4%;
   --ring: 222.2 84% 4.9%;
 
+  --success: 142 76% 96%;
+  --success-foreground: 142 76% 36%;
+  --error: 0 84% 97%;
+  --error-foreground: 0 84% 60%;
+  --info: 217 91% 96%;
+  --info-foreground: 217 91% 45%;
+  --warning: 48 96% 96%;
+  --warning-foreground: 48 96% 45%;
+  --neutral: 220 20% 96%;
+  --neutral-foreground: 220 20% 46%;
+
   --radius: 0.5rem;
 }
 
@@ -125,6 +147,17 @@
   --border: 217.2 32.6% 17.5%;
   --input: 217.2 32.6% 17.5%;
   --ring: 212.7 26.8% 83.9%;
+
+  --success: 142 76% 15%;
+  --success-foreground: 142 76% 90%;
+  --error: 0 84% 60%;
+  --error-foreground: 0 84% 97%;
+  --info: 217 91% 15%;
+  --info-foreground: 217 91% 90%;
+  --warning: 48 96% 15%;
+  --warning-foreground: 48 96% 90%;
+  --neutral: 220 20% 15%;
+  --neutral-foreground: 220 20% 90%;
 }
 
 @layer base {

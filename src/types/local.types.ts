@@ -2,21 +2,24 @@ export interface LocalUnit {
   _id: string;
   name: string;
   isActive: boolean;
-  sequence?: number;
+  sequence: number;
+  courseName?: string;
 }
 
 export interface LocalTopic {
   _id: string;
   name: string;
   isActive: boolean;
-  sequence?: number;
+  sequence: number;
+  unitName?: string;
 }
 
 export interface LocalSessionGroup {
   _id: string;
   name: string;
   isActive: boolean;
-  sequence?: number;
+  sequence: number;
+  topicName?: string;
 }
 
 export interface LocalSession {
@@ -25,5 +28,6 @@ export interface LocalSession {
   type: string;
   cefrLevel: string;
   isActive: boolean;
-  sequence?: number;
+  sequence: number;
+  groupName?: string;
 }

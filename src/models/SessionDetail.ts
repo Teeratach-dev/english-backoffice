@@ -9,13 +9,14 @@ export {
 
 // Action Schema
 const ActionSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: false,
+  },
   type: {
     type: String,
     enum: ACTION_TYPE_VALUES,
     required: true,
-  },
-  content: {
-    type: mongoose.Schema.Types.Mixed,
   },
   sequence: {
     type: Number,
@@ -25,6 +26,10 @@ const ActionSchema = new mongoose.Schema({
 
 // Screen Schema
 const ScreenSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: false,
+  },
   sequence: {
     type: Number,
     required: true,

@@ -13,19 +13,20 @@ export const SessionDetailZodSchema = z.object({
   screens: z
     .array(
       z.object({
+        id: z.string().optional(),
         sequence: z.number(),
         templateId: z.string().optional(),
         actions: z.array(
           z.object({
+            id: z.string().optional(),
             type: z.enum(ACTION_TYPE_VALUES as [string, ...string[]]),
-            content: z.any(),
             sequence: z.number(),
           }),
         ),
       }),
     )
     .default([]),
-  isActive: z.boolean().default(true),
+  isActive: z.boolean(),
 });
 
 export type SessionDetailInput = z.infer<typeof SessionDetailZodSchema>;

@@ -74,6 +74,7 @@ export type Word = {
   audioUrl?: string;
   bold?: boolean;
   italic?: boolean;
+  italian?: boolean;
   underline?: boolean;
   highlight?: boolean;
 };
@@ -83,120 +84,94 @@ export type Word = {
 // =============================================
 export type ExplainAction = {
   type: "explain";
-  content: {
-    text: Word[];
-    alignment: "left" | "center" | "right";
-    size: number;
-  };
+  text: Word[];
+  alignment: "left" | "center" | "right";
+  size: number;
 };
 
 export type ReadingAction = {
   type: "reading";
-  content: {
-    text: Word[];
-    audioUrl?: string;
-    isHide: boolean;
-    isReadable: boolean;
-  };
+  text: Word[];
+  audioUrl?: string;
+  isHide: boolean;
+  isReadable: boolean;
 };
 
 export type AudioAction = {
   type: "audio";
-  content: {
-    audio: string;
-  };
+  audio: string;
 };
 
 export type ChatAction = {
   type: "chat";
-  content: {
-    sender: { name: string; imageUrl: string };
-    position: "left" | "right";
-    text: Word[];
-    audioUrl: string;
-    isDisplay: boolean;
-    isReadable: boolean;
-  };
+  sender: { name: string; imageUrl: string };
+  position: "left" | "right";
+  text: Word[];
+  audioUrl: string;
+  isDisplay: boolean;
+  isReadable: boolean;
 };
 
 export type ImageAction = {
   type: "image";
-  content: {
-    url: string;
-  };
+  url: string;
 };
 
 export type ColumnAction = {
   type: "column";
-  content: {
-    actions: Array<ImageAction | ReadingAction | AudioAction>;
-  };
+  actions: Array<ImageAction | ReadingAction | AudioAction>;
 };
 
 export type ChoiceAction = {
   type: "choice";
-  content: {
-    items: {
-      text: Word;
-      isCorrect: boolean;
-    }[];
-  };
+  items: {
+    text: Word;
+    isCorrect: boolean;
+  }[];
 };
 
 export type ReorderAction = {
   type: "reorder";
-  content: {
-    items: {
-      text: Word;
-      sequence: number;
-    }[];
-  };
+  items: {
+    text: Word;
+    sequence: number;
+  }[];
 };
 
 export type MatchCardAction = {
   type: "match_card";
-  content: {
-    items: {
-      left: { text?: string; audioUrl?: string };
-      right: { text?: string; audioUrl?: string };
-    }[];
-  };
+  items: {
+    left: { text?: string; audioUrl?: string };
+    right: { text?: string; audioUrl?: string };
+  }[];
 };
 
 export type FillSentenceByTypingAction = {
   type: "fill_sentence_by_typing";
-  content: {
-    sentence: {
-      text: string;
-      isBlank: boolean;
-    }[];
-  };
+  sentence: {
+    text: string;
+    isBlank: boolean;
+  }[];
 };
 
 export type FillSentenceWithChoiceAction = {
   type: "fill_sentence_with_choice";
-  content: {
-    sentence: {
-      text: string;
-      isBlank: boolean;
-      choice?: Word[];
-    }[];
-  };
+  sentence: {
+    text: string;
+    isBlank: boolean;
+    choice?: Word[];
+  }[];
 };
 
 export type WriteSentenceAction = {
   type: "write_sentence";
-  content: {
-    sentence: string[];
-  };
+  sentence: string[];
 };
 
 export type WriteSentenceInChatAction = {
   type: "write_sentence_in_chat";
-  content: {
-    sentence: string[];
-    position: "left" | "right";
-  };
+  sentence: string[];
+  position: "left" | "right";
 };
 
 export type Action =
@@ -226,16 +201,17 @@ export type Screen = {
 // =============================================
 // Default content for each action type
 // =============================================
-export function getDefaultContent(type: ActionType): Record<string, unknown> {
+export function getDefaultContent(type: ActionType): Action {
   switch (type) {
     case ActionType.Explain:
-      return { text: [], alignment: "left", size: 16 };
+      return { type: "explain", text: [], alignment: "left", size: 16 };
     case ActionType.Reading:
-      return { text: [], audioUrl: "", isHide: false, isReadable: true };
+      return { type: "reading", text: [], audioUrl: "", isHide: false, isReadable: true };
     case ActionType.Audio:
-      return { audio: "" };
+      return { type: "audio", audio: "" };
     case ActionType.Chat:
       return {
+        type: "chat",
         sender: { name: "", imageUrl: "" },
         position: "left",
         text: [],
@@ -244,24 +220,24 @@ export function getDefaultContent(type: ActionType): Record<string, unknown> {
         isReadable: true,
       };
     case ActionType.Image:
-      return { url: "" };
+      return { type: "image", url: "" };
     case ActionType.Column:
-      return { actions: [] };
+      return { type: "column", actions: [] };
     case ActionType.Choice:
-      return { items: [] };
+      return { type: "choice", items: [] };
     case ActionType.Reorder:
-      return { items: [] };
+      return { type: "reorder", items: [] };
     case ActionType.MatchCard:
-      return { items: [] };
+      return { type: "match_card", items: [] };
     case ActionType.FillSentenceByTyping:
-      return { sentence: [] };
+      return { type: "fill_sentence_by_typing", sentence: [] };
     case ActionType.FillSentenceWithChoice:
-      return { sentence: [] };
+      return { type: "fill_sentence_with_choice", sentence: [] };
     case ActionType.WriteSentence:
-      return { sentence: [] };
+      return { type: "write_sentence", sentence: [] };
     case ActionType.WriteSentenceInChat:
-      return { sentence: [], position: "left" };
+      return { type: "write_sentence_in_chat", sentence: [], position: "left" };
     default:
-      return {};
+      return { type: "explain", text: [], alignment: "left", size: 16 };
   }
 }

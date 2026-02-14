@@ -39,6 +39,16 @@
 26. unit, topic, session group, session detail อยากให้แสดง parent name ของมันด้วย เช่น ในหน้า session detail อยากให้แสดง session group name ของมันด้วย
     โดยให้ความกว้างไม่มากจนเกินไป ถ้าข้อความล้น ก็ให้ตัดเป็น ...
 
+------ Typescript rule ------
+ทุกไฟล์ให้เชคด้วย ห้ามมีไฟล์ไหน error typescript
+
+
+------ Email & Password ------
+email: teeratach@english.com
+password: @TeN123456
+
+
+------ model & schema & type -----
 
 Course
         - id: objectId

@@ -52,13 +52,18 @@ export function SortableTopicItem({
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
-      <div className="flex-1">
-        <h4 className="font-medium">{topic.name}</h4>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium truncate">{topic.name}</h4>
+        {topic.unitName && (
+          <p className="text-xs text-muted-foreground truncate">
+            Unit: {topic.unitName}
+          </p>
+        )}
         <span
           className={`text-xs px-2 py-0.5 rounded-full ${
             topic.isActive
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-success text-success-foreground"
+              : "bg-error text-error-foreground"
           }`}
         >
           {topic.isActive ? "Active" : "Inactive"}

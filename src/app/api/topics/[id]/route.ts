@@ -17,8 +17,9 @@ async function getUserIdFromRequest(req: NextRequest) {
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { params } = context;
   try {
     const { id } = await params;
     const userId = await getUserIdFromRequest(req);
@@ -50,8 +51,9 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
+  context: { params: Promise<{ id: string }> },
 ) {
+  const { params } = context;
   try {
     const { id } = await params;
     const userId = await getUserIdFromRequest(req);

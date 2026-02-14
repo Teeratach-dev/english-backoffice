@@ -56,20 +56,25 @@ export function SortableSessionItem({
         <GripVertical className="h-5 w-5 text-muted-foreground" />
       </div>
 
-      <div className="flex-1">
-        <h4 className="font-medium">{session.name}</h4>
+      <div className="flex-1 min-w-0">
+        <h4 className="font-medium truncate">{session.name}</h4>
+        {session.groupName && (
+          <p className="text-xs text-muted-foreground truncate">
+            Group: {session.groupName}
+          </p>
+        )}
         <div className="flex gap-2 mt-1">
-          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800">
+          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-info text-info-foreground">
             {session.type}
           </span>
-          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-purple-100 text-purple-800">
+          <span className="text-[10px] uppercase font-bold px-1.5 py-0.5 rounded bg-warning text-warning-foreground">
             {session.cefrLevel}
           </span>
           <span
             className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
               session.isActive
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
+                ? "bg-success text-success-foreground"
+                : "bg-error text-error-foreground"
             }`}
           >
             {session.isActive ? "Active" : "Inactive"}
