@@ -14,6 +14,7 @@ import { Plus, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
 export default function UnitsPage({
   params,
@@ -90,6 +91,12 @@ export default function UnitsPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        items={[
+          { label: "Courses", href: "/dashboard/courses" },
+          { label: `Units: ${course?.name || ""}`, href: "#" },
+        ]}
+      />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/dashboard/courses">

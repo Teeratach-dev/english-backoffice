@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { User, Shield, User as UserIcon } from "lucide-react";
+import { Shield, User as UserIcon, Edit, Trash } from "lucide-react";
 
 interface UserData {
   _id: string;
@@ -22,9 +22,16 @@ interface UserData {
   createdAt: string;
 }
 
-export function UserTable() {
+interface UserTableProps {
+  currentUserRole?: string;
+  onEdit?: (user: UserData) => void;
+}
+
+export function UserTable({ currentUserRole, onEdit }: UserTableProps) {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const isSuperadmin = currentUserRole === "superadmin";
 
   async function fetchUsers() {
     setLoading(true);
@@ -44,6 +51,23 @@ export function UserTable() {
     fetchUsers();
   }, []);
 
+  async function handleDelete(id: string) {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+    try {
+      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.message || "Failed to delete user");
+      }
+      toast.success("User deleted");
+      fetchUsers();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Error deleting user",
+      );
+    }
+  }
+
   if (loading) {
     return (
       <div className="space-y-4">
@@ -62,12 +86,18 @@ export function UserTable() {
             <TableHead>Email</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Joined At</TableHead>
+            {isSuperadmin && (
+              <TableHead className="text-right">Actions</TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={4} className="h-24 text-center">
+              <TableCell
+                colSpan={isSuperadmin ? 5 : 4}
+                className="h-24 text-center"
+              >
                 No users found.
               </TableCell>
             </TableRow>
@@ -95,6 +125,24 @@ export function UserTable() {
                 <TableCell>
                   {new Date(user.createdAt).toLocaleDateString()}
                 </TableCell>
+                {isSuperadmin && (
+                  <TableCell className="text-right space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => onEdit?.(user)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDelete(user._id)}
+                    >
+                      <Trash className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))
           )}

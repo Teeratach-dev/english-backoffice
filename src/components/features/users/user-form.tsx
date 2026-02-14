@@ -9,21 +9,39 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useState } from "react";
 
-const userSchema = z.object({
+const createUserSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   role: z.enum(["admin", "superadmin"]),
 });
 
-type UserFormValues = z.infer<typeof userSchema>;
+const editUserSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Invalid email"),
+  password: z
+    .string()
+    .min(6, "Password must be at least 6 characters")
+    .optional()
+    .or(z.literal("")),
+  role: z.enum(["admin", "superadmin"]),
+});
+
+type UserFormValues = z.infer<typeof createUserSchema>;
 
 interface UserFormProps {
+  initialData?: {
+    _id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
   onSuccess: () => void;
 }
 
-export function UserForm({ onSuccess }: UserFormProps) {
+export function UserForm({ initialData, onSuccess }: UserFormProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const isEditing = !!initialData?._id;
 
   const {
     register,
@@ -31,33 +49,43 @@ export function UserForm({ onSuccess }: UserFormProps) {
     formState: { errors },
     reset,
   } = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(isEditing ? editUserSchema : createUserSchema) as any,
     defaultValues: {
-      role: "admin",
+      name: initialData?.name || "",
+      email: initialData?.email || "",
+      password: "",
+      role: (initialData?.role as "admin" | "superadmin") || "admin",
     },
   });
 
   async function onSubmit(data: UserFormValues) {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/users", {
-        method: "POST",
+      const url = isEditing ? `/api/users/${initialData!._id}` : "/api/users";
+      const method = isEditing ? "PUT" : "POST";
+
+      // Remove empty password for editing
+      const payload = { ...data };
+      if (isEditing && !payload.password) {
+        delete (payload as any).password;
+      }
+
+      const res = await fetch(url, {
+        method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) {
         const err = await res.json();
-        throw new Error(err.message || "Failed to create user");
+        throw new Error(err.message || "Failed to save user");
       }
 
-      toast.success("User created successfully");
+      toast.success(isEditing ? "User updated" : "User created successfully");
       reset();
       onSuccess();
     } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : "Error creating user",
-      );
+      toast.error(error instanceof Error ? error.message : "Error saving user");
     } finally {
       setIsLoading(false);
     }
@@ -87,7 +115,9 @@ export function UserForm({ onSuccess }: UserFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">
+          Password{isEditing ? " (leave blank to keep current)" : ""}
+        </Label>
         <Input
           id="password"
           type="password"
@@ -116,7 +146,7 @@ export function UserForm({ onSuccess }: UserFormProps) {
 
       <div className="flex justify-end pt-4">
         <Button type="submit" disabled={isLoading}>
-          {isLoading ? "Creating..." : "Create User"}
+          {isLoading ? "Saving..." : isEditing ? "Update User" : "Create User"}
         </Button>
       </div>
     </form>

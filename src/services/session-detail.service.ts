@@ -11,6 +11,7 @@ export class SessionDetailService {
 
     return sessions.map((s: any) => ({
       ...s,
+      sessionGroupId: s.sessionGroupId?._id?.toString() || s.sessionGroupId,
       sessionGroupName: s.sessionGroupId?.name,
     }));
   }
@@ -24,6 +25,7 @@ export class SessionDetailService {
 
     return sessions.map((s: any) => ({
       ...s,
+      sessionGroupId: s.sessionGroupId?._id?.toString() || s.sessionGroupId,
       sessionGroupName: s.sessionGroupId?.name,
     }));
   }

@@ -21,6 +21,7 @@ export class UnitService {
 
     return units.map((u: any) => ({
       ...u,
+      courseId: u.courseId?._id?.toString() || u.courseId,
       courseName: u.courseId?.name,
       topicCount: countMap.get(u._id.toString()) || 0,
     }));
@@ -44,6 +45,7 @@ export class UnitService {
 
     return units.map((u: any) => ({
       ...u,
+      courseId: u.courseId?._id?.toString() || u.courseId,
       courseName: u.courseId?.name,
       topicCount: countMap.get(u._id.toString()) || 0,
     }));

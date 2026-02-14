@@ -21,6 +21,7 @@ export class SessionGroupService {
 
     return groups.map((g: any) => ({
       ...g,
+      topicId: g.topicId?._id?.toString() || g.topicId,
       topicName: g.topicId?.name,
       sessionCount: countMap.get(g._id.toString()) || 0,
     }));
@@ -44,6 +45,7 @@ export class SessionGroupService {
 
     return groups.map((g: any) => ({
       ...g,
+      topicId: g.topicId?._id?.toString() || g.topicId,
       topicName: g.topicId?.name,
       sessionCount: countMap.get(g._id.toString()) || 0,
     }));

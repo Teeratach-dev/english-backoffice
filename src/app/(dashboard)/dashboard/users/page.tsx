@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 import { UserTable } from "@/components/features/users/user-table";
 import { UserForm } from "@/components/features/users/user-form";
 import { Button } from "@/components/ui/button";
@@ -16,10 +18,25 @@ import { UserPlus } from "lucide-react";
 export default function UsersPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedUser, setSelectedUser] = useState<any>(null);
+
+  // @ts-ignore
+  const currentUser = useSelector((state: RootState) => state.auth.user);
 
   function handleSuccess() {
     setIsDialogOpen(false);
+    setSelectedUser(null);
     setRefreshKey((prev) => prev + 1);
+  }
+
+  function handleEdit(user: any) {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  }
+
+  function handleAdd() {
+    setSelectedUser(null);
+    setIsDialogOpen(true);
   }
 
   return (
@@ -31,22 +48,34 @@ export default function UsersPage() {
             Manage backoffice administrators and permissions.
           </p>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog
+          open={isDialogOpen}
+          onOpenChange={(open) => {
+            setIsDialogOpen(open);
+            if (!open) setSelectedUser(null);
+          }}
+        >
           <DialogTrigger asChild>
-            <Button>
+            <Button onClick={handleAdd}>
               <UserPlus className="mr-2 h-4 w-4" /> Add Admin
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Administrator</DialogTitle>
+              <DialogTitle>
+                {selectedUser ? "Edit User" : "Add New Administrator"}
+              </DialogTitle>
             </DialogHeader>
-            <UserForm onSuccess={handleSuccess} />
+            <UserForm initialData={selectedUser} onSuccess={handleSuccess} />
           </DialogContent>
         </Dialog>
       </div>
 
-      <UserTable key={refreshKey} />
+      <UserTable
+        key={refreshKey}
+        currentUserRole={currentUser?.role}
+        onEdit={handleEdit}
+      />
     </div>
   );
 }

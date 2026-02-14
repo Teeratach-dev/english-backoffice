@@ -14,6 +14,7 @@ import { Plus, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
 export default function SessionGroupsPage({
   params,
@@ -92,6 +93,17 @@ export default function SessionGroupsPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumb
+        items={[
+          { label: "Courses", href: "/dashboard/courses" },
+          { label: "Units", href: `/dashboard/courses/${courseId}/units` },
+          {
+            label: "Topics",
+            href: `/dashboard/courses/${courseId}/units/${unitId}/topics`,
+          },
+          { label: `Groups: ${topic?.name || ""}`, href: "#" },
+        ]}
+      />
       <div className="flex items-center gap-4">
         <Button variant="ghost" size="icon" asChild>
           <Link href={`/dashboard/courses/${courseId}/units/${unitId}/topics`}>

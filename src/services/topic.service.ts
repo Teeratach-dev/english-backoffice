@@ -21,6 +21,7 @@ export class TopicService {
 
     return topics.map((t: any) => ({
       ...t,
+      unitId: t.unitId?._id?.toString() || t.unitId,
       unitName: t.unitId?.name,
       sessionGroupCount: countMap.get(t._id.toString()) || 0,
     }));
@@ -44,6 +45,7 @@ export class TopicService {
 
     return topics.map((t: any) => ({
       ...t,
+      unitId: t.unitId?._id?.toString() || t.unitId,
       unitName: t.unitId?.name,
       sessionGroupCount: countMap.get(t._id.toString()) || 0,
     }));
