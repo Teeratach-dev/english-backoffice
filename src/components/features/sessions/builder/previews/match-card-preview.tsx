@@ -1,12 +1,17 @@
 import React from "react";
 import { MatchCardAction } from "@/types/action.types";
 import { Volume2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface MatchCardPreviewProps {
   action: MatchCardAction;
+  isShowShadow?: boolean;
 }
 
-export function MatchCardPreview({ action }: MatchCardPreviewProps) {
+export function MatchCardPreview({
+  action,
+  isShowShadow = true,
+}: MatchCardPreviewProps) {
   const items = action.items || [];
 
   if (items.length === 0) {
@@ -19,7 +24,12 @@ export function MatchCardPreview({ action }: MatchCardPreviewProps) {
 
   return (
     <div className="space-y-4 max-w-sm mx-auto">
-      <div className="p-4 border rounded-lg bg-background shadow-sm grid grid-cols-2 gap-x-8 gap-y-2">
+      <div
+        className={cn(
+          "p-4 border rounded-lg bg-background grid grid-cols-2 gap-x-8 gap-y-2",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         {items.map((item, i) => (
           <React.Fragment key={i}>
             {/* Left Side */}

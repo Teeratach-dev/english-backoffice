@@ -7,9 +7,13 @@ import { AudioPreview } from "./audio-preview";
 
 interface ColumnPreviewProps {
   action: ColumnAction;
+  isShowShadow?: boolean;
 }
 
-export function ColumnPreview({ action }: ColumnPreviewProps) {
+export function ColumnPreview({
+  action,
+  isShowShadow = true,
+}: ColumnPreviewProps) {
   const actions = action.actions || [];
 
   if (actions.length === 0) {
@@ -26,13 +30,22 @@ export function ColumnPreview({ action }: ColumnPreviewProps) {
         {actions.map((subAction, index) => (
           <div key={index} className="w-full">
             {subAction.type === ActionType.Image && (
-              <ImagePreview action={subAction as any} />
+              <ImagePreview
+                action={subAction as any}
+                isShowShadow={isShowShadow}
+              />
             )}
             {subAction.type === ActionType.Reading && (
-              <ReadingPreview action={subAction as any} />
+              <ReadingPreview
+                action={subAction as any}
+                isShowShadow={isShowShadow}
+              />
             )}
             {subAction.type === ActionType.Audio && (
-              <AudioPreview action={subAction as any} />
+              <AudioPreview
+                action={subAction as any}
+                isShowShadow={isShowShadow}
+              />
             )}
           </div>
         ))}

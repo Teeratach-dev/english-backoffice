@@ -7,6 +7,7 @@ import { Volume2, Snail, Eye, EyeOff } from "lucide-react";
 
 interface ReadingPreviewProps {
   action: ReadingAction;
+  isShowShadow?: boolean;
 }
 
 /**
@@ -17,14 +18,22 @@ interface ReadingPreviewProps {
  * 2. ถ้า isHide = true && isReadable = true: แสดงข้อความแบบเบลอ (ค่าเริ่มต้น) และมีปุ่มลูกตาเพื่อ Toggle
  * 3. ถ้า isHide = false: แสดงข้อความปกติ ไม่สนใจ IsReadable และไม่มีปุ่มลูกตา
  */
-export function ReadingPreview({ action }: ReadingPreviewProps) {
+export function ReadingPreview({
+  action,
+  isShowShadow = true,
+}: ReadingPreviewProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
   // เงื่อนไข: ถ้า isHide=true && isReadable=false ให้แสดงเฉพาะแผงควบคุมเสียง (Placeholder)
   if (action.isHide && !action.isReadable) {
     return (
       <div className="space-y-3 w-full max-w-sm mx-auto">
-        <div className="p-4 border rounded-lg bg-background shadow-sm flex items-center justify-center gap-10 relative overflow-hidden">
+        <div
+          className={cn(
+            "p-4 border rounded-lg bg-background flex items-center justify-center gap-10 relative overflow-hidden",
+            isShowShadow ? "shadow-sm" : "shadow-none",
+          )}
+        >
           <Volume2
             className={cn(
               "h-6 w-6 transition-colors",
@@ -52,7 +61,12 @@ export function ReadingPreview({ action }: ReadingPreviewProps) {
 
   return (
     <div className="space-y-3 w-full max-w-sm mx-auto">
-      <div className="p-4 border rounded-lg bg-background shadow-sm flex gap-4 relative overflow-hidden">
+      <div
+        className={cn(
+          "p-4 border rounded-lg bg-background flex gap-4 relative overflow-hidden",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         {/* ส่วนควบคุมเสียง (Audio Controls) */}
         <div className="flex flex-col gap-3 shrink-0 py-0.5">
           <Volume2

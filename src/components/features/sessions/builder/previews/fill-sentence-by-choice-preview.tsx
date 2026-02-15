@@ -1,17 +1,25 @@
 import { FillSentenceWithChoiceAction } from "@/types/action.types";
+import { cn } from "@/lib/utils";
 
 interface FillSentenceByChoicePreviewProps {
   action: FillSentenceWithChoiceAction;
+  isShowShadow?: boolean;
 }
 
 export function FillSentenceByChoicePreview({
   action,
+  isShowShadow = true,
 }: FillSentenceByChoicePreviewProps) {
   const sentence = action.sentence || [];
 
   return (
     <div className="w-full flex justify-center">
-      <div className="p-6 border rounded-lg bg-background shadow-sm w-full max-w-sm space-y-6">
+      <div
+        className={cn(
+          "p-6 border rounded-lg bg-background w-full max-w-sm space-y-6",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         <div className="text-sm text-center text-card-foreground leading-relaxed">
           {sentence.length === 0 ? (
             <span className="text-muted-foreground italic">Empty sentence</span>

@@ -1,15 +1,23 @@
 import React from "react";
 import { FillSentenceByTypingAction } from "@/types/action.types";
+import { cn } from "@/lib/utils";
 
 interface FillSentenceByTypingPreviewProps {
   action: FillSentenceByTypingAction;
+  isShowShadow?: boolean;
 }
 
 export function FillSentenceByTypingPreview({
   action,
+  isShowShadow = true,
 }: FillSentenceByTypingPreviewProps) {
   return (
-    <div className="p-6 border rounded-lg bg-background shadow-sm max-w-sm mx-auto flex justify-center">
+    <div
+      className={cn(
+        "p-6 border rounded-lg bg-background max-w-sm mx-auto flex justify-center",
+        isShowShadow ? "shadow-sm" : "shadow-none",
+      )}
+    >
       <p className="text-sm text-card-foreground">
         {(action.sentence || []).map((segment, index) => (
           <React.Fragment key={index}>

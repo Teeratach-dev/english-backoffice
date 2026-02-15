@@ -31,7 +31,7 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
                 key={(action as any).id || idx}
                 className=""
               >
-                <SessionPreview action={action} />
+                <SessionPreview action={action} isShowShadow={false} />
               </div>
             ))}
             {actions.length === 0 && (

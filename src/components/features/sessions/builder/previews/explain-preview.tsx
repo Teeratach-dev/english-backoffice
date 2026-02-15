@@ -5,12 +5,21 @@ import { cn } from "@/lib/utils";
 
 interface ExplainPreviewProps {
   action: ExplainAction;
+  isShowShadow?: boolean;
 }
 
-export function ExplainPreview({ action }: ExplainPreviewProps) {
+export function ExplainPreview({
+  action,
+  isShowShadow = true,
+}: ExplainPreviewProps) {
   return (
     <div className="space-y-3 w-full max-w-sm mx-auto">
-      <div className="rounded-md p-4 relative bg-card shadow-sm border border-muted/20">
+      <div
+        className={cn(
+          "rounded-md p-4 relative bg-card border border-muted/20",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         <p
           className={cn(
             "text-card-foreground leading-loose font-medium",

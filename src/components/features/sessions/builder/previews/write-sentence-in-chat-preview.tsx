@@ -3,16 +3,23 @@ import { cn } from "@/lib/utils";
 
 interface WriteSentenceInChatPreviewProps {
   action: WriteSentenceInChatAction;
+  isShowShadow?: boolean;
 }
 
 export function WriteSentenceInChatPreview({
   action,
+  isShowShadow = true,
 }: WriteSentenceInChatPreviewProps) {
   const sentence = action.sentence?.join(" ") || "Type your sentence here...";
   const isRight = action.position === "right";
 
   return (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto space-y-4">
+    <div
+      className={cn(
+        "p-4 border rounded-lg bg-background max-w-sm mx-auto space-y-4",
+        isShowShadow ? "shadow-sm" : "shadow-none",
+      )}
+    >
       {!isRight && (
         <div className="flex items-start gap-2">
           <div className="shrink-0 flex flex-col items-center ">

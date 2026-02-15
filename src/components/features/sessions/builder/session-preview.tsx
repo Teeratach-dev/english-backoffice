@@ -10,7 +10,6 @@ import {
   AudioAction,
   ColumnAction,
   ChoiceAction,
-  ReorderAction,
 } from "@/types/action.types";
 import { ImageIcon, Info } from "lucide-react";
 import { ExplainPreview } from "./previews/explain-preview";
@@ -29,9 +28,13 @@ import { WriteSentenceInChatPreview } from "./previews/write-sentence-in-chat-pr
 
 interface SessionPreviewProps {
   action: Action | null;
+  isShowShadow?: boolean;
 }
 
-export function SessionPreview({ action }: SessionPreviewProps) {
+export function SessionPreview({
+  action,
+  isShowShadow = true,
+}: SessionPreviewProps) {
   if (!action) {
     return (
       <div className="h-full flex flex-col items-center justify-center text-muted-foreground space-y-4 text-center px-10">
@@ -55,43 +58,103 @@ export function SessionPreview({ action }: SessionPreviewProps) {
 
     switch (action.type) {
       case ActionType.Explain:
-        return <ExplainPreview action={action as ExplainAction} />;
+        return (
+          <ExplainPreview
+            action={action as ExplainAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Reading:
-        return <ReadingPreview action={action as ReadingAction} />;
+        return (
+          <ReadingPreview
+            action={action as ReadingAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Audio:
-        return <AudioPreview action={action as AudioAction} />;
+        return (
+          <AudioPreview
+            action={action as AudioAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Chat:
-        return <ChatPreview action={action as ChatAction} />;
+        return (
+          <ChatPreview
+            action={action as ChatAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Image:
-        return <ImagePreview action={action as ImageAction} />;
+        return (
+          <ImagePreview
+            action={action as ImageAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Column:
-        return <ColumnPreview action={action as ColumnAction} />;
+        return (
+          <ColumnPreview
+            action={action as ColumnAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Choice:
-        return <ChoicePreview action={action as ChoiceAction} />;
+        return (
+          <ChoicePreview
+            action={action as ChoiceAction}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.Reorder:
-        return <ReorderPreview action={action} />;
+        return <ReorderPreview action={action} isShowShadow={isShowShadow} />;
 
       case ActionType.MatchCard:
-        return <MatchCardPreview action={action as any} />;
+        return (
+          <MatchCardPreview
+            action={action as any}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.FillSentenceByTyping:
-        return <FillSentenceByTypingPreview action={action as any} />;
+        return (
+          <FillSentenceByTypingPreview
+            action={action as any}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.FillSentenceWithChoice:
-        return <FillSentenceByChoicePreview action={action as any} />;
+        return (
+          <FillSentenceByChoicePreview
+            action={action as any}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.WriteSentence:
-        return <WriteSentencePreview action={action as any} />;
+        return (
+          <WriteSentencePreview
+            action={action as any}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       case ActionType.WriteSentenceInChat:
-        return <WriteSentenceInChatPreview action={action as any} />;
+        return (
+          <WriteSentenceInChatPreview
+            action={action as any}
+            isShowShadow={isShowShadow}
+          />
+        );
 
       default:
         return (

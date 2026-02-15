@@ -7,6 +7,7 @@ import React from "react";
 
 interface ChatPreviewProps {
   action: ChatAction;
+  isShowShadow?: boolean;
 }
 
 /**
@@ -16,7 +17,7 @@ interface ChatPreviewProps {
  * 2. isDisplay=false && isReadable=true: Show blurred text (default) + Eye toggle + Audio panel
  * 3. isDisplay=true: Show normal text, ignore isReadable, no Eye toggle
  */
-export function ChatPreview({ action }: ChatPreviewProps) {
+export function ChatPreview({ action, isShowShadow = true }: ChatPreviewProps) {
   const [isRevealed, setIsRevealed] = React.useState(false);
 
   // Conditions based on prompt
@@ -28,7 +29,12 @@ export function ChatPreview({ action }: ChatPreviewProps) {
   const shouldBlur = isBlurryMode && !isRevealed;
 
   return (
-    <div className="space-y-6 p-4 border rounded-lg bg-background shadow-md max-w-sm mx-auto flex flex-col justify-end relative overflow-hidden group/chat">
+    <div
+      className={cn(
+        "space-y-6 p-4 border rounded-lg bg-background max-w-sm mx-auto flex flex-col justify-end relative overflow-hidden group/chat",
+        isShowShadow ? "shadow-md" : "shadow-none",
+      )}
+    >
       <BackgroundDecor />
 
       <div

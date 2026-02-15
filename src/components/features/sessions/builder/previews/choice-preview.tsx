@@ -5,11 +5,20 @@ import { cn } from "@/lib/utils";
 
 interface ChoicePreviewProps {
   action: ChoiceAction;
+  isShowShadow?: boolean;
 }
 
-export function ChoicePreview({ action }: ChoicePreviewProps) {
+export function ChoicePreview({
+  action,
+  isShowShadow = true,
+}: ChoicePreviewProps) {
   return (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto flex flex-col items-center gap-3">
+    <div
+      className={cn(
+        "p-4 border rounded-lg bg-background max-w-sm mx-auto flex flex-col items-center gap-3",
+        isShowShadow ? "shadow-sm" : "shadow-none",
+      )}
+    >
       {action.items && action.items.length > 0 ? (
         action.items.map((item, index) => (
           <div

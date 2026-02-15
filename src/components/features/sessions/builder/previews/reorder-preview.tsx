@@ -2,12 +2,17 @@
 
 import { ReorderAction } from "@/types/action.types";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface ReorderPreviewProps {
   action: ReorderAction;
+  isShowShadow?: boolean;
 }
 
-export function ReorderPreview({ action }: ReorderPreviewProps) {
+export function ReorderPreview({
+  action,
+  isShowShadow = true,
+}: ReorderPreviewProps) {
   const items = action.items || [];
   const words = items.map((item) => item.text?.text || "Empty");
 
@@ -41,7 +46,12 @@ export function ReorderPreview({ action }: ReorderPreviewProps) {
   return (
     <div className="space-y-4 max-w-sm mx-auto">
       {/* Pool of words (Full Set Shuffled) */}
-      <div className="p-4 border rounded-lg bg-background shadow-sm space-y-6">
+      <div
+        className={cn(
+          "p-4 border rounded-lg bg-background space-y-6",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         <div className="space-y-4">
           <div className="border-b border-muted-foreground/30 h-1"></div>
           <div className="border-b border-muted-foreground/30 h-1"></div>
@@ -65,7 +75,12 @@ export function ReorderPreview({ action }: ReorderPreviewProps) {
       </div>
 
       {/* Target Area (Simulation) */}
-      <div className="p-4 border rounded-lg bg-background shadow-sm space-y-6">
+      <div
+        className={cn(
+          "p-4 border rounded-lg bg-background space-y-6",
+          isShowShadow ? "shadow-sm" : "shadow-none",
+        )}
+      >
         <div className="space-y-4">
           <div className="flex gap-2 border-b border-muted-foreground/30 min-h-6">
             {/* Simulate some dropped items (Correct Order) */}
