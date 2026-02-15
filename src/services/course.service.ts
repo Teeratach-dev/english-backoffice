@@ -4,14 +4,29 @@ import Unit from "@/models/Unit";
 
 export class CourseService {
   async getAllCourses(
-    params: { page?: number; limit?: number; search?: string } = {},
+    params: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      isActive?: boolean;
+      purchaseable?: boolean;
+    } = {},
   ) {
     await dbConnect();
     const page = params.page || 1;
     const limit = params.limit || 100;
     const search = params.search || "";
 
-    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+    const query: any = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+    if (params.isActive !== undefined) {
+      query.isActive = params.isActive;
+    }
+    if (params.purchaseable !== undefined) {
+      query.purchaseable = params.purchaseable;
+    }
 
     const courses = await Course.find(query)
       .sort({ createdAt: -1 })

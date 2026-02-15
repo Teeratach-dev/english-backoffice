@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -10,15 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import {
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  MoreVertical,
-  ChevronRight,
-} from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
@@ -31,6 +23,11 @@ import { Button } from "@/components/ui/button";
 import { TopicForm } from "@/components/features/topics/topic-form";
 import { PageHeader } from "@/components/layouts/page-header";
 import { formatDate } from "@/lib/utils";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface TopicItem {
   _id: string;
@@ -44,21 +41,48 @@ interface TopicItem {
   createdAt: string;
 }
 
+const FILTER_CONFIG: FilterGroup[] = [
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export default function TopicsListPage() {
   const router = useRouter();
   const [topics, setTopics] = useState<TopicItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingTopic, setEditingTopic] = useState<TopicItem | null>(null);
   const [deletingTopic, setDeletingTopic] = useState<TopicItem | null>(null);
 
-  async function fetchTopics() {
+  const fetchTopics = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/topics");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const res = await fetch(`/api/topics?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch topics");
       const result = await res.json();
       setTopics(result.data || []);
@@ -67,11 +91,11 @@ export default function TopicsListPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchTopics();
-  }, []);
+  }, [fetchTopics]);
 
   async function handleDelete() {
     if (!deletingTopic) return;
@@ -88,48 +112,29 @@ export default function TopicsListPage() {
     }
   }
 
-  const filteredTopics = topics.filter((t) => {
-    const matchesSearch =
-      t.name.toLowerCase().includes(search.toLowerCase()) ||
-      (t.unitName || "").toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? t.isActive : !t.isActive);
-
-    return matchesSearch && matchesStatus;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   return (
     <div className="space-y-6">
       <PageHeader title="Topics" />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search topics or unit name..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        <div className="ml-auto">
-          <Button onClick={() => setIsAddOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Topic
-          </Button>
-        </div>
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search topics or unit name..."
+        filters={FILTER_CONFIG}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        <Button onClick={() => setIsAddOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add
+        </Button>
+      </SearchAndFilter>
 
       {loading ? (
         <div className="space-y-4">
@@ -150,14 +155,14 @@ export default function TopicsListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTopics.length === 0 ? (
+              {topics.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-24 text-center">
                     No topics found.
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredTopics.map((topic) => (
+                topics.map((topic) => (
                   <TableRow
                     key={topic._id}
                     className="cursor-pointer hover:bg-muted/50"

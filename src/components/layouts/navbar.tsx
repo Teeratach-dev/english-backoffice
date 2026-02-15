@@ -1,7 +1,7 @@
 "use client";
 import { ModeToggle } from "@/components/layouts/mode-toggle";
-import { UserNav } from "@/components/layouts/user-nav";
 import { useHeader } from "@/components/providers/header-provider";
+import { UserProfileButton } from "./user-profile-button";
 
 export function Navbar() {
   const { title } = useHeader();
@@ -18,7 +18,7 @@ export function Navbar() {
         </div>
         <div className="ml-auto flex items-center space-x-4">
           <ModeToggle />
-          <UserNav />
+          <UserProfileButton />
         </div>
       </div>
     </div>

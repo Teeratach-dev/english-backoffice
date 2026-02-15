@@ -28,7 +28,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(topics);
     }
 
-    const result = await topicService.getAllTopics({ page, limit, search });
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+
+    const result = await topicService.getAllTopics({
+      page,
+      limit,
+      search,
+      isActive,
+    });
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

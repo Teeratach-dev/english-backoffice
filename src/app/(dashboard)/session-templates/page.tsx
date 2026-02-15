@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -10,17 +10,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
-  Trash,
   Layout,
-  Copy,
   CheckCircle2,
   XCircle,
   Plus,
-  Search,
   Edit,
   Trash2,
 } from "lucide-react";
@@ -35,6 +31,11 @@ import {
 import { TemplateForm } from "@/components/features/templates/template-form";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface Template {
   _id: string;
@@ -45,22 +46,63 @@ interface Template {
   createdAt: string;
 }
 
+const TEMPLATE_FILTERS: FilterGroup[] = [
+  {
+    key: "type",
+    title: "Type",
+    options: SESSION_TYPES.map((type) => ({
+      label:
+        SESSION_TYPE_LABELS[type as keyof typeof SESSION_TYPE_LABELS] || type,
+      value: type,
+    })),
+    allowMultiple: true,
+  },
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export default function SessionTemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
     null,
   );
 
-  async function fetchTemplates() {
+  const fetchTemplates = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/templates");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const types = activeFilters["type"];
+      if (types && types.length > 0) {
+        types.forEach((t) => params.append("type", t));
+      }
+
+      const res = await fetch(`/api/templates?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch templates");
       const data = await res.json();
       setTemplates(data);
@@ -69,11 +111,11 @@ export default function SessionTemplatesPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchTemplates();
-  }, []);
+  }, [fetchTemplates]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this template?")) return;
@@ -118,17 +160,12 @@ export default function SessionTemplatesPage() {
     fetchTemplates();
   };
 
-  const filteredTemplates = templates.filter((template: Template) => {
-    const matchesSearch = template.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? template.isActive : !template.isActive);
-    const matchesType = typeFilter === "all" || template.type === typeFilter;
-
-    return matchesSearch && matchesStatus && matchesType;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   if (loading) {
     return (
@@ -144,48 +181,18 @@ export default function SessionTemplatesPage() {
       <PageHeader title="Session Templates" />
       <Breadcrumb items={[{ label: "Session Templates", href: "#" }]} />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search templates..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <div className="flex gap-2">
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="flex h-10 w-40 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All Types</option>
-            {SESSION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {SESSION_TYPE_LABELS[type as keyof typeof SESSION_TYPE_LABELS]}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-        <div className="ml-auto">
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Template
-          </Button>
-        </div>
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search templates..."
+        filters={TEMPLATE_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        <Button onClick={handleAdd}>
+          <Plus className="mr-2 h-4 w-4" /> Add
+        </Button>
+      </SearchAndFilter>
 
       <div className="rounded-md border">
         <Table>
@@ -200,14 +207,14 @@ export default function SessionTemplatesPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredTemplates.length === 0 ? (
+            {templates.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
                   No templates found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredTemplates.map((template: Template) => (
+              templates.map((template: Template) => (
                 <TableRow key={template._id}>
                   <TableCell className="font-medium">{template.name}</TableCell>
                   <TableCell>

@@ -4,14 +4,25 @@ import SessionGroup from "@/models/SessionGroup";
 
 export class TopicService {
   async getAllTopics(
-    params: { page?: number; limit?: number; search?: string } = {},
+    params: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      isActive?: boolean;
+    } = {},
   ) {
     await dbConnect();
     const page = params.page || 1;
     const limit = params.limit || 100;
     const search = params.search || "";
 
-    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+    const query: any = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+    if (params.isActive !== undefined) {
+      query.isActive = params.isActive;
+    }
 
     const topics = await Topic.find(query)
       .populate("unitId", "name courseId")

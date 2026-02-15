@@ -22,7 +22,20 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "100");
     const search = searchParams.get("search") || "";
 
-    const result = await courseService.getAllCourses({ page, limit, search });
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+    const purchaseable = searchParams.has("purchaseable")
+      ? searchParams.get("purchaseable") === "true"
+      : undefined;
+
+    const result = await courseService.getAllCourses({
+      page,
+      limit,
+      search,
+      isActive,
+      purchaseable,
+    });
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

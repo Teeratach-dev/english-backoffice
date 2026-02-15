@@ -28,7 +28,16 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(units);
     }
 
-    const result = await unitService.getAllUnits({ page, limit, search });
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+
+    const result = await unitService.getAllUnits({
+      page,
+      limit,
+      search,
+      isActive,
+    });
     return NextResponse.json(result);
   } catch (error) {
     return NextResponse.json(

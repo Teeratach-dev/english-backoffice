@@ -1,7 +1,7 @@
 "use client";
 
+import { LogOut, Settings, User } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,26 +16,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/slices/authSlice";
 import { useRouter } from "next/navigation";
 import { RootState } from "@/store";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export function UserNav() {
+export function UserProfileButton() {
   const dispatch = useDispatch();
   const router = useRouter();
   // @ts-ignore
   const user = useSelector((state: RootState) => state.auth.user);
 
-  const handleLogout = () => {
+  function handleLogout() {
     dispatch(logout());
     router.push("/login");
-  };
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar className="h-8 w-8">
+        <Button variant="outline" size="icon">
+          <Avatar className="h-[1.2rem] w-[1.2rem]">
             <AvatarImage src="" alt={user?.name || "User"} />
-            <AvatarFallback>
+            <AvatarFallback className="bg-transparent text-primary">
               {user?.name?.[0]?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>

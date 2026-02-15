@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -10,8 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -29,6 +28,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { SessionForm } from "@/components/features/sessions/session-form";
 import { PageHeader } from "@/components/layouts/page-header";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface SessionItem {
   _id: string;
@@ -45,14 +49,46 @@ interface SessionItem {
   createdAt: string;
 }
 
+const SESSION_FILTERS: FilterGroup[] = [
+  {
+    key: "type",
+    title: "Type",
+    options: SESSION_TYPES.map((type) => ({
+      label:
+        SESSION_TYPE_LABELS[type as keyof typeof SESSION_TYPE_LABELS] || type,
+      value: type,
+    })),
+    allowMultiple: true,
+  },
+  {
+    key: "cefr",
+    title: "CEFR Level",
+    options: CEFR_LEVELS.map((level) => ({
+      label: level,
+      value: level,
+    })),
+    allowMultiple: true,
+  },
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export default function SessionsListPage() {
   const router = useRouter();
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [cefrFilter, setCefrFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingSession, setEditingSession] = useState<SessionItem | null>(
@@ -62,10 +98,32 @@ export default function SessionsListPage() {
     null,
   );
 
-  async function fetchSessions() {
+  const fetchSessions = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/sessions");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const types = activeFilters["type"];
+      if (types && types.length > 0) {
+        types.forEach((t) => params.append("type", t));
+      }
+
+      const cefr = activeFilters["cefr"];
+      if (cefr && cefr.length > 0) {
+        cefr.forEach((c) => params.append("cefrLevel", c));
+      }
+
+      const res = await fetch(`/api/sessions?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch sessions");
       const result = await res.json();
       setSessions(result.data || []);
@@ -74,11 +132,11 @@ export default function SessionsListPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchSessions();
-  }, []);
+  }, [fetchSessions]);
 
   async function handleDelete() {
     if (!deletingSession) return;
@@ -95,78 +153,29 @@ export default function SessionsListPage() {
     }
   }
 
-  const filteredSessions = sessions.filter((s) => {
-    const matchesSearch =
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      (s.sessionGroupName || "").toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? s.isActive : !s.isActive);
-    const matchesType = typeFilter === "all" || s.type === typeFilter;
-    const matchesCefr = cefrFilter === "all" || s.cefrLevel === cefrFilter;
-
-    return matchesSearch && matchesStatus && matchesType && matchesCefr;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   return (
     <div className="space-y-6">
       <PageHeader title="Session Details" />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search sessions or group name..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <div className="flex gap-2">
-          <select
-            value={typeFilter}
-            onChange={(e) => setTypeFilter(e.target.value)}
-            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All Types</option>
-            {SESSION_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {SESSION_TYPE_LABELS[type as keyof typeof SESSION_TYPE_LABELS]}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={cefrFilter}
-            onChange={(e) => setCefrFilter(e.target.value)}
-            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All CEFR</option>
-            {CEFR_LEVELS.map((level) => (
-              <option key={level} value={level}>
-                {level}
-              </option>
-            ))}
-          </select>
-
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-        <div className="ml-auto">
-          <Button onClick={() => setIsAddOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Session
-          </Button>
-        </div>
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search sessions or group name..."
+        filters={SESSION_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        <Button onClick={() => setIsAddOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add
+        </Button>
+      </SearchAndFilter>
 
       {loading ? (
         <div className="space-y-4">
@@ -188,14 +197,14 @@ export default function SessionsListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredSessions.length === 0 ? (
+              {sessions.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="h-24 text-center">
                     No sessions found.
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredSessions.map((session) => (
+                sessions.map((session) => (
                   <TableRow
                     key={session._id}
                     className="cursor-pointer hover:bg-muted/50"

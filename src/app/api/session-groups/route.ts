@@ -28,10 +28,15 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(groups);
     }
 
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+
     const result = await sessionGroupService.getAllGroups({
       page,
       limit,
       search,
+      isActive,
     });
     return NextResponse.json(result);
   } catch (error) {

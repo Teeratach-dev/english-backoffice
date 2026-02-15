@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -10,13 +10,16 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Edit, Trash2, Plus, Search } from "lucide-react";
+import { Edit, Trash2, Plus } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface Course {
   _id: string;
@@ -29,6 +32,27 @@ interface Course {
   createdAt: string;
 }
 
+const COURSE_FILTERS: FilterGroup[] = [
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+  {
+    key: "purchaseable",
+    title: "Purchaseable",
+    options: [
+      { label: "Yes", value: "yes" },
+      { label: "No", value: "no" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export function CourseTable({
   onEdit,
   addButton,
@@ -39,14 +63,42 @@ export function CourseTable({
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [purchaseableFilter, setPurchaseableFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
   const router = useRouter();
 
-  async function fetchCourses() {
+  const fetchCourses = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/courses?limit=100");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const purchaseable = activeFilters["purchaseable"];
+      if (purchaseable && purchaseable.length > 0) {
+        if (purchaseable.includes("yes") && !purchaseable.includes("no")) {
+          params.append("purchaseable", "true");
+        } else if (
+          purchaseable.includes("no") &&
+          !purchaseable.includes("yes")
+        ) {
+          params.append("purchaseable", "false");
+        }
+      }
+
+      params.append("limit", "100");
+
+      const res = await fetch(`/api/courses?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch courses");
       const result = await res.json();
       setCourses(result.data || []);
@@ -55,11 +107,11 @@ export function CourseTable({
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchCourses();
-  }, []);
+  }, [fetchCourses]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this course?")) return;
@@ -74,17 +126,12 @@ export function CourseTable({
     }
   }
 
-  const filteredCourses = courses.filter((c) => {
-    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? c.isActive : !c.isActive);
-    const matchesPurchaseable =
-      purchaseableFilter === "all" ||
-      (purchaseableFilter === "yes" ? c.purchaseable : !c.purchaseable);
-
-    return matchesSearch && matchesStatus && matchesPurchaseable;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   if (loading) {
     return (
@@ -97,36 +144,17 @@ export function CourseTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search courses..."
-            className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        <select
-          value={purchaseableFilter}
-          onChange={(e) => setPurchaseableFilter(e.target.value)}
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Purchaseable</option>
-          <option value="yes">Yes</option>
-          <option value="no">No</option>
-        </select>
-        {addButton && <div className="ml-auto">{addButton}</div>}
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search courses..."
+        filters={COURSE_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        {addButton}
+      </SearchAndFilter>
+
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -141,14 +169,14 @@ export function CourseTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredCourses.length === 0 ? (
+            {courses.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-24 text-center">
                   No courses found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredCourses.map((course) => (
+              courses.map((course) => (
                 <TableRow
                   key={course._id}
                   className="cursor-pointer hover:bg-muted/50"

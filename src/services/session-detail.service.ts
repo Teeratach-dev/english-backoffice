@@ -3,14 +3,33 @@ import SessionDetail, { SessionDetailInput } from "@/models/SessionDetail";
 
 export class SessionDetailService {
   async getAllSessions(
-    params: { page?: number; limit?: number; search?: string } = {},
+    params: {
+      page?: number;
+      limit?: number;
+      search?: string;
+      isActive?: boolean;
+      type?: string[];
+      cefrLevel?: string[];
+    } = {},
   ) {
     await dbConnect();
     const page = params.page || 1;
     const limit = params.limit || 100;
     const search = params.search || "";
 
-    const query = search ? { name: { $regex: search, $options: "i" } } : {};
+    const query: any = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+    if (params.isActive !== undefined) {
+      query.isActive = params.isActive;
+    }
+    if (params.type && params.type.length > 0) {
+      query.type = { $in: params.type };
+    }
+    if (params.cefrLevel && params.cefrLevel.length > 0) {
+      query.cefrLevel = { $in: params.cefrLevel };
+    }
 
     const sessions = await SessionDetail.find(query)
       .populate({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Table,
   TableBody,
@@ -9,15 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import {
-  CheckCircle2,
-  XCircle,
-  Plus,
-  Search,
-  Edit,
-  Trash2,
-} from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
@@ -31,6 +23,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { UnitForm } from "@/components/features/units/unit-form";
 import { PageHeader } from "@/components/layouts/page-header";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface UnitItem {
   _id: string;
@@ -43,19 +40,46 @@ interface UnitItem {
   createdAt: string;
 }
 
+const UNIT_FILTERS: FilterGroup[] = [
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export default function UnitsListPage() {
   const [units, setUnits] = useState<UnitItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<UnitItem | null>(null);
   const router = useRouter();
 
-  async function fetchUnits() {
+  const fetchUnits = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/units");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const res = await fetch(`/api/units?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch units");
       const result = await res.json();
       setUnits(result.data || []);
@@ -64,11 +88,11 @@ export default function UnitsListPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchUnits();
-  }, []);
+  }, [fetchUnits]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this unit?")) return;
@@ -98,16 +122,12 @@ export default function UnitsListPage() {
     fetchUnits();
   };
 
-  const filteredUnits = units.filter((u) => {
-    const matchesSearch =
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      (u.courseName || "").toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? u.isActive : !u.isActive);
-
-    return matchesSearch && matchesStatus;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   if (loading) {
     return (
@@ -122,33 +142,18 @@ export default function UnitsListPage() {
     <div className="space-y-6">
       <PageHeader title="Units" />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search units or course name..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        <div className="ml-auto">
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Unit
-          </Button>
-        </div>
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search units or course name..."
+        filters={UNIT_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        <Button onClick={handleAdd}>
+          <Plus className="mr-2 h-4 w-4" /> Add
+        </Button>
+      </SearchAndFilter>
 
       <div className="rounded-md border">
         <Table>
@@ -163,14 +168,14 @@ export default function UnitsListPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredUnits.length === 0 ? (
+            {units.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
                   No units found.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredUnits.map((unit) => (
+              units.map((unit) => (
                 <TableRow
                   key={unit._id}
                   className="cursor-pointer hover:bg-muted/50"

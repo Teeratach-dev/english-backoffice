@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import {
   Table,
@@ -10,8 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -24,6 +23,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { SessionGroupForm } from "@/components/features/session-groups/session-group-form";
 import { PageHeader } from "@/components/layouts/page-header";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface SessionGroupItem {
   _id: string;
@@ -38,12 +42,27 @@ interface SessionGroupItem {
   sequence: number;
 }
 
+const SESSION_GROUP_FILTERS: FilterGroup[] = [
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export default function SessionGroupsListPage() {
   const router = useRouter();
   const [groups, setGroups] = useState<SessionGroupItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const debouncedSearch = useDebounce(search, 500);
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<SessionGroupItem | null>(
@@ -53,10 +72,22 @@ export default function SessionGroupsListPage() {
     null,
   );
 
-  async function fetchGroups() {
+  const fetchGroups = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/session-groups");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const status = activeFilters["status"];
+      if (status && status.length > 0) {
+        if (status.includes("active") && !status.includes("inactive")) {
+          params.append("isActive", "true");
+        } else if (status.includes("inactive") && !status.includes("active")) {
+          params.append("isActive", "false");
+        }
+      }
+
+      const res = await fetch(`/api/session-groups?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch session groups");
       const result = await res.json();
       setGroups(result.data || []);
@@ -65,11 +96,11 @@ export default function SessionGroupsListPage() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
     fetchGroups();
-  }, []);
+  }, [fetchGroups]);
 
   async function handleDelete() {
     if (!deletingGroup) return;
@@ -86,48 +117,29 @@ export default function SessionGroupsListPage() {
     }
   }
 
-  const filteredGroups = groups.filter((g) => {
-    const matchesSearch =
-      g.name.toLowerCase().includes(search.toLowerCase()) ||
-      (g.topicName || "").toLowerCase().includes(search.toLowerCase());
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" ? g.isActive : !g.isActive);
-
-    return matchesSearch && matchesStatus;
-  });
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   return (
     <div className="space-y-6">
       <PageHeader title="Session Groups" />
 
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[300px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search groups or topic name..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        <div className="ml-auto">
-          <Button onClick={() => setIsAddOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" /> Add Group
-          </Button>
-        </div>
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search groups or topic name..."
+        filters={SESSION_GROUP_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        <Button onClick={() => setIsAddOpen(true)}>
+          <Plus className="mr-2 h-4 w-4" /> Add
+        </Button>
+      </SearchAndFilter>
 
       {loading ? (
         <div className="space-y-4">
@@ -148,14 +160,14 @@ export default function SessionGroupsListPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredGroups.length === 0 ? (
+              {groups.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="h-24 text-center">
                     No session groups found.
                   </TableCell>
                 </TableRow>
               ) : (
-                filteredGroups.map((group) => (
+                groups.map((group) => (
                   <TableRow
                     key={group._id}
                     className="cursor-pointer hover:bg-muted/50"

@@ -21,9 +21,23 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type");
+    const search = searchParams.get("search");
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+    const types = searchParams.getAll("type");
 
-    const query = type ? { type } : {};
+    const query: any = {};
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+    if (isActive !== undefined) {
+      query.isActive = isActive;
+    }
+    if (types.length > 0) {
+      query.type = { $in: types };
+    }
+
     const templates = await SessionTemplate.find(query).sort({ createdAt: -1 });
     return NextResponse.json(templates);
   } catch (error) {

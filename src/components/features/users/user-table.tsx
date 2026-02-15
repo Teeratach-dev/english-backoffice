@@ -10,11 +10,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Shield, User as UserIcon, Edit, Trash2, Search } from "lucide-react";
+import { Shield, User as UserIcon, Edit, Trash2 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
 
 interface UserData {
   _id: string;
@@ -27,16 +30,31 @@ interface UserData {
 interface UserTableProps {
   currentUserRole?: string;
   onEdit?: (user: UserData) => void;
+  addButton?: React.ReactNode;
 }
+
+const USER_FILTERS: FilterGroup[] = [
+  {
+    key: "role",
+    title: "Role",
+    options: [
+      { label: "Admin", value: "admin" },
+      { label: "Superadmin", value: "superadmin" },
+    ],
+    allowMultiple: true,
+  },
+];
 
 export function UserTable({
   currentUserRole,
   onEdit,
   addButton,
-}: UserTableProps & { addButton?: React.ReactNode }) {
+}: UserTableProps) {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [roleFilter, setRoleFilter] = useState("all");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
   const [search, setSearch] = useState("");
 
   const isSuperadmin = currentUserRole === "superadmin";
@@ -76,8 +94,18 @@ export function UserTable({
     }
   }
 
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
+
   const filteredUsers = users.filter((user) => {
-    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    const roleValues = activeFilters["role"] || [];
+    const matchesRole =
+      roleValues.length === 0 || roleValues.includes(user.role);
+
     const matchesSearch =
       user.name.toLowerCase().includes(search.toLowerCase()) ||
       user.email.toLowerCase().includes(search.toLowerCase());
@@ -95,29 +123,16 @@ export function UserTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="relative flex-1 min-w-[250px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search users..."
-            className="pl-8"
-            value={search}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSearch(e.target.value)
-            }
-          />
-        </div>
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="superadmin">Superadmin</option>
-        </select>
-        {addButton && <div className="ml-auto">{addButton}</div>}
-      </div>
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        placeholder="Search users..."
+        filters={USER_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        {addButton}
+      </SearchAndFilter>
 
       <div className="rounded-md border">
         <Table>

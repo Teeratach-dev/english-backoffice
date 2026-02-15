@@ -29,10 +29,19 @@ export async function GET(req: NextRequest) {
       return NextResponse.json(sessions);
     }
 
+    const isActive = searchParams.has("isActive")
+      ? searchParams.get("isActive") === "true"
+      : undefined;
+    const type = searchParams.getAll("type"); // Supports ?type=A&type=B
+    const cefrLevel = searchParams.getAll("cefrLevel");
+
     const result = await sessionDetailService.getAllSessions({
       page,
       limit,
       search,
+      isActive,
+      type: type.length > 0 ? type : undefined,
+      cefrLevel: cefrLevel.length > 0 ? cefrLevel : undefined,
     });
     return NextResponse.json(result);
   } catch (error) {
