@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DndContext,
   closestCenter,
@@ -26,11 +27,12 @@ import {
   Screen,
   getDefaultContent,
   SESSION_TYPE_LABELS,
+  ACTION_TYPE_LABELS,
   SESSION_TYPES,
   CEFR_LEVELS,
 } from "@/types/action.types";
 import { SessionBuilderHeader } from "@/components/features/sessions/builder/session-builder-header";
-import { SessionBuilderSidebar } from "@/components/features/sessions/builder/session-builder-sidebar";
+import { SessionPreview } from "@/components/features/sessions/builder/session-preview";
 import { SaveTemplateDialog } from "@/components/features/sessions/builder/save-template-dialog";
 import { LoadTemplateDialog } from "@/components/features/sessions/builder/load-template-dialog";
 import { SortableScreenCard } from "@/components/features/sessions/builder/sortable-screen-card";
@@ -373,9 +375,9 @@ export default function SessionBuilderPage({
   }
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background">
+    <div className="min-h-screen flex flex-col bg-background">
       {/* Breadcrumb — always visible at top */}
-      <div className="border-b px-4 md:px-8 py-3 bg-background shrink-0">
+      <div className="border-b px-4 md:px-8 py-3 sticky top-0 z-50 shrink-0 shadow-sm backdrop-blur-md bg-background/95">
         <div className="max-w-5xl mx-auto">
           <Breadcrumb
             items={[
@@ -397,164 +399,155 @@ export default function SessionBuilderPage({
           />
         </div>
       </div>
+      <div className="flex-1 p-4 md:p-8 bg-muted/5">
+        <div className="max-w-6xl mx-auto">
+          <SessionBuilderHeader
+            courseId={courseId}
+            unitId={unitId}
+            topicId={topicId}
+            groupId={groupId}
+            sessionName={sessionForm.name || session?.name}
+            sessionType={sessionForm.type || session?.type}
+            cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
+            saving={saving}
+            onSave={handleSave}
+            onLoadTemplate={fetchTemplates}
+            onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
+            hasScreens={screens.length > 0}
+          />
+        </div>
 
-      <div className="flex-1 flex overflow-hidden relative">
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/5 custom-scrollbar">
-          <div className="max-w-5xl mx-auto">
-            <SessionBuilderHeader
-              courseId={courseId}
-              unitId={unitId}
-              topicId={topicId}
-              groupId={groupId}
-              sessionName={sessionForm.name || session?.name}
-              sessionType={sessionForm.type || session?.type}
-              cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
-              saving={saving}
-              onSave={handleSave}
-              onLoadTemplate={fetchTemplates}
-              onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
-              hasScreens={screens.length > 0}
-            />
-          </div>
-
-          {/* Session Detail Card */}
-          <div className="max-w-5xl mx-auto mb-6">
-            <Card>
-              <CardHeader
-                className="cursor-pointer flex flex-row items-center justify-between"
-                onClick={() => setShowSessionCard(!showSessionCard)}
-              >
-                <CardTitle>Session Details</CardTitle>
-                {showSessionCard ? (
-                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
-                ) : (
-                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
-                )}
-              </CardHeader>
-              {showSessionCard && (
-                <CardContent className="space-y-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="session-name">Session Name</Label>
-                    <Input
-                      id="session-name"
-                      value={sessionForm.name}
-                      onChange={(e) =>
-                        setSessionForm({ ...sessionForm, name: e.target.value })
-                      }
-                      placeholder="Enter session name"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="session-type">Type</Label>
-                      <select
-                        id="session-type"
-                        value={sessionForm.type}
-                        onChange={(e) =>
-                          setSessionForm({
-                            ...sessionForm,
-                            type: e.target.value,
-                          })
-                        }
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        {SESSION_TYPES.map((type) => (
-                          <option key={type} value={type}>
-                            {
-                              SESSION_TYPE_LABELS[
-                                type as keyof typeof SESSION_TYPE_LABELS
-                              ]
-                            }
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="session-cefr">CEFR Level</Label>
-                      <select
-                        id="session-cefr"
-                        value={sessionForm.cefrLevel}
-                        onChange={(e) =>
-                          setSessionForm({
-                            ...sessionForm,
-                            cefrLevel: e.target.value,
-                          })
-                        }
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                      >
-                        {CEFR_LEVELS.map((level) => (
-                          <option key={level} value={level}>
-                            {level}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="session-active"
-                      checked={sessionForm.isActive}
-                      onCheckedChange={(checked) =>
-                        setSessionForm({ ...sessionForm, isActive: checked })
-                      }
-                    />
-                    <Label htmlFor="session-active">Active Status</Label>
-                  </div>
-                </CardContent>
-              )}
-            </Card>
-          </div>
-          <div className="max-w-5xl mx-auto mb-4 flex items-center">
-            <h2 className="text-xl font-semibold">Screens</h2>
-            <div className="ml-auto">
-              <Button onClick={addScreen}>
-                <Plus className="mr-2 h-4 w-4" /> Add
-              </Button>
-            </div>
-          </div>
-
-          <div className="max-w-5xl mx-auto space-y-6 pb-20">
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleScreenDragEnd}
+        {/* Session Detail Card */}
+        <div className="max-w-6xl mx-auto mb-6">
+          <Card>
+            <CardHeader
+              className="cursor-pointer flex flex-row items-center justify-between"
+              onClick={() => setShowSessionCard(!showSessionCard)}
             >
-              <SortableContext
-                items={screens.map((s) => s.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                {screens.map((screen, sIdx) => (
-                  <SortableScreenCard
-                    key={screen.id}
-                    screen={screen}
-                    sIdx={sIdx}
-                    activeActionId={activeActionId}
-                    onDelete={() => deleteScreen(screen.id)}
-                    onAddAction={(type) => addActionToScreen(screen.id, type)}
-                    onDeleteAction={(actionId) =>
-                      deleteAction(screen.id, actionId)
+              <CardTitle>Session Details</CardTitle>
+              {showSessionCard ? (
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              )}
+            </CardHeader>
+            {showSessionCard && (
+              <CardContent className="space-y-4">
+                <div className="grid gap-2">
+                  <Label htmlFor="session-name">Session Name</Label>
+                  <Input
+                    id="session-name"
+                    value={sessionForm.name}
+                    onChange={(e) =>
+                      setSessionForm({ ...sessionForm, name: e.target.value })
                     }
-                    onEditAction={(actionId) => setActiveActionId(actionId)}
-                    onReorderActions={(activeId, overId) =>
-                      reorderActions(screen.id, activeId, overId)
+                    placeholder="Enter session name"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="session-type">Type</Label>
+                    <select
+                      id="session-type"
+                      value={sessionForm.type}
+                      onChange={(e) =>
+                        setSessionForm({
+                          ...sessionForm,
+                          type: e.target.value,
+                        })
+                      }
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      {SESSION_TYPES.map((type) => (
+                        <option key={type} value={type}>
+                          {
+                            SESSION_TYPE_LABELS[
+                              type as keyof typeof SESSION_TYPE_LABELS
+                            ]
+                          }
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="session-cefr">CEFR Level</Label>
+                    <select
+                      id="session-cefr"
+                      value={sessionForm.cefrLevel}
+                      onChange={(e) =>
+                        setSessionForm({
+                          ...sessionForm,
+                          cefrLevel: e.target.value,
+                        })
+                      }
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      {CEFR_LEVELS.map((level) => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="session-active"
+                    checked={sessionForm.isActive}
+                    onCheckedChange={(checked) =>
+                      setSessionForm({ ...sessionForm, isActive: checked })
                     }
                   />
-                ))}
-              </SortableContext>
-            </DndContext>
+                  <Label htmlFor="session-active">Active Status</Label>
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
+        <div className="max-w-6xl mx-auto mb-4 flex items-center">
+          <h2 className="text-xl font-semibold">Screens</h2>
+          <div className="ml-auto">
+            <Button onClick={addScreen} size="sm">
+              <Plus className="mr-2 h-4 w-4" /> Add Screen
+            </Button>
           </div>
         </div>
 
-        <SessionBuilderSidebar
-          activeAction={activeAction}
-          activeActionId={activeActionId}
-          onClose={() => setActiveActionId(null)}
-          onUpdateAction={updateActionContent}
-        />
+        <div className="max-w-6xl mx-auto space-y-6 pb-40">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleScreenDragEnd}
+          >
+            <SortableContext
+              items={screens.map((s) => s.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {screens.map((screen, sIdx) => (
+                <SortableScreenCard
+                  key={screen.id}
+                  screen={screen}
+                  sIdx={sIdx}
+                  activeActionId={activeActionId}
+                  onDelete={() => deleteScreen(screen.id)}
+                  onAddAction={(type) => addActionToScreen(screen.id, type)}
+                  onDeleteAction={(actionId) =>
+                    deleteAction(screen.id, actionId)
+                  }
+                  onEditAction={(actionId) => setActiveActionId(actionId)}
+                  onReorderActions={(activeId, overId) =>
+                    reorderActions(screen.id, activeId, overId)
+                  }
+                  onUpdateAction={updateActionContent}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </div>
       </div>
 
       {/* Sticky Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-70 border-t bg-background/80 backdrop-blur-md">
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/80 backdrop-blur-md">
         <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
           <Button
             variant="destructive"

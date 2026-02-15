@@ -275,7 +275,6 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
   ),
   [ActionType.MatchCard]: (
     <div className="space-y-4 max-w-sm mx-auto">
-      {/* Text + Text */}
       <div className="p-4 border rounded-lg bg-background shadow-sm grid grid-cols-2 gap-x-8 gap-y-2">
         {[
           ["International", "ลำโพง"],
@@ -411,7 +410,7 @@ export function ActionTypeSelector({
 }: ActionTypeSelectorProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[95vw] sm:max-w-3xl lg:max-w-5xl xl:max-w-6xl flex flex-col p-0 overflow-hidden fixed left-1/2 -translate-x-1/2 top-8 bottom-20 translate-y-0 z-100">
+      <DialogContent className="w-[95vw] sm:max-w-3xl lg:max-w-5xl xl:max-w-6xl flex flex-col p-0 overflow-hidden fixed left-1/2 -translate-x-1/2 top-8 bottom-24 translate-y-0! z-100 max-h-none">
         <DialogHeader className="p-4 sm:p-6 border-b shrink-0">
           <DialogTitle>Select Action Type</DialogTitle>
         </DialogHeader>

@@ -87,6 +87,7 @@ export type ExplainAction = {
   text: Word[];
   alignment: "left" | "center" | "right";
   size: number;
+  explanation?: string;
 };
 
 export type ReadingAction = {
@@ -206,7 +207,13 @@ export function getDefaultContent(type: ActionType): Action {
     case ActionType.Explain:
       return { type: "explain", text: [], alignment: "left", size: 16 };
     case ActionType.Reading:
-      return { type: "reading", text: [], audioUrl: "", isHide: false, isReadable: true };
+      return {
+        type: "reading",
+        text: [],
+        audioUrl: "",
+        isHide: false,
+        isReadable: true,
+      };
     case ActionType.Audio:
       return { type: "audio", audio: "" };
     case ActionType.Chat:

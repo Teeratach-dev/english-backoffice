@@ -23,10 +23,10 @@ export function SessionBuilderSidebar({
   return (
     <div
       className={cn(
-        "fixed lg:relative inset-y-0 right-0 z-[60] lg:z-0 w-full lg:w-[450px] border-l bg-background shadow-2xl lg:shadow-none transition-transform duration-300 ease-in-out flex flex-col overflow-hidden",
+        "fixed lg:sticky inset-y-0 right-0 z-60 lg:z-0 w-full lg:w-112.5 border-l bg-background shadow-2xl lg:shadow-none transition-transform duration-300 ease-in-out flex flex-col overflow-hidden lg:h-screen lg:top-0",
         activeActionId
           ? "translate-x-0"
-          : "translate-x-full lg:absolute lg:right-0 lg:h-full lg:pointer-events-none",
+          : "translate-x-full lg:absolute lg:right-0 lg:h-screen lg:pointer-events-none",
       )}
     >
       {activeAction ? (
