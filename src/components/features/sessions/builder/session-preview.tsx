@@ -1,8 +1,19 @@
 "use client";
 
-import { Action, ActionType } from "@/types/action.types";
+import {
+  Action,
+  ActionType,
+  ExplainAction,
+  ReadingAction,
+  ChatAction,
+  ImageAction,
+} from "@/types/action.types";
 import { ImageIcon, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ExplainPreview } from "./previews/explain-preview";
+import { ReadingPreview } from "./previews/reading-preview";
+import { ChatPreview } from "./previews/chat-preview";
+import { ImagePreview } from "./previews/image-preview";
 
 interface SessionPreviewProps {
   action: Action | null;
@@ -27,121 +38,21 @@ export function SessionPreview({ action }: SessionPreviewProps) {
     );
   }
 
-  const renderPreview = () => {
+  function renderPreview() {
+    if (!action) return null;
+
     switch (action.type) {
       case ActionType.Explain:
-        return (
-          <div className="space-y-3 w-full max-w-sm mx-auto">
-            <div className="rounded-md p-4 relative bg-card shadow-sm">
-              <p
-                className={cn(
-                  "text-card-foreground leading-loose font-medium ",
-                  action.alignment === "center"
-                    ? "text-center"
-                    : action.alignment === "right"
-                      ? "text-right"
-                      : "text-left",
-                )}
-                style={{
-                  fontSize: action.size ? `${action.size}px` : undefined,
-                }}
-              >
-                {action.text && action.text.length > 0
-                  ? action.text.map((word: any, i: number) => (
-                      <span
-                        key={i}
-                        className={cn(
-                          "inline-block mx-0.5 transition-all duration-200 relative group",
-                          word.bold && "font-bold",
-                          word.italic && "italic",
-                          word.underline &&
-                            "underline decoration-orange-400 decoration-2 underline-offset-4 cursor-help",
-                          word.highlight &&
-                            "bg-primary text-primary-foreground px-1.5 rounded-sm shadow-sm",
-                          word.translation?.length > 0 &&
-                            "text-orange-600 dark:text-orange-400",
-                        )}
-                      >
-                        {word.text}
-                        {word.translation?.length > 0 && (
-                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap z-10 hidden group-hover:block animate-in fade-in zoom-in duration-200 pointer-events-none">
-                            {word.translation[0]}
-                            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-500 rotate-45 rounded-sm"></div>
-                          </span>
-                        )}
-                      </span>
-                    ))
-                  : "No text content"}
-              </p>
-            </div>
-            {action.explanation && (
-              <div className="border rounded-md p-3 bg-muted/20 text-center text-xs text-muted-foreground italic border-dashed">
-                {action.explanation}
-              </div>
-            )}
-          </div>
-        );
+        return <ExplainPreview action={action as ExplainAction} />;
+
+      case ActionType.Reading:
+        return <ReadingPreview action={action as ReadingAction} />;
 
       case ActionType.Chat:
-        return (
-          <div className="space-y-6 p-4 border rounded-2xl bg-background shadow-sm max-w-sm mx-auto min-h-75 flex flex-col justify-end">
-            <div
-              className={cn(
-                "flex items-start gap-3",
-                action.position === "right" ? "flex-row-reverse" : "flex-row",
-              )}
-            >
-              <div className="shrink-0 flex flex-col items-center">
-                <div className="h-10 w-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md border-2 border-white">
-                  {action.sender?.name?.[0] || "U"}
-                </div>
-                <span className="text-[10px] mt-1 font-bold text-muted-foreground">
-                  {action.sender?.name || "User"}
-                </span>
-              </div>
-              <div
-                className={cn(
-                  "flex flex-1 flex-col",
-                  action.position === "right" ? "items-end" : "items-start",
-                )}
-              >
-                <div
-                  className={cn(
-                    "rounded-2xl p-4 text-sm shadow-sm max-w-[85%]",
-                    action.position === "right"
-                      ? "bg-indigo-600 text-white rounded-tr-none"
-                      : "bg-muted text-foreground rounded-tl-none border border-muted-foreground/10",
-                  )}
-                >
-                  {action.text?.map((w: any) => w.text).join(" ") ||
-                    "Message content goes here..."}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
+        return <ChatPreview action={action as ChatAction} />;
 
       case ActionType.Image:
-        return (
-          <div className="p-2 border rounded-2xl bg-background shadow-lg overflow-hidden max-w-sm mx-auto">
-            <div className="aspect-video bg-muted rounded-xl relative overflow-hidden flex items-center justify-center border border-muted-foreground/10">
-              {action.url ? (
-                <img
-                  src={action.url}
-                  alt="Preview"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <ImageIcon className="h-16 w-16 text-muted-foreground/20" />
-              )}
-            </div>
-            <div className="p-3 text-center">
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                Image Content
-              </p>
-            </div>
-          </div>
-        );
+        return <ImagePreview action={action as ImageAction} />;
 
       default:
         return (
@@ -160,7 +71,7 @@ export function SessionPreview({ action }: SessionPreviewProps) {
           </div>
         );
     }
-  };
+  }
 
   return (
     <div className="animate-in fade-in zoom-in duration-500 w-full">

@@ -1,6 +1,11 @@
 "use client";
 
-import { Action, ActionType } from "@/types/action.types";
+import {
+  Action,
+  ActionType,
+  ReadingAction,
+  ExplainAction,
+} from "@/types/action.types";
 import { WordEditor } from "./word-editor";
 import { RichWordEditor } from "./rich-word-editor";
 import { Input } from "@/components/ui/input";
@@ -16,73 +21,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus, Trash2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
-
-const FONT_SIZES = Array.from(
-  { length: (144 - 2) / 2 + 1 },
-  (_, i) => 2 + i * 2,
-);
-
-function FontSizePicker({
-  value,
-  onChange,
-}: {
-  value: number;
-  onChange: (val: number) => void;
-}) {
-  const [inputValue, setInputValue] = React.useState(value.toString());
-
-  React.useEffect(() => {
-    setInputValue(value.toString());
-  }, [value]);
-
-  return (
-    <Popover>
-      <div className="relative group flex items-center">
-        <Input
-          type="number"
-          value={inputValue}
-          onChange={(e) => {
-            setInputValue(e.target.value);
-            const val = parseInt(e.target.value);
-            if (!isNaN(val)) onChange(val);
-          }}
-          className="h-8 text-xs pr-8 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-        />
-        <PopoverTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="absolute right-0 top-0 h-8 w-8 hover:bg-transparent text-muted-foreground"
-          >
-            <ChevronDown className="h-3 w-3" />
-          </Button>
-        </PopoverTrigger>
-      </div>
-      <PopoverContent className="p-1 w-20" align="end">
-        <ScrollArea className="h-40">
-          <div className="flex flex-col gap-0.5">
-            {FONT_SIZES.map((size) => (
-              <Button
-                key={size}
-                variant="ghost"
-                size="sm"
-                className={cn(
-                  "justify-start font-normal h-7 px-2 text-xs rounded-sm",
-                  value === size && "bg-primary/10 text-primary font-bold",
-                )}
-                onClick={() => {
-                  onChange(size);
-                }}
-              >
-                {size}
-              </Button>
-            ))}
-          </div>
-        </ScrollArea>
-      </PopoverContent>
-    </Popover>
-  );
-}
+import { ReadingActionForm } from "./forms/reading-action-form";
+import { ExplainActionForm } from "./forms/explain-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -101,80 +41,18 @@ export function ActionContentEditor({
   switch (action.type) {
     case ActionType.Explain:
       return (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label className="text-xs">Alignment</Label>
-              <select
-                value={action.alignment || "left"}
-                onChange={(e) =>
-                  updateAction({
-                    alignment: e.target.value as "left" | "center" | "right",
-                  })
-                }
-                className="w-full h-8 rounded-md border bg-background px-2 text-xs"
-              >
-                <option value="left">Left</option>
-                <option value="center">Center</option>
-                <option value="right">Right</option>
-              </select>
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Font Size</Label>
-              <FontSizePicker
-                value={action.size || 16}
-                onChange={(val) => updateAction({ size: val })}
-              />
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs font-semibold">Text</Label>
-            <RichWordEditor
-              words={action.text || []}
-              onChange={(words) => updateAction({ text: words })}
-            />
-          </div>
-        </div>
+        <ExplainActionForm
+          action={action}
+          onChange={(updates: Partial<ExplainAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.Reading:
       return (
-        <div className="space-y-4">
-          <div className="flex gap-4 p-2 bg-muted/30 rounded-md">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isHide"
-                checked={action.isHide}
-                onCheckedChange={(c) => updateAction({ isHide: c })}
-              />
-              <Label htmlFor="isHide" className="text-xs font-normal">
-                Hidden
-              </Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="isReadable"
-                checked={action.isReadable}
-                onCheckedChange={(c) => updateAction({ isReadable: c })}
-              />
-              <Label htmlFor="isReadable" className="text-xs font-normal">
-                Readable
-              </Label>
-            </div>
-            <div className="flex-1">
-              <Input
-                placeholder="Background Audio URL"
-                value={action.audioUrl || ""}
-                onChange={(e) => updateAction({ audioUrl: e.target.value })}
-                className="h-8 text-xs"
-              />
-            </div>
-          </div>
-          <WordEditor
-            words={action.text || []}
-            onChange={(words) => updateAction({ text: words })}
-          />
-        </div>
+        <ReadingActionForm
+          action={action}
+          onChange={(updates: Partial<ReadingAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.Audio:

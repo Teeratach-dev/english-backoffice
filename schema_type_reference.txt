@@ -1,0 +1,218 @@
+Course
+    - id: objectId
+    - name: string
+    - description // richtext
+    - price: number
+    - isActive: boolean
+    - purchaseable: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+Unit // บทเรียน
+    - id: objectId
+    - courseId: objectId
+    - name: string
+    - description // richtext
+    - sequence: number
+    - isActive: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+Topic // หัวข้อ
+    - id: objectId
+    - unitId: objectId
+    - name: string
+    - description // richtext
+    - sequence: number
+    - isActive: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+Session Group // หัวข้อย่อย
+    - id: objectId
+    - topicId: objectId
+    - name: string
+    - description // richtext
+    - sequence: number
+    - isActive: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+Session Detail // เกมส์แต่ละ session ที่จะเล่นจบ 1 - 3 นาที
+    - id: objectId
+    - sessionGroupId: objectId
+    - name: string
+    - type: 'reading' | 'vocab' | 'listening' | 'grammar' | 'example' | 'test' // แยกไปทำ enum ด้วย
+    - ceftLevel: 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2'
+    - screens: Screen[]
+    - sequence: number
+    - isActive: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+Session Template
+    - id: objectId
+    - name: string
+    - type: 'reading' | 'vocab' | 'listening' | 'grammar' | 'example' | 'test'
+    - screens: {sequence: number, actionTypes: ActionType[]}
+    - isActive: boolean
+    - createdAt: Date
+    - createdBy: objectId
+    - updatedAt: Date
+    - updatedBy: objectId
+
+export type Screen = {
+    id: string
+    sequence: number
+    actions: Action[]
+}
+
+export type Word = {
+    text: string
+    translation: string[]
+    isBlank: boolean
+    audioUrl?: string
+    bold?: boolean
+    italian?: boolean
+    underline?: boolean
+    highlight?: boolean
+}
+
+export type Action =
+    | ExplainAction
+    | ReadingAction
+    | AudioAction
+    | ChatAction
+    | ImageAction
+    | ColumnAction
+    | ChoiceAction
+    | ReorderAction
+    | MatchCardAction
+    | FillSentenceByTypingAction
+    | FillSentenceWithChoiceAction
+    | WriteSentenceAction
+    | WriteSentenceInChatAction
+
+export enum ActionType = {
+    Explain = 'explain',
+    Reading = 'reading',
+    Audio = 'audio',
+    Chat = 'chat',
+    Image = 'image',
+    Column = 'column',
+    Choice = 'choice',
+    Reorder = 'reorder',
+    MatchCard = 'match_card',
+    FillSentenceByTyping = 'fill_sentence_by_typing',
+    FillSentenceWithChoice = 'fill_sentence_with_choice',
+    WriteSentence = 'write_sentence',
+    WriteSentenceInChat = 'write_sentence_in_chat',
+}
+
+export type ExplainAction = {
+    type: 'explain'
+    text: Word[]
+    alignment: 'left' | 'center' | 'right'
+    size: number
+}
+
+export type ReadingAction = {
+    type: 'reading'
+    text: Word[]
+    audioUrl?: string
+    isHide: boolean
+    isReadable: boolean
+}
+
+export type AudioAction = {
+    type: 'audio'
+    audio: string
+}
+
+export type ChatAction = {
+    type: 'chat'
+    sender: { name: string, imageUrl: string }
+    poistion: 'left' | 'right'
+    text: Word[]
+    audioUrl: string
+    isDisplay: bool
+    isReadable: bool
+}
+
+export type ImageAction = {
+    type: 'image'
+    url: string
+}
+
+export type ColumnAction = {
+    type: 'column'
+    actions: Array<
+    ImageAction |
+    ReadingAction |
+    AudioAction
+    >
+}
+
+export type ChoiceAction = {
+    type: 'choice'
+    items: { 
+    text: Word,
+    isCorrect: bool 
+    }[]
+}
+
+export type ReorderAction = {
+    type: 'reorder'
+    items: items: { 
+    text: Word, 
+    sequence: number 
+    }[]
+}
+
+export type MatchCardAction = {
+    type: 'match_card'
+    items: items: {
+    left: { text?: string, audioUrl?: string },
+    right: { text?: string, audioUrl?: string }
+    }[]
+}
+
+export type FillSentenceByTyping = {
+    type: 'fill_sentence_by_typing'
+    sentence: {
+    text: string,
+    isBlank: bool,
+    }[]
+}
+
+export type FillSentenceWithChoice = {
+    type: 'fill_sentence_with_choice'
+    sentence: {
+    text: string,
+    isBlank: bool,
+    choice?: Word[]
+    }[]
+}
+
+export type WriteSentence = {
+    type: 'write_sentence'
+    sentence: string[]
+}
+
+export type WriteSentenceInChat = {
+    type: 'write_sentence_in_chat'
+    sentence: string[]
+    position: 'left' | 'right'
+}
+
+
