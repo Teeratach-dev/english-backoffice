@@ -1,5 +1,4 @@
-"use client";
-
+import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Trash2, Plus } from "lucide-react";
@@ -27,6 +26,7 @@ import {
   ACTION_TYPE_LABELS,
 } from "@/types/action.types";
 import { SortableActionItem } from "./sortable-action-item";
+import { ActionTypeSelector } from "./action-type-selector";
 
 interface SortableScreenCardProps {
   screen: Screen;
@@ -49,6 +49,8 @@ export function SortableScreenCard({
   onReorderActions,
   onEditAction,
 }: SortableScreenCardProps) {
+  const [isActionSelectorOpen, setIsActionSelectorOpen] = useState(false);
+
   const {
     attributes,
     listeners,
@@ -97,30 +99,15 @@ export function SortableScreenCard({
         >
           <Trash2 className="h-4 w-4" />
         </Button>
-        <CardHeader className="py-4 pl-10 lg:pl-6">
+        <CardHeader className="py-2 pl-10 lg:pl-6 border-b bg-muted/5">
           <CardTitle className="text-sm font-medium flex items-center">
-            <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-xs">
+            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-[10px] font-bold">
               {sIdx + 1}
             </span>
             Screen {sIdx + 1}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex flex-wrap gap-1 mb-2 pb-2 border-b">
-            {ACTION_TYPE_VALUES.map((at) => (
-              <Button
-                key={at}
-                variant="outline"
-                size="sm"
-                className="h-7 text-[10px] px-2 bg-background/50 hover:bg-background"
-                onClick={() => onAddAction(at as ActionType)}
-              >
-                <Plus className="h-2 w-2 mr-1" />{" "}
-                {ACTION_TYPE_LABELS[at as ActionType]}
-              </Button>
-            ))}
-          </div>
-
+        <CardContent className="p-4 space-y-4">
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -130,21 +117,42 @@ export function SortableScreenCard({
               items={screen.actions.map((a) => a.id)}
               strategy={horizontalListSortingStrategy}
             >
-              <div className="flex flex-wrap gap-2 p-3 min-h-[60px] bg-muted/20 rounded-lg border-2 border-dashed">
-                {screen.actions.map((action) => (
-                  <SortableActionItem
-                    key={action.id}
-                    action={action}
-                    isEditing={activeActionId === action.id}
-                    onEdit={() => onEditAction(action.id)}
-                    onDelete={() => onDeleteAction(action.id)}
-                  />
-                ))}
+              <div className="flex flex-wrap gap-2 min-h-25 p-2 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20">
+                {screen.actions.length === 0 ? (
+                  <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
+                    <p className="text-xs">No actions added yet</p>
+                  </div>
+                ) : (
+                  screen.actions.map((action) => (
+                    <SortableActionItem
+                      key={action.id}
+                      action={action}
+                      isEditing={activeActionId === action.id}
+                      onEdit={() => onEditAction(action.id)}
+                      onDelete={() => onDeleteAction(action.id)}
+                    />
+                  ))
+                )}
               </div>
             </SortableContext>
           </DndContext>
+
+          <Button
+            variant="outline"
+            className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+            onClick={() => setIsActionSelectorOpen(true)}
+          >
+            <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
+            <span className="text-xs font-semibold">Add Action</span>
+          </Button>
         </CardContent>
       </Card>
+
+      <ActionTypeSelector
+        open={isActionSelectorOpen}
+        onOpenChange={setIsActionSelectorOpen}
+        onSelect={(type) => onAddAction(type)}
+      />
     </div>
   );
 }

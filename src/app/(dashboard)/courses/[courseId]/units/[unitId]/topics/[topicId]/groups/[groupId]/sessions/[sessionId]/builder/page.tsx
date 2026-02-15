@@ -508,7 +508,7 @@ export default function SessionBuilderPage({
             <h2 className="text-xl font-semibold">Screens</h2>
             <div className="ml-auto">
               <Button onClick={addScreen}>
-                <Plus className="mr-2 h-4 w-4" /> + Add
+                <Plus className="mr-2 h-4 w-4" /> Add
               </Button>
             </div>
           </div>
@@ -554,7 +554,7 @@ export default function SessionBuilderPage({
       </div>
 
       {/* Sticky Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-[70] border-t bg-background/80 backdrop-blur-md">
+      <div className="fixed bottom-0 left-0 right-0 z-70 border-t bg-background/80 backdrop-blur-md">
         <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
           <Button
             variant="destructive"
@@ -568,11 +568,7 @@ export default function SessionBuilderPage({
             <Button variant="outline" onClick={handleCancel} disabled={saving}>
               Cancel
             </Button>
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="min-w-[100px]"
-            >
+            <Button onClick={handleSave} disabled={saving} className="min-w-25">
               {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
