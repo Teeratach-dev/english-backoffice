@@ -64,13 +64,13 @@ export function ReorderPreview({
             shuffledPool.map((word, i) => (
               <div
                 key={i}
-                className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground"
+                className="px-3 py-1 bg-muted/60 border rounded-lg text-sm text-card-foreground"
               >
                 {word}
               </div>
             ))
           ) : (
-            <div className="text-[10px] text-muted-foreground italic">
+            <div className="text-sm text-muted-foreground italic">
               No items added
             </div>
           )}
@@ -91,7 +91,7 @@ export function ReorderPreview({
             {targetWords.map((word, i) => (
               <div
                 key={i}
-                className="px-2 py-0.5 bg-muted/60 rounded-lg text-[10px] text-card-foreground"
+                className="px-2 py-0.5 bg-muted/60 rounded-lg text-sm text-card-foreground"
               >
                 {word}
               </div>

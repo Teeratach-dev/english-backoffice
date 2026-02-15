@@ -25,7 +25,7 @@ export function AudioPreview({
     <div className="space-y-3 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "p-4 rounded-lg bg-background flex items-center justify-center gap-10 relative overflow-hidden",
+          "p-4 rounded-lg bg-muted flex items-center justify-center gap-10 relative overflow-hidden",
           isShowShadow ? "shadow-sm" : "shadow-none",
           useBorder ? "border" : "border-none",
         )}

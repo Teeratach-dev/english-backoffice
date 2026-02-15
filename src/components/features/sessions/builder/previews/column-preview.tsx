@@ -42,14 +42,14 @@ export function ColumnPreview({
               <ReadingPreview
                 action={subAction as any}
                 isShowShadow={isShowShadow}
-                useBorder={useBorder}
+                useBorder={true}
               />
             )}
             {subAction.type === ActionType.Audio && (
               <AudioPreview
                 action={subAction as any}
                 isShowShadow={isShowShadow}
-                useBorder={useBorder}
+                useBorder={true}
               />
             )}
           </div>

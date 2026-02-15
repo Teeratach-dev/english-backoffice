@@ -18,12 +18,12 @@ export function ImagePreview({
   return (
     <div
       className={cn(
-        "p-4 rounded-lg bg-background max-w-sm mx-auto",
+        "p-4 rounded-lg max-w-sm mx-auto",
         isShowShadow ? "shadow-sm" : "shadow-none",
         useBorder ? "border" : "border-none",
       )}
     >
-      <div className="aspect-video bg-muted rounded-md relative overflow-hidden flex items-center justify-center">
+      <div className="aspect-video  rounded-md relative overflow-hidden flex items-center justify-center">
         <ImageIcon className="h-12 w-12 text-muted-foreground" />
         {action.url && (
           <div className="absolute inset-0 bg-black/5 flex items-center justify-center">

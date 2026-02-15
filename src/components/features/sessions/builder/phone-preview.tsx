@@ -1,4 +1,4 @@
-import { Action } from "@/types/action.types";
+import { Action, ActionType } from "@/types/action.types";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SessionPreview } from "./session-preview";
 
@@ -35,7 +35,10 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
                   action={action}
                   isShowShadow={false}
                   isHoverEffect={false}
-                  useBorder={false}
+                  useBorder={
+                    action.type === ActionType.Reading ||
+                    action.type === ActionType.Audio
+                  }
                 />
               </div>
             ))}

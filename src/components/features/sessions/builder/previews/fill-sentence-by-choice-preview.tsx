@@ -51,7 +51,7 @@ export function FillSentenceByChoicePreview({
 
             if (choices.length === 0) {
               return (
-                <div className="text-[10px] text-muted-foreground italic opacity-50">
+                <div className="text-sm text-muted-foreground italic opacity-50">
                   No choices configured
                 </div>
               );
@@ -60,7 +60,7 @@ export function FillSentenceByChoicePreview({
             return choices.map((s, i) => (
               <div
                 key={i}
-                className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground"
+                className="px-3 py-1 bg-muted/60 border rounded-lg text-sm text-card-foreground"
               >
                 {s.text.text}
               </div>

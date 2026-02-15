@@ -32,7 +32,7 @@ export function ReadingPreview({
       <div className="space-y-3 w-full max-w-sm mx-auto">
         <div
           className={cn(
-            "p-4 rounded-lg bg-background flex items-center justify-center gap-10 relative overflow-hidden",
+            "p-4 rounded-lg bg-muted flex items-center justify-center gap-10 relative overflow-hidden",
             isShowShadow ? "shadow-sm" : "shadow-none",
             useBorder ? "border" : "border-none",
           )}
@@ -66,7 +66,7 @@ export function ReadingPreview({
     <div className="space-y-3 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "p-4 rounded-lg bg-background flex gap-4 relative overflow-hidden",
+          "p-4 rounded-lg bg-muted flex gap-4 relative overflow-hidden",
           isShowShadow ? "shadow-sm" : "shadow-none",
           useBorder ? "border" : "border-none",
         )}
@@ -99,7 +99,7 @@ export function ReadingPreview({
               "blur-xs opacity-40 grayscale select-none pointer-events-none",
           )}
         >
-          <p className="text-[11px] leading-relaxed text-card-foreground">
+          <p className="text-sm leading-relaxed text-card-foreground">
             {action.text && action.text.length > 0
               ? action.text.map((word, i) => (
                   <span
