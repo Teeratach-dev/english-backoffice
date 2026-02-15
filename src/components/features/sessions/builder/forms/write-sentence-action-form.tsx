@@ -1,60 +1,34 @@
 import { Label } from "@/components/ui/label";
-import {
-  ActionType,
-  WriteSentenceAction,
-  WriteSentenceInChatAction,
-} from "@/types/action.types";
+import { WriteSentenceAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
 
 interface WriteSentenceActionFormProps {
-  action: WriteSentenceAction | WriteSentenceInChatAction;
-  onChange: (
-    updates: Partial<WriteSentenceAction | WriteSentenceInChatAction>,
-  ) => void;
+  action: WriteSentenceAction;
+  onChange: (updates: Partial<WriteSentenceAction>) => void;
 }
 
 export function WriteSentenceActionForm({
   action,
   onChange,
 }: WriteSentenceActionFormProps) {
-  const updateAction = (
-    updates: Partial<WriteSentenceAction | WriteSentenceInChatAction>,
-  ) => {
+  function updateAction(updates: Partial<WriteSentenceAction>) {
     onChange(updates);
-  };
+  }
 
-  const mapToSegments = (strings: string[]): SentenceSegment[] => {
+  function mapToSegments(strings: string[]): SentenceSegment[] {
     return (strings || []).map((text) => ({ text, isBlank: false }));
-  };
+  }
 
-  const handleSentenceChange = (newSegments: SentenceSegment[]) => {
+  function handleSentenceChange(newSegments: SentenceSegment[]) {
     updateAction({ sentence: newSegments.map((s) => s.text) });
-  };
+  }
 
-  const handleExpectSentenceChange = (newSegments: SentenceSegment[]) => {
+  function handleExpectSentenceChange(newSegments: SentenceSegment[]) {
     updateAction({ expectSentence: newSegments.map((s) => s.text) });
-  };
+  }
 
   return (
     <div className="space-y-6">
-      {action.type === ActionType.WriteSentenceInChat && (
-        <div className="space-y-1">
-          <Label className="text-xs">Position</Label>
-          <select
-            value={action.position || "left"}
-            onChange={(e) =>
-              updateAction({
-                position: e.target.value as "left" | "right",
-              } as Partial<WriteSentenceInChatAction>)
-            }
-            className="w-full h-8 rounded-md border bg-background px-2 text-xs"
-          >
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
-        </div>
-      )}
-
       <div className="space-y-3">
         <Label className="text-[10px] font-bold uppercase text-muted-foreground">
           Correct Sentence (Words)

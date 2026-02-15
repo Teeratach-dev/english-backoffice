@@ -32,6 +32,7 @@ import { MatchCardActionForm } from "./forms/match-card-action-form";
 import { FillSentenceByTypingActionForm } from "./forms/fill-sentence-by-typing-action-form";
 import { FillSentenceWithChoiceActionForm } from "./forms/fill-sentence-by-choice-action-form";
 import { WriteSentenceActionForm } from "./forms/write-sentence-action-form";
+import { WriteSentenceInChatActionForm } from "./forms/write-sentence-in-chat-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -143,14 +144,22 @@ export function ActionContentEditor({
       );
 
     case ActionType.WriteSentence:
+      return (
+        <WriteSentenceActionForm
+          action={action as WriteSentenceAction}
+          onChange={(updates: Partial<WriteSentenceAction>) =>
+            updateAction(updates)
+          }
+        />
+      );
 
     case ActionType.WriteSentenceInChat:
       return (
-        <WriteSentenceActionForm
-          action={action as WriteSentenceAction | WriteSentenceInChatAction}
-          onChange={(
-            updates: Partial<WriteSentenceAction | WriteSentenceInChatAction>,
-          ) => updateAction(updates)}
+        <WriteSentenceInChatActionForm
+          action={action as WriteSentenceInChatAction}
+          onChange={(updates: Partial<WriteSentenceInChatAction>) =>
+            updateAction(updates)
+          }
         />
       );
 
