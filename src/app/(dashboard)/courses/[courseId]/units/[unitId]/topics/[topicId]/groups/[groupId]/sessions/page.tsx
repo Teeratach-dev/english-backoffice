@@ -239,11 +239,11 @@ export default function SessionsPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <Button
-          variant="destructive"
+          variant="ghost"
           onClick={handleDeleteGroup}
-          className="gap-2"
+          className="gap-2 text-muted-foreground/60 hover:bg-destructive/10 hover:text-destructive"
         >
-          Delete Group
+          Delete
         </Button>
         <div className="flex gap-4">
           <Button
