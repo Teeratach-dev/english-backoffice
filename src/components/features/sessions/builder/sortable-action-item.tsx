@@ -1,17 +1,55 @@
 "use client";
 
+import React, { useState } from "react";
+
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripHorizontal, Settings, Trash2 } from "lucide-react";
+import {
+  GripHorizontal,
+  Settings,
+  Trash2,
+  Volume2,
+  Image as ImageIcon,
+  MessageCircle,
+  Info,
+  Type,
+  ListChecks,
+  ArrowLeftRight,
+  CreditCard,
+  Keyboard,
+  MousePointer2,
+  PenTool,
+  Columns2,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Action, ActionType, ACTION_TYPE_LABELS } from "@/types/action.types";
+import { SessionPreview } from "./session-preview";
+
+const ACTION_ICONS: Record<ActionType, React.ReactNode> = {
+  [ActionType.Explain]: <Info className="h-4 w-4" />,
+  [ActionType.Reading]: <Type className="h-4 w-4" />,
+  [ActionType.Audio]: <Volume2 className="h-4 w-4" />,
+  [ActionType.Chat]: <MessageCircle className="h-4 w-4" />,
+  [ActionType.Image]: <ImageIcon className="h-4 w-4" />,
+  [ActionType.Column]: <Columns2 className="h-4 w-4" />,
+  [ActionType.Choice]: <ListChecks className="h-4 w-4" />,
+  [ActionType.Reorder]: <ArrowLeftRight className="h-4 w-4" />,
+  [ActionType.MatchCard]: <CreditCard className="h-4 w-4" />,
+  [ActionType.FillSentenceByTyping]: <Keyboard className="h-4 w-4" />,
+  [ActionType.FillSentenceWithChoice]: <MousePointer2 className="h-4 w-4" />,
+  [ActionType.WriteSentence]: <PenTool className="h-4 w-4" />,
+  [ActionType.WriteSentenceInChat]: <MessageCircle className="h-4 w-4" />,
+};
 
 interface SortableActionItemProps {
   action: Action & { id: string };
   isEditing: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  index: number;
 }
 
 export function SortableActionItem({
@@ -19,7 +57,9 @@ export function SortableActionItem({
   isEditing,
   onEdit,
   onDelete,
+  index,
 }: SortableActionItemProps) {
+  const [showPreview, setShowPreview] = useState(true);
   const {
     attributes,
     listeners,
@@ -41,56 +81,74 @@ export function SortableActionItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center gap-3 border rounded-xl px-4 py-3 shadow-sm relative group/action transition-all w-full",
-        isEditing
-          ? "bg-primary/5 border-primary shadow-md ring-1 ring-primary/20"
-          : "bg-background hover:border-primary/30 hover:shadow-md",
+        "group/action relative flex flex-col gap-3 p-4 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
+        isEditing ? "ring-2 ring-primary shadow-2xl" : "",
       )}
       onClick={onEdit}
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab p-1 hover:bg-muted rounded transition-colors group-hover/action:text-primary"
-      >
-        <GripHorizontal className="h-4 w-4 text-muted-foreground/50" />
-      </div>
-      <div className="flex-1 min-w-0" onClick={onEdit}>
-        <div className="flex items-center gap-2">
-          <span className="text-xs font-bold text-foreground">
-            {ACTION_TYPE_LABELS[action.type as ActionType] || action.type}
-          </span>
-          {action.type === "explain" && (action as any).text?.length > 0 && (
-            <span className="text-[10px] text-muted-foreground truncate opacity-60">
-              - {(action as any).text.map((w: any) => w.text).join(" ")}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div
+            {...attributes}
+            {...listeners}
+            className="cursor-grab p-1 hover:bg-muted rounded transition-colors group-hover/action:text-primary"
+          >
+            <GripHorizontal className="h-4 w-4 text-muted-foreground/50" />
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="p-2 rounded-lg bg-primary/10 text-primary">
+              {ACTION_ICONS[action.type as ActionType]}
+            </div>
+            <h3 className="font-bold text-sm tracking-tight text-foreground">
+              {ACTION_TYPE_LABELS[action.type as ActionType] || action.type}
+            </h3>
+            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/30">
+              #{index + 1}
             </span>
-          )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className={cn(
+              "h-8 w-8 transition-colors",
+              showPreview
+                ? "text-primary hover:bg-primary/10"
+                : "text-muted-foreground hover:bg-muted",
+            )}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowPreview(!showPreview);
+            }}
+            title={showPreview ? "Hide Preview" : "Show Preview"}
+          >
+            {showPreview ? (
+              <Eye className="h-4 w-4" />
+            ) : (
+              <EyeOff className="h-4 w-4" />
+            )}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 hover:bg-destructive/10 hover:text-destructive transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </div>
       </div>
-      <div className="flex items-center gap-1.5 ml-auto">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 hover:bg-primary/10 hover:text-primary transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onEdit();
-          }}
-        >
-          <Settings className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-7 w-7 hover:bg-destructive/10 hover:text-destructive transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-        >
-          <Trash2 className="h-3.5 w-3.5" />
-        </Button>
-      </div>
+
+      {showPreview && (
+        <div className="rounded-lg overflow-hidden border border-muted/20 animate-in fade-in slide-in-from-top-1 duration-200">
+          <SessionPreview action={action} />
+        </div>
+      )}
     </div>
   );
 }

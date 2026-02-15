@@ -31,7 +31,7 @@ interface RichWordEditorProps {
 
 export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [isBulkEditing, setIsBulkEditing] = useState(false);
+  const [isBulkEditing, setIsBulkEditing] = useState(true);
   const [bulkText, setBulkText] = useState("");
 
   useEffect(() => {
@@ -112,8 +112,8 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
   const hasSelection = selectedIndices.length > 0;
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between border-b pb-2">
+    <div className="space-y-0">
+      <div className="flex items-center justify-between pb-1">
         <div className="flex items-center gap-1">
           <Button
             variant={hasSelection ? "outline" : "ghost"}
@@ -181,7 +181,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
       {isBulkEditing ? (
         <div className="space-y-2 animate-in fade-in duration-200">
           <textarea
-            className="flex min-h-[120px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            className="flex min-h-30 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
             placeholder="Type or paste your text here..."
@@ -200,7 +200,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
           </div>
         </div>
       ) : (
-        <div className="p-4 bg-muted/5 rounded-xl border-2 border-dashed min-h-[100px] flex flex-wrap gap-x-1.5 gap-y-2.5 items-center content-start">
+        <div className="p-4 bg-muted/5 rounded-xl border-2 border-dashed min-h-25 flex flex-wrap gap-x-1.5 gap-y-2.5 items-center content-start">
           {words.length === 0 ? (
             <div className="w-full flex flex-col items-center justify-center py-4 text-muted-foreground">
               <p className="text-xs">No text content yet.</p>

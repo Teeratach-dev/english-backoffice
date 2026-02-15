@@ -7,7 +7,82 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Plus, Trash2, ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import React from "react";
+
+const FONT_SIZES = Array.from(
+  { length: (144 - 2) / 2 + 1 },
+  (_, i) => 2 + i * 2,
+);
+
+function FontSizePicker({
+  value,
+  onChange,
+}: {
+  value: number;
+  onChange: (val: number) => void;
+}) {
+  const [inputValue, setInputValue] = React.useState(value.toString());
+
+  React.useEffect(() => {
+    setInputValue(value.toString());
+  }, [value]);
+
+  return (
+    <Popover>
+      <div className="relative group flex items-center">
+        <Input
+          type="number"
+          value={inputValue}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            const val = parseInt(e.target.value);
+            if (!isNaN(val)) onChange(val);
+          }}
+          className="h-8 text-xs pr-8 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute right-0 top-0 h-8 w-8 hover:bg-transparent text-muted-foreground"
+          >
+            <ChevronDown className="h-3 w-3" />
+          </Button>
+        </PopoverTrigger>
+      </div>
+      <PopoverContent className="p-1 w-20" align="end">
+        <ScrollArea className="h-40">
+          <div className="flex flex-col gap-0.5">
+            {FONT_SIZES.map((size) => (
+              <Button
+                key={size}
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "justify-start font-normal h-7 px-2 text-xs rounded-sm",
+                  value === size && "bg-primary/10 text-primary font-bold",
+                )}
+                onClick={() => {
+                  onChange(size);
+                }}
+              >
+                {size}
+              </Button>
+            ))}
+          </div>
+        </ScrollArea>
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface ActionContentEditorProps {
   action: Action;
@@ -46,20 +121,14 @@ export function ActionContentEditor({
             </div>
             <div className="space-y-1">
               <Label className="text-xs">Font Size</Label>
-              <Input
-                type="number"
+              <FontSizePicker
                 value={action.size || 16}
-                onChange={(e) =>
-                  updateAction({ size: parseInt(e.target.value) })
-                }
-                className="h-8 text-xs"
+                onChange={(val) => updateAction({ size: val })}
               />
             </div>
           </div>
           <div className="space-y-1">
-            <Label className="text-xs font-semibold">
-              Content Content (Rich Editor)
-            </Label>
+            <Label className="text-xs font-semibold">Text</Label>
             <RichWordEditor
               words={action.text || []}
               onChange={(words) => updateAction({ text: words })}

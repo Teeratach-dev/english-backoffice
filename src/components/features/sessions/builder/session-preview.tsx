@@ -32,7 +32,7 @@ export function SessionPreview({ action }: SessionPreviewProps) {
       case ActionType.Explain:
         return (
           <div className="space-y-3 w-full max-w-sm mx-auto">
-            <div className="border rounded-md p-4 relative bg-card shadow-sm border-orange-200/50">
+            <div className="rounded-md p-4 relative bg-card shadow-sm">
               <p
                 className={cn(
                   "text-card-foreground leading-loose font-medium",
@@ -70,7 +70,7 @@ export function SessionPreview({ action }: SessionPreviewProps) {
                         )}
                       </span>
                     ))
-                  : "Preview content will appear here..."}
+                  : ""}
               </p>
             </div>
             {action.explanation && (

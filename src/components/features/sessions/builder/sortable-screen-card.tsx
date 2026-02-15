@@ -85,18 +85,10 @@ export function SortableScreenCard({
   onUpdateAction,
 }: SortableScreenCardProps) {
   const [isActionSelectorOpen, setIsActionSelectorOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<"form" | "preview">("form");
 
   const activeActionInScreen = screen.actions.find(
     (a) => a.id === activeActionId,
   );
-
-  // Auto-switch to form mode when an action is selected for editing
-  React.useEffect(() => {
-    if (activeActionInScreen) {
-      setViewMode("form");
-    }
-  }, [activeActionId]);
 
   const {
     attributes,
@@ -138,40 +130,16 @@ export function SortableScreenCard({
         >
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </div>
-        <div className="absolute right-12 top-2 flex items-center bg-muted/20 rounded-lg p-0.5 z-10 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+        <div className="absolute right-2 top-2 flex items-center gap-2">
           <Button
             variant="ghost"
-            size="sm"
-            className={cn(
-              "h-7 px-2 text-[10px] gap-1 rounded-md transition-all",
-              viewMode === "form" && "shadow-sm bg-background text-primary",
-            )}
-            onClick={() => setViewMode("form")}
+            size="icon"
+            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+            onClick={onDelete}
           >
-            <Edit2 className="h-3 w-3" />
-            Form
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            className={cn(
-              "h-7 px-2 text-[10px] gap-1 rounded-md transition-all",
-              viewMode === "preview" && "shadow-sm bg-background text-primary",
-            )}
-            onClick={() => setViewMode("preview")}
-          >
-            <Eye className="h-3 w-3" />
-            Preview
+            <Trash2 className="h-4 w-4" />
           </Button>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute right-2 top-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-10 hover:text-destructive"
-          onClick={onDelete}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
         <CardHeader className="py-2 pl-10 lg:pl-6 border-b bg-muted/5">
           <CardTitle className="text-sm font-medium flex items-center">
             <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-[10px] font-bold">
@@ -181,80 +149,53 @@ export function SortableScreenCard({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 space-y-4">
-          {viewMode === "form" ? (
-            <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleActionDragEnd}
+          <>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleActionDragEnd}
+            >
+              <SortableContext
+                items={screen.actions.map((a) => a.id)}
+                strategy={verticalListSortingStrategy}
               >
-                <SortableContext
-                  items={screen.actions.map((a) => a.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  <div className="flex flex-col gap-3 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20">
-                    {screen.actions.length === 0 ? (
-                      <div className="flex-1 flex flex-col items-center justify-center py-8 text-muted-foreground">
-                        <Plus className="h-8 w-8 mb-2 opacity-10" />
-                        <p className="text-xs font-medium">
-                          No actions added to this screen yet
-                        </p>
-                      </div>
-                    ) : (
-                      screen.actions.map((action) => (
-                        <SortableActionItem
-                          key={action.id}
-                          action={action}
-                          isEditing={activeActionId === action.id}
-                          onEdit={() => onEditAction(action.id)}
-                          onDelete={() => onDeleteAction(action.id)}
-                        />
-                      ))
-                    )}
+                {screen.actions.length === 0 ? (
+                  <div className="flex flex-col gap-4 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20 items-center justify-center py-12 text-muted-foreground">
+                    <Plus className="h-8 w-8 mb-2 opacity-10" />
+                    <p className="text-xs font-medium">
+                      No actions added to this screen yet
+                    </p>
                   </div>
-                </SortableContext>
-              </DndContext>
-
-              <Button
-                variant="outline"
-                className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
-                onClick={() => setIsActionSelectorOpen(true)}
-              >
-                <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">Add Action</span>
-              </Button>
-            </>
-          ) : (
-            <div className="w-full">
-              {screen.actions.length === 0 ? (
-                <div className="col-span-full flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl">
-                  <Eye className="h-8 w-8 mb-2 opacity-20" />
-                  <p className="text-xs font-medium">No actions to preview</p>
-                </div>
-              ) : (
-                screen.actions.map((action, idx) => (
-                  <div
-                    key={action.id}
-                    className="flex flex-col gap-3 p-4 border rounded-xl shadow-sm bg-card "
-                  >
-                    <div className="flex items-center gap-2 mb-1">
-                      <div className="p-2 rounded-lg bg-primary/10 text-primary">
-                        {ACTION_ICONS[action.type as ActionType]}
-                      </div>
-                      <h3 className="font-bold text-sm tracking-tight text-foreground">
-                        {ACTION_TYPE_LABELS[action.type as ActionType]}
-                      </h3>
-                      <span className="ml-auto text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">
-                        #{idx + 1}
-                      </span>
-                    </div>
-
-                    <SessionPreview action={action} />
+                ) : (
+                  <div className="flex flex-col gap-4">
+                    {screen.actions.map((action, idx) => (
+                      <SortableActionItem
+                        key={action.id}
+                        action={action}
+                        index={idx}
+                        isEditing={activeActionId === action.id}
+                        onEdit={() =>
+                          onEditAction(
+                            activeActionId === action.id ? "" : action.id,
+                          )
+                        }
+                        onDelete={() => onDeleteAction(action.id)}
+                      />
+                    ))}
                   </div>
-                ))
-              )}
-            </div>
-          )}
+                )}
+              </SortableContext>
+            </DndContext>
+
+            <Button
+              variant="outline"
+              className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+              onClick={() => setIsActionSelectorOpen(true)}
+            >
+              <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
+              <span className="text-xs font-semibold">Add Action</span>
+            </Button>
+          </>
 
           {activeActionInScreen && (
             <Card className="mt-6 border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
