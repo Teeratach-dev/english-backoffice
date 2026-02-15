@@ -169,10 +169,6 @@ export default function SessionsPage({
             href: `/courses/${courseId}/units/${unitId}/topics`,
           },
           {
-            label: "Groups",
-            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          },
-          {
             label: groupForm.name || group?.name || "",
             href: "#",
           },

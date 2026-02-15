@@ -37,6 +37,7 @@ import { SaveTemplateDialog } from "@/components/features/sessions/builder/save-
 import { LoadTemplateDialog } from "@/components/features/sessions/builder/load-template-dialog";
 import { SortableScreenCard } from "@/components/features/sessions/builder/sortable-screen-card";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
+import { PageHeader } from "@/components/layouts/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -376,9 +377,10 @@ export default function SessionBuilderPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <PageHeader title="Session detail" />
       {/* Breadcrumb — always visible at top */}
-      <div className="border-b px-4 md:px-8 py-3 sticky top-0 z-50 shrink-0 shadow-sm backdrop-blur-md bg-background/95">
-        <div className="max-w-5xl mx-auto">
+      <div className="px-4 md:px-8 py-4 sticky top-0 z-50 shrink-0">
+        <div className="max-w-6xl mx-auto">
           <Breadcrumb
             items={[
               { label: "Courses", href: "/courses" },
