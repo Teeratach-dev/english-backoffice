@@ -5,6 +5,8 @@ import { RichWordEditor } from "../rich-word-editor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlignLeft, AlignRight } from "lucide-react";
 import React from "react";
 
 interface ChatActionFormProps {
@@ -65,18 +67,26 @@ export function ChatActionForm({ action, onChange }: ChatActionFormProps) {
         </div>
 
         {/* Configuration */}
-        <div className="space-y-1">
+        <div className="space-y-1.5">
           <Label className="text-xs">Position</Label>
-          <select
+          <Tabs
             value={action.position || "left"}
-            onChange={(e) =>
-              updateAction({ position: e.target.value as "left" | "right" })
+            onValueChange={(val: string) =>
+              updateAction({ position: val as "left" | "right" })
             }
-            className="w-full h-8 rounded-md border bg-background px-2 text-xs"
+            className="w-full"
           >
-            <option value="left">Left</option>
-            <option value="right">Right</option>
-          </select>
+            <TabsList className="grid w-full grid-cols-2 h-8 p-1 bg-muted/50">
+              <TabsTrigger value="left" className="text-[10px] h-6 flex gap-2">
+                <AlignLeft className="h-3.5 w-3.5" />
+                Left
+              </TabsTrigger>
+              <TabsTrigger value="right" className="text-[10px] h-6 flex gap-2">
+                Right
+                <AlignRight className="h-3.5 w-3.5" />
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
 
         <div className="space-y-1">
