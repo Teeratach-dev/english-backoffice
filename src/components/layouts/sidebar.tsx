@@ -86,7 +86,7 @@ const sidebarItems = [
   },
 ];
 
-export function SidebarRoutes() {
+export function SidebarRoutes({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -100,6 +100,7 @@ export function SidebarRoutes() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
                 buttonVariants({
                   variant: item.isActive(pathname) ? "secondary" : "ghost",
