@@ -151,7 +151,7 @@ export default function SessionGroupsPage({
 
   return (
     <div className="pb-20 space-y-6">
-      <PageHeader title={topic ? `Groups: ${topic.name}` : "Groups"} />
+      <PageHeader title="Topic" />
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
@@ -161,7 +161,7 @@ export default function SessionGroupsPage({
             href: `/courses/${courseId}/units/${unitId}/topics`,
           },
           {
-            label: `Groups: ${topicForm.name || topic?.name || ""}`,
+            label: topicForm.name || topic?.name || "",
             href: "#",
           },
         ]}

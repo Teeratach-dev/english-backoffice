@@ -149,12 +149,12 @@ export default function TopicsPage({
 
   return (
     <div className="pb-20 space-y-6">
-      <PageHeader title={unit ? `Topics: ${unit.name}` : "Topics"} />
+      <PageHeader title="Unit" />
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
           { label: "Units", href: `/courses/${courseId}/units` },
-          { label: `Topics: ${unitForm.name || unit?.name || ""}`, href: "#" },
+          { label: unitForm.name || unit?.name || "", href: "#" },
         ]}
       />
 

@@ -152,12 +152,12 @@ export default function UnitsPage({
 
   return (
     <div className="pb-20 space-y-6">
-      <PageHeader title={course ? `Units: ${course.name}` : "Units"} />
+      <PageHeader title="Course" />
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
           {
-            label: `Units: ${courseForm.name || course?.name || ""}`,
+            label: courseForm.name || course?.name || "",
             href: "#",
           },
         ]}
