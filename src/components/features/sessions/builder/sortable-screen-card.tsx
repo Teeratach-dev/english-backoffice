@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash, Plus } from "lucide-react";
+import { GripVertical, Trash2, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -20,7 +20,12 @@ import {
   sortableKeyboardCoordinates,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Screen, ActionType, ACTION_TYPE_VALUES, ACTION_TYPE_LABELS } from "@/types/action.types";
+import {
+  Screen,
+  ActionType,
+  ACTION_TYPE_VALUES,
+  ACTION_TYPE_LABELS,
+} from "@/types/action.types";
 import { SortableActionItem } from "./sortable-action-item";
 
 interface SortableScreenCardProps {
@@ -90,7 +95,7 @@ export function SortableScreenCard({
           className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
           onClick={onDelete}
         >
-          <Trash className="h-4 w-4 text-destructive" />
+          <Trash2 className="h-4 w-4" />
         </Button>
         <CardHeader className="py-4">
           <CardTitle className="text-sm font-medium flex items-center">

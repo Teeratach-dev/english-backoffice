@@ -219,7 +219,7 @@ export default function SessionTemplatesPage() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center">
-                      <Layout className="mr-2 h-4 w-4 text-muted-foreground" />
+                      <Layout className="mr-2 h-4 w-4" />
                       {template.screens?.length || 0} Screens
                     </div>
                   </TableCell>
@@ -231,8 +231,8 @@ export default function SessionTemplatesPage() {
                       className={cn(
                         "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                         template.isActive
-                          ? "bg-success/15 text-success hover:bg-success/25"
-                          : "bg-error/15 text-error hover:bg-error/25",
+                          ? "bg-success text-success-foreground hover:bg-success/80"
+                          : "bg-error text-error-foreground hover:bg-error/80",
                       )}
                     >
                       {template.isActive ? (
@@ -254,14 +254,14 @@ export default function SessionTemplatesPage() {
                         size="icon"
                         onClick={() => handleEdit(template)}
                       >
-                        <Edit className="h-4 w-4 text-muted-foreground" />
+                        <Edit className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={() => handleDelete(template._id)}
                       >
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
                   </TableCell>

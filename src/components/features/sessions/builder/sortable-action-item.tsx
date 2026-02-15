@@ -2,7 +2,7 @@
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripHorizontal, Settings, Trash } from "lucide-react";
+import { GripHorizontal, Settings, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Action, ActionType, ACTION_TYPE_LABELS } from "@/types/action.types";
@@ -66,10 +66,10 @@ export function SortableActionItem({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 text-destructive"
+          className="h-6 w-6"
           onClick={onDelete}
         >
-          <Trash className="h-3 w-3" />
+          <Trash2 className="h-3 w-3" />
         </Button>
       </div>
     </div>

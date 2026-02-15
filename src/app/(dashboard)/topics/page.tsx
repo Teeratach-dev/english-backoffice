@@ -198,7 +198,7 @@ export default function TopicsListPage() {
                             setEditingTopic(topic);
                           }}
                         >
-                          <Edit className="h-4 w-4 text-muted-foreground" />
+                          <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -208,7 +208,7 @@ export default function TopicsListPage() {
                             setDeletingTopic(topic);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

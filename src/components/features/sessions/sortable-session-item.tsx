@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash, PenTool } from "lucide-react";
+import { GripVertical, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -53,7 +53,7 @@ export function SortableSessionItem({
         {...listeners}
         className="cursor-grab active:cursor-grabbing"
       >
-        <GripVertical className="h-5 w-5 text-muted-foreground" />
+        <GripVertical className="h-5 w-5" />
       </div>
 
       <div className="flex-1 min-w-0">
@@ -83,11 +83,12 @@ export function SortableSessionItem({
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="ghost" size="icon" asChild>
           <Link
             href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions/${session._id}/builder`}
+            title="Builder"
           >
-            <PenTool className="h-4 w-4 mr-2" /> Builder
+            <PenTool className="h-4 w-4" />
           </Link>
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onEdit(session)}>
@@ -98,7 +99,7 @@ export function SortableSessionItem({
           size="icon"
           onClick={() => onDelete(session._id)}
         >
-          <Trash className="h-4 w-4" />
+          <Trash2 className="h-4 w-4" />
         </Button>
       </div>
     </div>

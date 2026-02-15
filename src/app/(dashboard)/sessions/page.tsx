@@ -245,7 +245,7 @@ export default function SessionsListPage() {
                             setEditingSession(session);
                           }}
                         >
-                          <Edit className="h-4 w-4 text-muted-foreground" />
+                          <Edit className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -255,7 +255,7 @@ export default function SessionsListPage() {
                             setDeletingSession(session);
                           }}
                         >
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </TableCell>

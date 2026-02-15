@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
   Plus,
-  Trash,
+  Trash2,
   Type,
   Music,
   Bold,
@@ -166,10 +166,10 @@ export function WordEditor({ words, onChange }: WordEditorProps) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-destructive h-8 w-8"
+                className="h-8 w-8"
                 onClick={() => removeWord(idx)}
               >
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </Card>

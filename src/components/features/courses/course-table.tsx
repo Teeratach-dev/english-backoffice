@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Edit, Trash, Plus, Search } from "lucide-react";
+import { Edit, Trash2, Plus, Search } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -200,7 +200,7 @@ export function CourseTable({
                       size="icon"
                       onClick={() => handleDelete(course._id)}
                     >
-                      <Trash className="h-4 w-4" />
+                      <Trash2 className="h-4 w-4" />
                     </Button>
                   </TableCell>
                 </TableRow>

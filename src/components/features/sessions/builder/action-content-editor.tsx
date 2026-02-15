@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -31,7 +31,11 @@ export function ActionContentEditor({
               <Label className="text-xs">Alignment</Label>
               <select
                 value={action.alignment || "left"}
-                onChange={(e) => updateAction({ alignment: e.target.value as "left" | "center" | "right" })}
+                onChange={(e) =>
+                  updateAction({
+                    alignment: e.target.value as "left" | "center" | "right",
+                  })
+                }
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -46,7 +50,7 @@ export function ActionContentEditor({
                 value={action.size || 16}
                 onChange={(e) =>
                   updateAction({ size: parseInt(e.target.value) })
-                  }
+                }
                 className="h-8 text-xs"
               />
             </div>
@@ -155,7 +159,9 @@ export function ActionContentEditor({
               <Label className="text-xs">Position</Label>
               <select
                 value={action.position || "left"}
-                onChange={(e) => updateAction({ position: e.target.value as "left" | "right" })}
+                onChange={(e) =>
+                  updateAction({ position: e.target.value as "left" | "right" })
+                }
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -251,7 +257,7 @@ export function ActionContentEditor({
                   updateAction({ items });
                 }}
               >
-                <Trash className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           ))}
@@ -317,7 +323,7 @@ export function ActionContentEditor({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="text-destructive absolute bottom-0 -right-2 h-10"
+                  className="absolute bottom-0 -right-2 h-10"
                   onClick={() => {
                     const items = action.items.filter(
                       (_: any, i: number) => i !== idx,
@@ -325,7 +331,7 @@ export function ActionContentEditor({
                     updateAction({ items });
                   }}
                 >
-                  <Trash className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
             </div>
@@ -342,7 +348,9 @@ export function ActionContentEditor({
               <Label className="text-xs">Position</Label>
               <select
                 value={action.position || "left"}
-                onChange={(e) => updateAction({ position: e.target.value as "left" | "right" })}
+                onChange={(e) =>
+                  updateAction({ position: e.target.value as "left" | "right" })
+                }
                 className="w-full h-8 rounded-md border bg-background px-2 text-xs"
               >
                 <option value="left">Left</option>
@@ -417,7 +425,7 @@ export function ActionContentEditor({
                 <Button
                   size="icon"
                   variant="ghost"
-                  className="text-destructive"
+                  className=""
                   onClick={() => {
                     const sentence = action.sentence.filter(
                       (_: any, i: number) => i !== idx,
@@ -425,7 +433,7 @@ export function ActionContentEditor({
                     updateAction({ sentence });
                   }}
                 >
-                  <Trash className="h-4 w-4" />
+                  <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
               {seg.isBlank &&

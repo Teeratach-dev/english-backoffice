@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Shield, User as UserIcon, Edit, Trash, Search } from "lucide-react";
+import { Shield, User as UserIcon, Edit, Trash2, Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
 interface UserData {
@@ -178,7 +178,7 @@ export function UserTable({
                         size="icon"
                         onClick={() => handleDelete(user._id)}
                       >
-                        <Trash className="h-4 w-4" />
+                        <Trash2 className="h-4 w-4" />
                       </Button>
                     </TableCell>
                   )}
