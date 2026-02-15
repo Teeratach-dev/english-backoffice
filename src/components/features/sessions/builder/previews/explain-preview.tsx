@@ -16,7 +16,7 @@ export function ExplainPreview({
     <div className="space-y-3 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "rounded-md p-4 relative bg-card border border-muted/20",
+          "rounded-md p-4 relative bg-background border border-muted/20",
           isShowShadow ? "shadow-sm" : "shadow-none",
         )}
       >

@@ -29,11 +29,13 @@ import { WriteSentenceInChatPreview } from "./previews/write-sentence-in-chat-pr
 interface SessionPreviewProps {
   action: Action | null;
   isShowShadow?: boolean;
+  isHoverEffect?: boolean;
 }
 
 export function SessionPreview({
   action,
   isShowShadow = true,
+  isHoverEffect = true,
 }: SessionPreviewProps) {
   if (!action) {
     return (
@@ -178,7 +180,9 @@ export function SessionPreview({
   return (
     <div className="animate-in fade-in zoom-in duration-500 w-full">
       <div className="relative group">
-        <div className="absolute -inset-4 bg-linear-to-r from-primary/5 to-purple-500/5 rounded-4xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        {isHoverEffect && (
+          <div className="absolute -inset-4 bg-linear-to-r from-primary/5 to-purple-500/5 rounded-4xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
+        )}
         <div className="relative">{renderPreview()}</div>
       </div>
     </div>

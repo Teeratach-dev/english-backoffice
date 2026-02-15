@@ -8,8 +8,8 @@ interface PhonePreviewProps {
 
 export function PhonePreview({ actions }: PhonePreviewProps) {
   return (
-    <div className="flex justify-center p-8 bg-muted/10 rounded-xl">
-      <div className="relative w-[375px] h-[667px] bg-background border-4 border-gray-800 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
+    <div className="flex justify-center  bg-muted/10 rounded-xl">
+      <div className="relative w-90 h-180 bg-background border-4 border-gray-800 rounded-[3rem] shadow-2xl overflow-hidden flex flex-col">
         {/* iPhone Notch */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[30px] w-[150px] bg-gray-800 rounded-b-2xl z-20"></div>
 
@@ -31,7 +31,11 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
                 key={(action as any).id || idx}
                 className=""
               >
-                <SessionPreview action={action} isShowShadow={false} />
+                <SessionPreview
+                  action={action}
+                  isShowShadow={false}
+                  isHoverEffect={false}
+                />
               </div>
             ))}
             {actions.length === 0 && (
