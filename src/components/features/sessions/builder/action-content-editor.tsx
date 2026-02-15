@@ -11,6 +11,8 @@ import {
   ColumnAction,
   ChoiceAction,
   ReorderAction,
+  MatchCardAction,
+  FillSentenceByTypingAction,
 } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,6 +29,8 @@ import { ImageActionForm } from "./forms/image-action-form";
 import { ColumnActionForm } from "./forms/column-action-form";
 import { ChoiceActionForm } from "./forms/choice-action-form";
 import { ReorderActionForm } from "./forms/reorder-action-form";
+import { MatchCardActionForm } from "./forms/match-card-action-form";
+import { FillSentenceByTypingActionForm } from "./forms/fill-sentence-by-typing-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -109,77 +113,12 @@ export function ActionContentEditor({
 
     case ActionType.MatchCard:
       return (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs uppercase font-bold text-muted-foreground">
-              Pairs
-            </Label>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                updateAction({
-                  items: [
-                    ...(action.items || []),
-                    { left: { text: "" }, right: { text: "" } },
-                  ],
-                })
-              }
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add Pair
-            </Button>
-          </div>
-          {action.items?.map((item: any, idx: number) => (
-            <div
-              key={idx}
-              className="grid grid-cols-2 gap-4 bg-muted/20 p-3 rounded items-center"
-            >
-              <div className="space-y-1">
-                <Label className="text-[10px]">Left Side</Label>
-                <Input
-                  value={item.left?.text || ""}
-                  onChange={(e) => {
-                    const items = [...action.items];
-                    items[idx].left = {
-                      ...items[idx].left,
-                      text: e.target.value,
-                    };
-                    updateAction({ items });
-                  }}
-                  placeholder="Text or Audio URL"
-                />
-              </div>
-              <div className="space-y-1 relative pr-8">
-                <Label className="text-[10px]">Right Side</Label>
-                <Input
-                  value={item.right?.text || ""}
-                  onChange={(e) => {
-                    const items = [...action.items];
-                    items[idx].right = {
-                      ...items[idx].right,
-                      text: e.target.value,
-                    };
-                    updateAction({ items });
-                  }}
-                  placeholder="Text or Audio URL"
-                />
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className="absolute bottom-0 -right-2 h-10"
-                  onClick={() => {
-                    const items = action.items.filter(
-                      (_: any, i: number) => i !== idx,
-                    );
-                    updateAction({ items });
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
+        <MatchCardActionForm
+          action={action as MatchCardAction}
+          onChange={(updates: Partial<MatchCardAction>) =>
+            updateAction(updates)
+          }
+        />
       );
 
     case ActionType.WriteSentence:
@@ -219,6 +158,15 @@ export function ActionContentEditor({
       );
 
     case ActionType.FillSentenceByTyping:
+      return (
+        <FillSentenceByTypingActionForm
+          action={action as FillSentenceByTypingAction}
+          onChange={(updates: Partial<FillSentenceByTypingAction>) =>
+            updateAction(updates)
+          }
+        />
+      );
+
     case ActionType.FillSentenceWithChoice:
       return (
         <div className="space-y-4">

@@ -21,6 +21,8 @@ import { AudioPreview } from "./previews/audio-preview";
 import { ColumnPreview } from "./previews/column-preview";
 import { ChoicePreview } from "./previews/choice-preview";
 import { ReorderPreview } from "./previews/reorder-preview";
+import { MatchCardPreview } from "./previews/match-card-preview";
+import { FillSentenceByTypingPreview } from "./previews/fill-sentence-by-typing-preview";
 
 interface SessionPreviewProps {
   action: Action | null;
@@ -72,6 +74,12 @@ export function SessionPreview({ action }: SessionPreviewProps) {
 
       case ActionType.Reorder:
         return <ReorderPreview action={action} />;
+
+      case ActionType.MatchCard:
+        return <MatchCardPreview action={action as any} />;
+
+      case ActionType.FillSentenceByTyping:
+        return <FillSentenceByTypingPreview action={action as any} />;
 
       default:
         return (
