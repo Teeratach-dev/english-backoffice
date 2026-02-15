@@ -1,21 +1,7 @@
 "use client";
 
-import React from "react";
 import { Action, ActionType } from "@/types/action.types";
-import {
-  Volume2,
-  Snail,
-  ImageIcon,
-  Type,
-  MessageCircle,
-  ListChecks,
-  ArrowLeftRight,
-  CreditCard,
-  Keyboard,
-  MousePointer2,
-  PenTool,
-  Info,
-} from "lucide-react";
+import { ImageIcon, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface SessionPreviewProps {
@@ -45,36 +31,50 @@ export function SessionPreview({ action }: SessionPreviewProps) {
     switch (action.type) {
       case ActionType.Explain:
         return (
-          <div className="space-y-4 p-4 border-2 border-orange-100 rounded-2xl bg-orange-50/30 shadow-sm max-w-sm mx-auto">
-            <div className="text-center font-black text-2xl mb-4 text-orange-600 tracking-tight">
-              Used to
-            </div>
-            <div className="bg-white dark:bg-card border-2 border-orange-200 rounded-xl p-5 relative shadow-sm">
-              <p className="text-center text-base text-foreground leading-relaxed font-medium">
+          <div className="space-y-3 w-full max-w-sm mx-auto">
+            <div className="border rounded-md p-4 relative bg-card shadow-sm border-orange-200/50">
+              <p
+                className={cn(
+                  "text-card-foreground leading-loose font-medium",
+                  action.alignment === "left"
+                    ? "text-left"
+                    : action.alignment === "right"
+                      ? "text-right"
+                      : "text-center",
+                )}
+                style={{
+                  fontSize: action.size ? `${action.size}px` : undefined,
+                }}
+              >
                 {action.text
                   ? action.text.map((word: any, i: number) => (
                       <span
                         key={i}
                         className={cn(
-                          "inline-block mx-0.5",
+                          "inline-block mx-0.5 transition-all duration-200",
+                          word.bold && "font-bold",
+                          word.italic && "italic",
+                          word.underline &&
+                            "underline decoration-orange-400 decoration-2 underline-offset-4 cursor-help",
+                          word.highlight && "bg-orange-100 px-1 rounded-sm",
                           word.translation?.length > 0 &&
-                            "relative underline decoration-orange-400 decoration-2 underline-offset-4 cursor-help text-orange-600",
+                            "text-orange-600 dark:text-orange-400",
                         )}
                       >
                         {word.text}
                         {word.translation?.length > 0 && (
-                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap z-10 animate-in fade-in zoom-in duration-200">
+                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap z-10 animate-in fade-in zoom-in duration-200 opacity-0 group-hover:opacity-100 pointer-events-none">
                             {word.translation[0]}
                             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-500 rotate-45 rounded-sm"></div>
                           </span>
                         )}
                       </span>
                     ))
-                  : "to talk about repeated past actions that you no longer do"}
+                  : "Preview content will appear here..."}
               </p>
             </div>
             {action.explanation && (
-              <div className="bg-white/80 border border-orange-100 rounded-xl p-4 text-center text-sm text-muted-foreground italic font-medium">
+              <div className="border rounded-md p-3 bg-muted/20 text-center text-xs text-muted-foreground italic border-dashed">
                 {action.explanation}
               </div>
             )}

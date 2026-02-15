@@ -30,7 +30,36 @@ import { SortableActionItem } from "./sortable-action-item";
 import { ActionTypeSelector } from "./action-type-selector";
 import { ActionContentEditor } from "./action-content-editor";
 import { SessionPreview } from "./session-preview";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Volume2,
+  Image as ImageIcon,
+  MessageCircle,
+  Info,
+  Type,
+  ListChecks,
+  ArrowLeftRight,
+  CreditCard,
+  Keyboard,
+  MousePointer2,
+  PenTool,
+  Columns2,
+} from "lucide-react";
+
+const ACTION_ICONS: Record<ActionType, React.ReactNode> = {
+  [ActionType.Explain]: <Info className="h-4 w-4" />,
+  [ActionType.Reading]: <Type className="h-4 w-4" />,
+  [ActionType.Audio]: <Volume2 className="h-4 w-4" />,
+  [ActionType.Chat]: <MessageCircle className="h-4 w-4" />,
+  [ActionType.Image]: <ImageIcon className="h-4 w-4" />,
+  [ActionType.Column]: <Columns2 className="h-4 w-4" />,
+  [ActionType.Choice]: <ListChecks className="h-4 w-4" />,
+  [ActionType.Reorder]: <ArrowLeftRight className="h-4 w-4" />,
+  [ActionType.MatchCard]: <CreditCard className="h-4 w-4" />,
+  [ActionType.FillSentenceByTyping]: <Keyboard className="h-4 w-4" />,
+  [ActionType.FillSentenceWithChoice]: <MousePointer2 className="h-4 w-4" />,
+  [ActionType.WriteSentence]: <PenTool className="h-4 w-4" />,
+  [ActionType.WriteSentenceInChat]: <MessageCircle className="h-4 w-4" />,
+};
 
 interface SortableScreenCardProps {
   screen: Screen;
@@ -196,21 +225,30 @@ export function SortableScreenCard({
               </Button>
             </>
           ) : (
-            <div className="space-y-6 py-4 px-2">
+            <div className="w-full">
               {screen.actions.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl">
+                <div className="col-span-full flex flex-col items-center justify-center py-12 text-muted-foreground border-2 border-dashed rounded-xl">
                   <Eye className="h-8 w-8 mb-2 opacity-20" />
                   <p className="text-xs font-medium">No actions to preview</p>
                 </div>
               ) : (
                 screen.actions.map((action, idx) => (
-                  <div key={action.id} className="space-y-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/80 bg-muted px-2 py-0.5 rounded">
-                        Action {idx + 1}
+                  <div
+                    key={action.id}
+                    className="flex flex-col gap-3 p-4 border rounded-xl shadow-sm bg-card "
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="p-2 rounded-lg bg-primary/10 text-primary">
+                        {ACTION_ICONS[action.type as ActionType]}
+                      </div>
+                      <h3 className="font-bold text-sm tracking-tight text-foreground">
+                        {ACTION_TYPE_LABELS[action.type as ActionType]}
+                      </h3>
+                      <span className="ml-auto text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">
+                        #{idx + 1}
                       </span>
-                      <div className="h-px flex-1 bg-muted" />
                     </div>
+
                     <SessionPreview action={action} />
                   </div>
                 ))
