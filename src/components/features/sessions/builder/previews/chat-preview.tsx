@@ -8,6 +8,7 @@ import React from "react";
 interface ChatPreviewProps {
   action: ChatAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 /**
@@ -17,7 +18,11 @@ interface ChatPreviewProps {
  * 2. isDisplay=false && isReadable=true: Show blurred text (default) + Eye toggle + Audio panel
  * 3. isDisplay=true: Show normal text, ignore isReadable, no Eye toggle
  */
-export function ChatPreview({ action, isShowShadow = true }: ChatPreviewProps) {
+export function ChatPreview({
+  action,
+  isShowShadow = true,
+  useBorder = true,
+}: ChatPreviewProps) {
   const [isRevealed, setIsRevealed] = React.useState(false);
 
   // Conditions based on prompt
@@ -31,8 +36,9 @@ export function ChatPreview({ action, isShowShadow = true }: ChatPreviewProps) {
   return (
     <div
       className={cn(
-        "space-y-6 p-4 border rounded-lg bg-background max-w-sm mx-auto flex flex-col justify-end relative overflow-hidden group/chat",
+        "space-y-6 p-4 rounded-lg bg-background max-w-sm mx-auto flex flex-col justify-end relative overflow-hidden group/chat",
         isShowShadow ? "shadow-md" : "shadow-none",
+        useBorder ? "border" : "border-none",
       )}
     >
       <BackgroundDecor />

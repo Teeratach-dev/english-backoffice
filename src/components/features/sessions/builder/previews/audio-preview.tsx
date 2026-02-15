@@ -7,6 +7,7 @@ import { Volume2, Snail } from "lucide-react";
 interface AudioPreviewProps {
   action: AudioAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 /**
@@ -18,13 +19,15 @@ interface AudioPreviewProps {
 export function AudioPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: AudioPreviewProps) {
   return (
     <div className="space-y-3 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "p-4 border rounded-lg bg-background flex items-center justify-center gap-10 relative overflow-hidden",
+          "p-4 rounded-lg bg-background flex items-center justify-center gap-10 relative overflow-hidden",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         <Volume2

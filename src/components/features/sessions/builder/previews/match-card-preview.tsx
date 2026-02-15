@@ -6,11 +6,13 @@ import { cn } from "@/lib/utils";
 interface MatchCardPreviewProps {
   action: MatchCardAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function MatchCardPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: MatchCardPreviewProps) {
   const items = action.items || [];
 
@@ -26,8 +28,9 @@ export function MatchCardPreview({
     <div className="space-y-4 max-w-sm mx-auto">
       <div
         className={cn(
-          "p-4 border rounded-lg bg-background grid grid-cols-2 gap-x-8 gap-y-2",
+          "p-4 rounded-lg bg-background grid grid-cols-2 gap-x-8 gap-y-2",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         {items.map((item, i) => (

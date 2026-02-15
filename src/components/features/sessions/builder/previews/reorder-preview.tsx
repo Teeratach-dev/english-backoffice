@@ -7,11 +7,13 @@ import { cn } from "@/lib/utils";
 interface ReorderPreviewProps {
   action: ReorderAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function ReorderPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: ReorderPreviewProps) {
   const items = action.items || [];
   const words = items.map((item) => item.text?.text || "Empty");
@@ -48,8 +50,9 @@ export function ReorderPreview({
       {/* Pool of words (Full Set Shuffled) */}
       <div
         className={cn(
-          "p-4 border rounded-lg bg-background space-y-6",
+          "p-4 rounded-lg bg-background space-y-6",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         <div className="space-y-4">
@@ -77,8 +80,9 @@ export function ReorderPreview({
       {/* Target Area (Simulation) */}
       <div
         className={cn(
-          "p-4 border rounded-lg bg-background space-y-6",
+          "p-4 rounded-lg bg-background space-y-6",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         <div className="space-y-4">

@@ -30,12 +30,14 @@ interface SessionPreviewProps {
   action: Action | null;
   isShowShadow?: boolean;
   isHoverEffect?: boolean;
+  useBorder?: boolean;
 }
 
 export function SessionPreview({
   action,
   isShowShadow = true,
   isHoverEffect = true,
+  useBorder = true,
 }: SessionPreviewProps) {
   if (!action) {
     return (
@@ -64,6 +66,7 @@ export function SessionPreview({
           <ExplainPreview
             action={action as ExplainAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -72,6 +75,7 @@ export function SessionPreview({
           <ReadingPreview
             action={action as ReadingAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -80,6 +84,7 @@ export function SessionPreview({
           <AudioPreview
             action={action as AudioAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -88,6 +93,7 @@ export function SessionPreview({
           <ChatPreview
             action={action as ChatAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -96,6 +102,7 @@ export function SessionPreview({
           <ImagePreview
             action={action as ImageAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -104,6 +111,7 @@ export function SessionPreview({
           <ColumnPreview
             action={action as ColumnAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -112,17 +120,25 @@ export function SessionPreview({
           <ChoicePreview
             action={action as ChoiceAction}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
       case ActionType.Reorder:
-        return <ReorderPreview action={action} isShowShadow={isShowShadow} />;
+        return (
+          <ReorderPreview
+            action={action}
+            isShowShadow={isShowShadow}
+            useBorder={useBorder}
+          />
+        );
 
       case ActionType.MatchCard:
         return (
           <MatchCardPreview
             action={action as any}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -131,6 +147,7 @@ export function SessionPreview({
           <FillSentenceByTypingPreview
             action={action as any}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -139,6 +156,7 @@ export function SessionPreview({
           <FillSentenceByChoicePreview
             action={action as any}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -147,6 +165,7 @@ export function SessionPreview({
           <WriteSentencePreview
             action={action as any}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 
@@ -155,6 +174,7 @@ export function SessionPreview({
           <WriteSentenceInChatPreview
             action={action as any}
             isShowShadow={isShowShadow}
+            useBorder={useBorder}
           />
         );
 

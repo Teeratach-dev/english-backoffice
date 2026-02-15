@@ -35,6 +35,7 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
                   action={action}
                   isShowShadow={false}
                   isHoverEffect={false}
+                  useBorder={false}
                 />
               </div>
             ))}

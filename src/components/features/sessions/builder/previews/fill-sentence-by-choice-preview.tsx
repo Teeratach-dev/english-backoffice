@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 interface FillSentenceByChoicePreviewProps {
   action: FillSentenceWithChoiceAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function FillSentenceByChoicePreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: FillSentenceByChoicePreviewProps) {
   const sentence = action.sentence || [];
 
@@ -16,8 +18,9 @@ export function FillSentenceByChoicePreview({
     <div className="w-full flex justify-center">
       <div
         className={cn(
-          "p-6 border rounded-lg bg-background w-full max-w-sm space-y-6",
+          "p-6 rounded-lg bg-background w-full max-w-sm space-y-6",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         <div className="text-sm text-center text-card-foreground leading-relaxed">

@@ -8,11 +8,13 @@ import { AudioPreview } from "./audio-preview";
 interface ColumnPreviewProps {
   action: ColumnAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function ColumnPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: ColumnPreviewProps) {
   const actions = action.actions || [];
 
@@ -33,18 +35,21 @@ export function ColumnPreview({
               <ImagePreview
                 action={subAction as any}
                 isShowShadow={isShowShadow}
+                useBorder={useBorder}
               />
             )}
             {subAction.type === ActionType.Reading && (
               <ReadingPreview
                 action={subAction as any}
                 isShowShadow={isShowShadow}
+                useBorder={useBorder}
               />
             )}
             {subAction.type === ActionType.Audio && (
               <AudioPreview
                 action={subAction as any}
                 isShowShadow={isShowShadow}
+                useBorder={useBorder}
               />
             )}
           </div>

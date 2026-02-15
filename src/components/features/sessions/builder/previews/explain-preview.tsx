@@ -6,18 +6,21 @@ import { cn } from "@/lib/utils";
 interface ExplainPreviewProps {
   action: ExplainAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function ExplainPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: ExplainPreviewProps) {
   return (
     <div className="space-y-3 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "rounded-md p-4 relative bg-background border border-muted/20",
+          "rounded-md p-4 relative bg-background border-muted/20",
           isShowShadow ? "shadow-sm" : "shadow-none",
+          useBorder ? "border" : "border-none",
         )}
       >
         <p

@@ -4,11 +4,13 @@ import { cn } from "@/lib/utils";
 interface WriteSentenceInChatPreviewProps {
   action: WriteSentenceInChatAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function WriteSentenceInChatPreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: WriteSentenceInChatPreviewProps) {
   const sentence = action.sentence?.join(" ") || "Type your sentence here...";
   const isRight = action.position === "right";
@@ -16,8 +18,9 @@ export function WriteSentenceInChatPreview({
   return (
     <div
       className={cn(
-        "p-4 border rounded-lg bg-background max-w-sm mx-auto space-y-4",
+        "p-4 rounded-lg bg-background max-w-sm mx-auto space-y-4",
         isShowShadow ? "shadow-sm" : "shadow-none",
+        useBorder ? "border" : "border-none",
       )}
     >
       {!isRight && (

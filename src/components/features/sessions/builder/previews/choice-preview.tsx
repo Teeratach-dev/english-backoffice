@@ -6,17 +6,20 @@ import { cn } from "@/lib/utils";
 interface ChoicePreviewProps {
   action: ChoiceAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function ChoicePreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: ChoicePreviewProps) {
   return (
     <div
       className={cn(
-        "p-4 border rounded-lg bg-background max-w-sm mx-auto flex flex-col items-center gap-3",
+        "p-4 rounded-lg bg-background max-w-sm mx-auto flex flex-col items-center gap-3",
         isShowShadow ? "shadow-sm" : "shadow-none",
+        useBorder ? "border" : "border-none",
       )}
     >
       {action.items && action.items.length > 0 ? (

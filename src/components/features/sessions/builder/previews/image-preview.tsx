@@ -7,17 +7,20 @@ import { cn } from "@/lib/utils";
 interface ImagePreviewProps {
   action: ImageAction;
   isShowShadow?: boolean;
+  useBorder?: boolean;
 }
 
 export function ImagePreview({
   action,
   isShowShadow = true,
+  useBorder = true,
 }: ImagePreviewProps) {
   return (
     <div
       className={cn(
-        "p-4 border rounded-lg bg-background max-w-sm mx-auto",
+        "p-4 rounded-lg bg-background max-w-sm mx-auto",
         isShowShadow ? "shadow-sm" : "shadow-none",
+        useBorder ? "border" : "border-none",
       )}
     >
       <div className="aspect-video bg-muted rounded-md relative overflow-hidden flex items-center justify-center">
