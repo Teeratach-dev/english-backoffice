@@ -200,20 +200,19 @@ export default function TopicsPage({
       </Card>
 
       <div className="pt-4 border-t">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Topics</h2>
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Topic
-          </Button>
-        </div>
-
         <TopicSortableList
+          title="Topics"
           courseId={courseId}
           unitId={unitId}
           topics={topics}
           onReorder={(newItems) => setTopics(newItems)}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          addButton={
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" /> Add
+            </Button>
+          }
         />
       </div>
 

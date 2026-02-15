@@ -75,7 +75,7 @@ export default function UsersPage() {
           >
             <DialogTrigger asChild>
               <Button onClick={handleAdd}>
-                <UserPlus className="h-4 w-4" />
+                <UserPlus className="mr-2 h-4 w-4" /> Add
               </Button>
             </DialogTrigger>
             <DialogContent>

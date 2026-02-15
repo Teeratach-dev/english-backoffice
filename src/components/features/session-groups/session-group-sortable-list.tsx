@@ -22,6 +22,7 @@ import { toast } from "sonner";
 import { LocalSessionGroup } from "@/types/local.types";
 
 interface SessionGroupSortableListProps {
+  title?: string;
   courseId: string;
   unitId: string;
   topicId: string;
@@ -33,6 +34,7 @@ interface SessionGroupSortableListProps {
 }
 
 export function SessionGroupSortableList({
+  title,
   courseId,
   unitId,
   topicId,
@@ -95,17 +97,20 @@ export function SessionGroupSortableList({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-4">
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-        {addButton && <div className="ml-auto">{addButton}</div>}
+      <div className="flex items-center gap-4">
+        {title && <h2 className="text-xl font-semibold">{title}</h2>}
+        <div className="ml-auto flex items-center gap-4">
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+          {addButton}
+        </div>
       </div>
 
       <DndContext

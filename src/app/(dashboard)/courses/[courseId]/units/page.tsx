@@ -233,19 +233,18 @@ export default function UnitsPage({
       </Card>
 
       <div className="pt-4 border-t">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Units</h2>
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Unit
-          </Button>
-        </div>
-
         <UnitSortableList
+          title="Units"
           courseId={courseId}
           units={units}
           onReorder={(newItems) => setUnits(newItems)}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          addButton={
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" /> Add
+            </Button>
+          }
         />
       </div>
 

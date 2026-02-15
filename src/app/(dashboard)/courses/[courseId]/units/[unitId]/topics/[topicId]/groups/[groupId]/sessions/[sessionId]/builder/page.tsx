@@ -467,6 +467,15 @@ export default function SessionBuilderPage({
               )}
             </Card>
           </div>
+          <div className="max-w-3xl mx-auto mb-4 flex items-center">
+            <h2 className="text-xl font-semibold">Screens</h2>
+            <div className="ml-auto">
+              <Button onClick={addScreen}>
+                <Plus className="mr-2 h-4 w-4" /> + Add
+              </Button>
+            </div>
+          </div>
+
           <div className="max-w-3xl mx-auto space-y-6 pb-20">
             <DndContext
               sensors={sensors}
@@ -496,14 +505,6 @@ export default function SessionBuilderPage({
                 ))}
               </SortableContext>
             </DndContext>
-
-            <Button
-              variant="outline"
-              className="w-full border-dashed py-10 hover:bg-muted/10 transition-colors"
-              onClick={addScreen}
-            >
-              <Plus className="mr-2 h-5 w-5" /> Add New Screen
-            </Button>
           </div>
         </div>
 

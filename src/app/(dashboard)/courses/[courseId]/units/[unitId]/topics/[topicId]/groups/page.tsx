@@ -209,14 +209,8 @@ export default function SessionGroupsPage({
       </Card>
 
       <div className="pt-4 border-t">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Session Groups</h2>
-          <Button onClick={handleAdd}>
-            <Plus className="mr-2 h-4 w-4" /> Add Group
-          </Button>
-        </div>
-
         <SessionGroupSortableList
+          title="Session Groups"
           courseId={courseId}
           unitId={unitId}
           topicId={topicId}
@@ -224,6 +218,11 @@ export default function SessionGroupsPage({
           onReorder={(newItems) => setGroups(newItems)}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          addButton={
+            <Button onClick={handleAdd}>
+              <Plus className="mr-2 h-4 w-4" /> Add
+            </Button>
+          }
         />
       </div>
 
