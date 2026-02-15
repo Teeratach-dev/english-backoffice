@@ -418,77 +418,75 @@ export default function SessionBuilderPage({
               onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
               hasScreens={screens.length > 0}
             />
-            {
-              <CardContent className="space-y-4">
+            <CardContent className="space-y-4">
+              <div className="grid gap-2">
+                <Label htmlFor="session-name">Session Name</Label>
+                <Input
+                  id="session-name"
+                  value={sessionForm.name}
+                  onChange={(e) =>
+                    setSessionForm({ ...sessionForm, name: e.target.value })
+                  }
+                  placeholder="Enter session name"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="session-name">Session Name</Label>
-                  <Input
-                    id="session-name"
-                    value={sessionForm.name}
+                  <Label htmlFor="session-type">Type</Label>
+                  <select
+                    id="session-type"
+                    value={sessionForm.type}
                     onChange={(e) =>
-                      setSessionForm({ ...sessionForm, name: e.target.value })
+                      setSessionForm({
+                        ...sessionForm,
+                        type: e.target.value,
+                      })
                     }
-                    placeholder="Enter session name"
-                  />
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    {SESSION_TYPES.map((type) => (
+                      <option key={type} value={type}>
+                        {
+                          SESSION_TYPE_LABELS[
+                            type as keyof typeof SESSION_TYPE_LABELS
+                          ]
+                        }
+                      </option>
+                    ))}
+                  </select>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="session-type">Type</Label>
-                    <select
-                      id="session-type"
-                      value={sessionForm.type}
-                      onChange={(e) =>
-                        setSessionForm({
-                          ...sessionForm,
-                          type: e.target.value,
-                        })
-                      }
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                      {SESSION_TYPES.map((type) => (
-                        <option key={type} value={type}>
-                          {
-                            SESSION_TYPE_LABELS[
-                              type as keyof typeof SESSION_TYPE_LABELS
-                            ]
-                          }
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="session-cefr">CEFR Level</Label>
-                    <select
-                      id="session-cefr"
-                      value={sessionForm.cefrLevel}
-                      onChange={(e) =>
-                        setSessionForm({
-                          ...sessionForm,
-                          cefrLevel: e.target.value,
-                        })
-                      }
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    >
-                      {CEFR_LEVELS.map((level) => (
-                        <option key={level} value={level}>
-                          {level}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="session-active"
-                    checked={sessionForm.isActive}
-                    onCheckedChange={(checked) =>
-                      setSessionForm({ ...sessionForm, isActive: checked })
+                <div className="grid gap-2">
+                  <Label htmlFor="session-cefr">CEFR Level</Label>
+                  <select
+                    id="session-cefr"
+                    value={sessionForm.cefrLevel}
+                    onChange={(e) =>
+                      setSessionForm({
+                        ...sessionForm,
+                        cefrLevel: e.target.value,
+                      })
                     }
-                  />
-                  <Label htmlFor="session-active">Active Status</Label>
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                  >
+                    {CEFR_LEVELS.map((level) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </CardContent>
-            }
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="session-active"
+                  checked={sessionForm.isActive}
+                  onCheckedChange={(checked) =>
+                    setSessionForm({ ...sessionForm, isActive: checked })
+                  }
+                />
+                <Label htmlFor="session-active">Active Status</Label>
+              </div>
+            </CardContent>
           </Card>
         </div>
         <div className="max-w-6xl mx-auto mb-4 flex items-center">

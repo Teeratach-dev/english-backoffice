@@ -44,6 +44,8 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --text-xxs: calc(var(--text-xs) - 2px);
 }
 
 @layer utilities {

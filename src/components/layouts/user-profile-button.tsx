@@ -37,7 +37,7 @@ export function UserProfileButton() {
           <Avatar className="h-[1.2rem] w-[1.2rem]">
             <AvatarImage src="" alt={user?.name || "User"} />
             <AvatarFallback className="bg-transparent text-primary">
-              {user?.name?.[0]?.toUpperCase() || "U"}
+              {user?.email?.[0]?.toUpperCase() || "U"}
             </AvatarFallback>
           </Avatar>
         </Button>
@@ -46,10 +46,10 @@ export function UserProfileButton() {
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">
-              {user?.name || "User"}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
               {user?.email || "user@example.com"}
+            </p>
+            <p className="text-xxs leading-none text-muted-foreground">
+              {user?.name || "User"}
             </p>
           </div>
         </DropdownMenuLabel>
@@ -58,16 +58,10 @@ export function UserProfileButton() {
           <DropdownMenuItem asChild>
             <Link href="/change-password">Change Password</Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            Settings
-            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-          </DropdownMenuItem>
+          <DropdownMenuItem>Settings</DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleLogout}>
-          Log out
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>Log out</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

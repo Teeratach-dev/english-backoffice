@@ -30,14 +30,6 @@ export default function UsersPage() {
   useEffect(() => {
     if (reduxUser?.role) {
       setCurrentUserRole(reduxUser.role);
-    } else {
-      // Fetch from API when Redux state is lost (e.g. after refresh)
-      fetch("/api/auth/me")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.role) setCurrentUserRole(data.role);
-        })
-        .catch(() => {});
     }
   }, [reduxUser]);
 
