@@ -19,7 +19,7 @@ export function Navbar() {
             </h1>
           )}
         </div>
-        <div className="ml-auto flex items-center space-x-4">
+        <div className="ml-auto flex items-center space-x-2">
           <ModeToggle />
           <UserProfileButton />
         </div>
