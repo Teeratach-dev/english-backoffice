@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Shield, User as UserIcon, Edit, Trash, Search } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 
 interface UserData {
   _id: string;
@@ -162,9 +163,7 @@ export function UserTable({
                       {user.role}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{formatDate(user.createdAt)}</TableCell>
                   {isSuperadmin && (
                     <TableCell className="text-right space-x-2">
                       <Button

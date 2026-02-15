@@ -16,6 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/utils";
 
 interface Course {
   _id: string;
@@ -182,9 +183,7 @@ export function CourseTable({
                       {course.purchaseable ? "Yes" : "No"}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    {new Date(course.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{formatDate(course.createdAt)}</TableCell>
                   <TableCell
                     className="text-right space-x-2"
                     onClick={(e) => e.stopPropagation()}

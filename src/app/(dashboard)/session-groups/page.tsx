@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -31,8 +32,8 @@ interface SessionGroupItem {
   topicId?: string;
   sessionCount: number;
   isActive: boolean;
-  sequence: number;
   createdAt: string;
+  sequence: number;
 }
 
 export default function SessionGroupsListPage() {
@@ -140,13 +141,14 @@ export default function SessionGroupsListPage() {
                 <TableHead className="max-w-[200px]">Topic</TableHead>
                 <TableHead>Sessions</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Created At</TableHead>
                 <TableHead className="w-[100px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredGroups.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No session groups found.
                   </TableCell>
                 </TableRow>
@@ -181,6 +183,7 @@ export default function SessionGroupsListPage() {
                         {group.isActive ? "Active" : "Inactive"}
                       </span>
                     </TableCell>
+                    <TableCell>{formatDate(group.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button

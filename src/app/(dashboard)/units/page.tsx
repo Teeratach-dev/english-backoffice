@@ -10,7 +10,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Plus, Search, Edit, Trash2 } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+} from "lucide-react";
+import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -194,9 +202,7 @@ export default function UnitsListPage() {
                       {unit.isActive ? "Active" : "Inactive"}
                     </span>
                   </TableCell>
-                  <TableCell>
-                    {new Date(unit.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{formatDate(unit.createdAt)}</TableCell>
                   <TableCell
                     className="text-right space-x-2"
                     onClick={(e) => e.stopPropagation()}

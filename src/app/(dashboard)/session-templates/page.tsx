@@ -25,7 +25,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { SESSION_TYPE_LABELS, SESSION_TYPES } from "@/types/action.types";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -244,9 +244,7 @@ export default function SessionTemplatesPage() {
                       )}
                     </button>
                   </TableCell>
-                  <TableCell>
-                    {new Date(template.createdAt).toLocaleDateString()}
-                  </TableCell>
+                  <TableCell>{formatDate(template.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       <Button

@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
+import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import {
@@ -179,13 +180,14 @@ export default function SessionsListPage() {
                 <TableHead>Type</TableHead>
                 <TableHead>CEFR Level</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Created At</TableHead>
                 <TableHead className="w-[100px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredSessions.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
+                  <TableCell colSpan={7} className="h-24 text-center">
                     No sessions found.
                   </TableCell>
                 </TableRow>
@@ -229,6 +231,7 @@ export default function SessionsListPage() {
                         {session.isActive ? "Active" : "Inactive"}
                       </span>
                     </TableCell>
+                    <TableCell>{formatDate(session.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button

@@ -30,6 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { TopicForm } from "@/components/features/topics/topic-form";
 import { PageHeader } from "@/components/layouts/page-header";
+import { formatDate } from "@/lib/utils";
 
 interface TopicItem {
   _id: string;
@@ -143,13 +144,14 @@ export default function TopicsListPage() {
                 <TableHead className="max-w-[200px]">Unit</TableHead>
                 <TableHead>Session Groups</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Created At</TableHead>
                 <TableHead className="w-[100px] text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredTopics.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No topics found.
                   </TableCell>
                 </TableRow>
@@ -184,6 +186,7 @@ export default function TopicsListPage() {
                         {topic.isActive ? "Active" : "Inactive"}
                       </span>
                     </TableCell>
+                    <TableCell>{formatDate(topic.createdAt)}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
