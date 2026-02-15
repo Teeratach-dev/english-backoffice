@@ -24,6 +24,7 @@ import { ReorderPreview } from "./previews/reorder-preview";
 import { MatchCardPreview } from "./previews/match-card-preview";
 import { FillSentenceByTypingPreview } from "./previews/fill-sentence-by-typing-preview";
 import { FillSentenceByChoicePreview } from "./previews/fill-sentence-by-choice-preview";
+import { WriteSentencePreview } from "./previews/write-sentence-preview";
 
 interface SessionPreviewProps {
   action: Action | null;
@@ -84,6 +85,11 @@ export function SessionPreview({ action }: SessionPreviewProps) {
 
       case ActionType.FillSentenceWithChoice:
         return <FillSentenceByChoicePreview action={action as any} />;
+
+      case ActionType.WriteSentence:
+
+      case ActionType.WriteSentenceInChat:
+        return <WriteSentencePreview action={action as any} />;
 
       default:
         return (

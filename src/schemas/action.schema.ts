@@ -130,11 +130,13 @@ export const FillSentenceWithChoiceActionSchema = BaseActionSchema.extend({
 export const WriteSentenceActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.WriteSentence),
   sentence: z.array(z.string()),
+  expectSentence: z.array(z.string()),
 });
 
 export const WriteSentenceInChatActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.WriteSentenceInChat),
   sentence: z.array(z.string()),
+  expectSentence: z.array(z.string()),
   position: z.enum(["left", "right"]),
 });
 

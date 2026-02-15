@@ -13,9 +13,14 @@ export interface SentenceSegment {
 interface SentenceBuilderProps {
   sentence: SentenceSegment[];
   onChange: (sentence: SentenceSegment[]) => void;
+  isShowSuggestion?: boolean;
 }
 
-export function SentenceBuilder({ sentence, onChange }: SentenceBuilderProps) {
+export function SentenceBuilder({
+  sentence,
+  onChange,
+  isShowSuggestion = true,
+}: SentenceBuilderProps) {
   const [isBulkEditing, setIsBulkEditing] = useState(true);
   const [bulkText, setBulkText] = useState("");
 
@@ -151,16 +156,18 @@ export function SentenceBuilder({ sentence, onChange }: SentenceBuilderProps) {
             )}
           </div>
 
-          <div className="flex items-center gap-2 px-2">
-            <MousePointerClick className="h-4 w-4 text-muted-foreground" />
-            <p className="text-xs text-muted-foreground">
-              Click on words to toggle them as{" "}
-              <span className="font-semibold text-orange-600 dark:text-orange-400">
-                Blanks
-              </span>{" "}
-              (items the user must type).
-            </p>
-          </div>
+          {isShowSuggestion && (
+            <div className="flex items-center gap-2 px-2">
+              <MousePointerClick className="h-4 w-4 text-muted-foreground" />
+              <p className="text-xs text-muted-foreground">
+                Click on words to toggle them as{" "}
+                <span className="font-semibold text-orange-600 dark:text-orange-400">
+                  Blanks
+                </span>{" "}
+                (items the user must type).
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

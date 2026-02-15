@@ -14,6 +14,8 @@ import {
   MatchCardAction,
   FillSentenceByTypingAction,
   FillSentenceWithChoiceAction,
+  WriteSentenceAction,
+  WriteSentenceInChatAction,
 } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -29,6 +31,7 @@ import { ReorderActionForm } from "./forms/reorder-action-form";
 import { MatchCardActionForm } from "./forms/match-card-action-form";
 import { FillSentenceByTypingActionForm } from "./forms/fill-sentence-by-typing-action-form";
 import { FillSentenceWithChoiceActionForm } from "./forms/fill-sentence-by-choice-action-form";
+import { WriteSentenceActionForm } from "./forms/write-sentence-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -143,37 +146,12 @@ export function ActionContentEditor({
 
     case ActionType.WriteSentenceInChat:
       return (
-        <div className="space-y-4">
-          {action.type === ActionType.WriteSentenceInChat && (
-            <div className="space-y-1">
-              <Label className="text-xs">Position</Label>
-              <select
-                value={action.position || "left"}
-                onChange={(e) =>
-                  updateAction({ position: e.target.value as "left" | "right" })
-                }
-                className="w-full h-8 rounded-md border bg-background px-2 text-xs"
-              >
-                <option value="left">Left</option>
-                <option value="right">Right</option>
-              </select>
-            </div>
-          )}
-          <div className="space-y-2">
-            <Label className="text-xs">
-              Sentences (comma separated variations)
-            </Label>
-            <Input
-              value={action.sentence?.join(", ") || ""}
-              onChange={(e) =>
-                updateAction({
-                  sentence: e.target.value.split(",").map((s) => s.trim()),
-                })
-              }
-              placeholder="Correct sentences..."
-            />
-          </div>
-        </div>
+        <WriteSentenceActionForm
+          action={action as WriteSentenceAction | WriteSentenceInChatAction}
+          onChange={(
+            updates: Partial<WriteSentenceAction | WriteSentenceInChatAction>,
+          ) => updateAction(updates)}
+        />
       );
 
     default:

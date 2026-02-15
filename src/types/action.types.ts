@@ -167,11 +167,13 @@ export type FillSentenceWithChoiceAction = {
 export type WriteSentenceAction = {
   type: "write_sentence";
   sentence: string[];
+  expectSentence?: string[];
 };
 
 export type WriteSentenceInChatAction = {
   type: "write_sentence_in_chat";
   sentence: string[];
+  expectSentence?: string[];
   position: "left" | "right";
 };
 
