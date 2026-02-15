@@ -163,7 +163,7 @@ export function UserTable({
                         <h3 className="font-semibold leading-none tracking-tight">
                           {user.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <p className="text-xs text-muted-foreground mt-1">
                           {formatDate(user.createdAt)}
                         </p>
                       </div>
@@ -181,7 +181,7 @@ export function UserTable({
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          className="h-8 w-8"
                           onClick={() => handleDelete(user._id)}
                         >
                           <Trash2 className="h-4 w-4" />
@@ -191,13 +191,19 @@ export function UserTable({
                   </div>
 
                   {/* Content: Details */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center justify-between py-1 border-b last:border-0">
-                      <span className="text-muted-foreground">Email</span>
-                      <span className="font-medium">{user.email}</span>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground bg-background pr-2">
+                        Email
+                      </span>
+                      <span className="font-medium truncate text-right">
+                        {user.email}
+                      </span>
                     </div>
-                    <div className="flex items-center justify-between py-1">
-                      <span className="text-muted-foreground">Role</span>
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground bg-background pr-2">
+                        Role
+                      </span>
                       <span
                         className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           user.role === "superadmin"

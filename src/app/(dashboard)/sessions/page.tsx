@@ -210,7 +210,7 @@ export default function SessionsListPage() {
                       <h3 className="font-semibold leading-none tracking-tight">
                         {session.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(session.createdAt)}
                       </p>
                     </div>
@@ -229,7 +229,7 @@ export default function SessionsListPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        className="h-8 w-8"
                         onClick={(e) => {
                           e.stopPropagation();
                           setDeletingSession(session);
@@ -241,9 +241,9 @@ export default function SessionsListPage() {
                   </div>
 
                   {/* Content Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Type
                       </span>
                       <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
@@ -252,24 +252,24 @@ export default function SessionsListPage() {
                         ] || session.type}
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         CEFR
                       </span>
                       <span className="inline-flex items-center rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
                         {session.cefrLevel}
                       </span>
                     </div>
-                    <div className="space-y-1 col-span-2">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground">
                         Session Group
                       </span>
-                      <span className="font-medium truncate block">
+                      <span className="font-medium truncate text-right max-w-[60%]">
                         {session.sessionGroupName || "—"}
                       </span>
                     </div>
-                    <div className="space-y-1 col-span-2">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground">
                         Status
                       </span>
                       <span

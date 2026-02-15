@@ -174,7 +174,7 @@ export function CourseTable({
                       <h3 className="font-semibold leading-none tracking-tight">
                         {course.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(course.createdAt)}
                       </p>
                     </div>
@@ -193,7 +193,7 @@ export function CourseTable({
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        className="h-8 w-8"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(course._id);
@@ -205,25 +205,25 @@ export function CourseTable({
                   </div>
 
                   {/* Badges Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Units
                       </span>
                       <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
                         {course.unitCount || 0}
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Price
                       </span>
-                      <span className="font-medium">
+                      <span className="font-medium text-xs">
                         {course.price.toLocaleString()} THB
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Status
                       </span>
                       <span
@@ -236,8 +236,8 @@ export function CourseTable({
                         {course.isActive ? "Active" : "Inactive"}
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Purchaseable
                       </span>
                       <span

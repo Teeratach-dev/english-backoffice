@@ -180,7 +180,7 @@ export default function UnitsListPage() {
                       <h3 className="font-semibold leading-none tracking-tight">
                         {unit.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(unit.createdAt)}
                       </p>
                     </div>
@@ -199,7 +199,7 @@ export default function UnitsListPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        className="h-8 w-8"
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(unit._id);
@@ -211,25 +211,25 @@ export default function UnitsListPage() {
                   </div>
 
                   {/* Content Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground">
                         Course
                       </span>
-                      <span className="font-medium truncate block">
+                      <span className="font-medium truncate text-right max-w-[60%]">
                         {unit.courseName || "—"}
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Topics
                       </span>
                       <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
                         {unit.topicCount}
                       </span>
                     </div>
-                    <div className="space-y-1 col-span-2">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Status
                       </span>
                       <span

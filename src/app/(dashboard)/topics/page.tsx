@@ -169,7 +169,7 @@ export default function TopicsListPage() {
                       <h3 className="font-semibold leading-none tracking-tight">
                         {topic.name}
                       </h3>
-                      <p className="text-sm text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {formatDate(topic.createdAt)}
                       </p>
                     </div>
@@ -188,7 +188,7 @@ export default function TopicsListPage() {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        className="h-8 w-8"
                         onClick={(e) => {
                           e.stopPropagation();
                           setDeletingTopic(topic);
@@ -200,25 +200,25 @@ export default function TopicsListPage() {
                   </div>
 
                   {/* Content Grid */}
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                    <div className="flex items-center justify-between gap-2 col-span-2">
+                      <span className="text-xs text-muted-foreground">
                         Unit
                       </span>
-                      <span className="font-medium truncate block">
+                      <span className="font-medium truncate text-right max-w-[60%]">
                         {topic.unitName || "—"}
                       </span>
                     </div>
-                    <div className="space-y-1">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Session Groups
                       </span>
                       <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
                         {topic.sessionGroupCount}
                       </span>
                     </div>
-                    <div className="space-y-1 col-span-2">
-                      <span className="text-xs text-muted-foreground block">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">
                         Status
                       </span>
                       <span
