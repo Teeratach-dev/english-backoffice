@@ -36,11 +36,11 @@ export function SessionPreview({ action }: SessionPreviewProps) {
               <p
                 className={cn(
                   "text-card-foreground leading-loose font-medium",
-                  action.alignment === "left"
-                    ? "text-left"
+                  action.alignment === "center"
+                    ? "text-center"
                     : action.alignment === "right"
                       ? "text-right"
-                      : "text-center",
+                      : "text-left",
                 )}
                 style={{
                   fontSize: action.size ? `${action.size}px` : undefined,
@@ -56,7 +56,8 @@ export function SessionPreview({ action }: SessionPreviewProps) {
                           word.italic && "italic",
                           word.underline &&
                             "underline decoration-orange-400 decoration-2 underline-offset-4 cursor-help",
-                          word.highlight && "bg-orange-100 px-1 rounded-sm",
+                          word.highlight &&
+                            "bg-primary text-primary-foreground px-1.5 rounded-sm shadow-sm",
                           word.translation?.length > 0 &&
                             "text-orange-600 dark:text-orange-400",
                         )}

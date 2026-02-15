@@ -225,7 +225,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
                       word.underline &&
                         "underline decoration-2 underline-offset-2",
                       word.highlight &&
-                        "bg-yellow-200 dark:bg-yellow-900/40 px-1.5",
+                        "bg-primary text-primary-foreground px-1.5",
                       selectedIndices.includes(idx)
                         ? "ring-2 ring-primary ring-offset-1 bg-primary/5 shadow-sm"
                         : "hover:bg-muted",
