@@ -129,15 +129,6 @@ export default function UnitsListPage() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <PageHeader title="Units" />
@@ -155,84 +146,90 @@ export default function UnitsListPage() {
         </Button>
       </SearchAndFilter>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead className="max-w-[200px]">Course</TableHead>
-              <TableHead>Topics</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {units.length === 0 ? (
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-96 w-full" />
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No units found.
-                </TableCell>
+                <TableHead>Name</TableHead>
+                <TableHead className="max-w-[200px]">Course</TableHead>
+                <TableHead>Topics</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ) : (
-              units.map((unit) => (
-                <TableRow
-                  key={unit._id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => {
-                    if (unit.courseId) {
-                      router.push(
-                        `/courses/${unit.courseId}/units/${unit._id}/topics`,
-                      );
-                    }
-                  }}
-                >
-                  <TableCell className="font-medium">{unit.name}</TableCell>
-                  <TableCell className="max-w-[200px] truncate">
-                    {unit.courseName || "—"}
-                  </TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-                      {unit.topicCount}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        unit.isActive
-                          ? "bg-success text-success-foreground"
-                          : "bg-error text-error-foreground"
-                      }`}
-                    >
-                      {unit.isActive ? "Active" : "Inactive"}
-                    </span>
-                  </TableCell>
-                  <TableCell>{formatDate(unit.createdAt)}</TableCell>
-                  <TableCell
-                    className="text-right space-x-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(unit)}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(unit._id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+            </TableHeader>
+            <TableBody>
+              {units.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    No units found.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                units.map((unit) => (
+                  <TableRow
+                    key={unit._id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => {
+                      if (unit.courseId) {
+                        router.push(
+                          `/courses/${unit.courseId}/units/${unit._id}/topics`,
+                        );
+                      }
+                    }}
+                  >
+                    <TableCell className="font-medium">{unit.name}</TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      {unit.courseName || "—"}
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                        {unit.topicCount}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          unit.isActive
+                            ? "bg-success text-success-foreground"
+                            : "bg-error text-error-foreground"
+                        }`}
+                      >
+                        {unit.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </TableCell>
+                    <TableCell>{formatDate(unit.createdAt)}</TableCell>
+                    <TableCell
+                      className="text-right space-x-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(unit)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(unit._id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

@@ -167,15 +167,6 @@ export default function SessionTemplatesPage() {
     }));
   };
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <PageHeader title="Session Templates" />
@@ -194,89 +185,97 @@ export default function SessionTemplatesPage() {
         </Button>
       </SearchAndFilter>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Screens</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {templates.length === 0 ? (
+      {loading ? (
+        <div className="space-y-4">
+          <Skeleton className="h-96 w-full" />
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
-                  No templates found.
-                </TableCell>
+                <TableHead>Name</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Screens</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Created At</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
-            ) : (
-              templates.map((template: Template) => (
-                <TableRow key={template._id}>
-                  <TableCell className="font-medium">{template.name}</TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
-                      {SESSION_TYPE_LABELS[
-                        template.type as keyof typeof SESSION_TYPE_LABELS
-                      ] || template.type}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-                      {template.screens?.length || 0}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <button
-                      onClick={() =>
-                        handleToggleStatus(template._id, template.isActive)
-                      }
-                      className={cn(
-                        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                        template.isActive
-                          ? "bg-success text-success-foreground hover:bg-success/80"
-                          : "bg-error text-error-foreground hover:bg-error/80",
-                      )}
-                    >
-                      {template.isActive ? (
-                        <>
-                          <CheckCircle2 className="mr-1 h-3 w-3" /> Active
-                        </>
-                      ) : (
-                        <>
-                          <XCircle className="mr-1 h-3 w-3" /> Inactive
-                        </>
-                      )}
-                    </button>
-                  </TableCell>
-                  <TableCell>{formatDate(template.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEdit(template)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(template._id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+            </TableHeader>
+            <TableBody>
+              {templates.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-24 text-center">
+                    No templates found.
                   </TableCell>
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                templates.map((template: Template) => (
+                  <TableRow key={template._id}>
+                    <TableCell className="font-medium">
+                      {template.name}
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
+                        {SESSION_TYPE_LABELS[
+                          template.type as keyof typeof SESSION_TYPE_LABELS
+                        ] || template.type}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                        {template.screens?.length || 0}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <button
+                        onClick={() =>
+                          handleToggleStatus(template._id, template.isActive)
+                        }
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                          template.isActive
+                            ? "bg-success text-success-foreground hover:bg-success/80"
+                            : "bg-error text-error-foreground hover:bg-error/80",
+                        )}
+                      >
+                        {template.isActive ? (
+                          <>
+                            <CheckCircle2 className="mr-1 h-3 w-3" /> Active
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="mr-1 h-3 w-3" /> Inactive
+                          </>
+                        )}
+                      </button>
+                    </TableCell>
+                    <TableCell>{formatDate(template.createdAt)}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEdit(template)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(template._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
 
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent className="max-w-md">

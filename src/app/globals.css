@@ -44,16 +44,53 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+}
 
-  --animate-sweep: sweep 2s infinite linear;
-
-  @keyframes sweep {
-    from {
-      transform: translateX(-100%);
-    }
-    to {
+@layer utilities {
+  @keyframes shimmer {
+    100% {
       transform: translateX(100%);
     }
+  }
+
+  /* Define shimmer gradient variables */
+  :root {
+    --shimmer-gradient: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(0, 0, 0, 0.05) 20%,
+      rgba(0, 0, 0, 0.08) 50%,
+      rgba(0, 0, 0, 0.05) 80%,
+      transparent 100%
+    );
+  }
+
+  .dark {
+    --shimmer-gradient: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.02) 20%,
+      rgba(255, 255, 255, 0.05) 45%,
+      rgba(255, 255, 255, 0.02) 80%,
+      transparent 100%
+    );
+  }
+
+  .shimmer-overlay {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .shimmer-overlay::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: var(--shimmer-gradient);
+    animation: shimmer 1s infinite linear;
+    content: "";
   }
 }
 
