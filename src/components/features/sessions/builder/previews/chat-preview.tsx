@@ -70,7 +70,7 @@ function BackgroundDecor() {
 function ChatAvatar({ sender }: { sender?: ChatAction["sender"] }) {
   return (
     <div className="shrink-0 flex flex-col items-center self-end">
-      <div className="h-10 w-10 rounded-2xl bg-linear-to-br from-indigo-500 to-primary overflow-hidden flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-background ring-2 ring-muted/20">
+      <div className="h-10 w-10 rounded-4xl bg-linear-to-br from-indigo-500 to-primary overflow-hidden flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-background ring-2 ring-muted/20">
         {sender?.imageUrl ? (
           <img
             src={sender.imageUrl}
@@ -111,7 +111,7 @@ function ChatBubble({
   isAudioOnly: boolean;
 }) {
   return (
-    <div className="flex flex-1 relative">
+    <div className="flex relative self-end">
       <div
         className={cn(
           "rounded-2xl p-4 text-sm shadow-xs transition-all duration-300 relative min-w-30",
@@ -177,7 +177,7 @@ function SideControls({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5 shrink-0 self-end pb-1",
+        "flex flex-col gap-1 shrink-0 self-end pb-1",
         position === "right" ? "items-end" : "items-start",
       )}
     >
