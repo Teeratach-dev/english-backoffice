@@ -62,7 +62,11 @@ export const ImageActionSchema = BaseActionSchema.extend({
 export const ColumnActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.Column),
   actions: z.array(
-    z.union([ImageActionSchema, ReadingActionSchema, AudioActionSchema]),
+    z.union([
+      ImageActionSchema.omit({ sequence: true, id: true }),
+      ReadingActionSchema.omit({ sequence: true, id: true }),
+      AudioActionSchema.omit({ sequence: true, id: true }),
+    ]),
   ),
 });
 
