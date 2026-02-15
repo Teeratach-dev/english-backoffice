@@ -82,7 +82,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
     onChange(newWords);
   }
 
-  function handleBulkSave() {
+  function handleBulkSave(shouldClose: boolean = true) {
     const newWords = bulkText
       .split(/\s+/)
       .filter((t) => t !== "")
@@ -96,8 +96,10 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
         };
       });
     onChange(newWords);
-    setIsBulkEditing(false);
-    setSelectedIndices([]);
+    if (shouldClose) {
+      setIsBulkEditing(false);
+      setSelectedIndices([]);
+    }
   }
 
   function updateTranslation(index: number, translationStr: string) {
@@ -184,6 +186,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
             className="flex min-h-30 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
+            onBlur={() => handleBulkSave(false)}
             placeholder="Type or paste your text here..."
           />
           <div className="flex justify-end gap-2">
@@ -194,7 +197,7 @@ export function RichWordEditor({ words, onChange }: RichWordEditorProps) {
             >
               Cancel
             </Button>
-            <Button size="sm" onClick={handleBulkSave}>
+            <Button size="sm" onClick={() => handleBulkSave(true)}>
               Apply Text Changes
             </Button>
           </div>

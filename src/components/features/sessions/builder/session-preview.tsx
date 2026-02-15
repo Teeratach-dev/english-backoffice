@@ -46,12 +46,12 @@ export function SessionPreview({ action }: SessionPreviewProps) {
                   fontSize: action.size ? `${action.size}px` : undefined,
                 }}
               >
-                {action.text
+                {action.text && action.text.length > 0
                   ? action.text.map((word: any, i: number) => (
                       <span
                         key={i}
                         className={cn(
-                          "inline-block mx-0.5 transition-all duration-200",
+                          "inline-block mx-0.5 transition-all duration-200 relative group",
                           word.bold && "font-bold",
                           word.italic && "italic",
                           word.underline &&
@@ -64,14 +64,14 @@ export function SessionPreview({ action }: SessionPreviewProps) {
                       >
                         {word.text}
                         {word.translation?.length > 0 && (
-                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap z-10 animate-in fade-in zoom-in duration-200 opacity-0 group-hover:opacity-100 pointer-events-none">
+                          <span className="absolute left-1/2 -translate-x-1/2 bottom-full mb-3 bg-orange-500 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-xl whitespace-nowrap z-10 hidden group-hover:block animate-in fade-in zoom-in duration-200 pointer-events-none">
                             {word.translation[0]}
                             <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-500 rotate-45 rounded-sm"></div>
                           </span>
                         )}
                       </span>
                     ))
-                  : ""}
+                  : "No text content"}
               </p>
             </div>
             {action.explanation && (

@@ -1,9 +1,6 @@
 import { z } from "zod";
-import {
-  SESSION_TYPES,
-  CEFR_LEVELS,
-  ACTION_TYPE_VALUES,
-} from "@/types/action.types";
+import { SESSION_TYPES, CEFR_LEVELS } from "@/types/action.types";
+import { ActionZodSchema } from "@/schemas/action.schema";
 
 export const SessionDetailZodSchema = z.object({
   sessionGroupId: z.string().min(1),
@@ -16,13 +13,7 @@ export const SessionDetailZodSchema = z.object({
         id: z.string().optional(),
         sequence: z.number(),
         templateId: z.string().optional(),
-        actions: z.array(
-          z.object({
-            id: z.string().optional(),
-            type: z.enum(ACTION_TYPE_VALUES as [string, ...string[]]),
-            sequence: z.number(),
-          }),
-        ),
+        actions: z.array(ActionZodSchema),
       }),
     )
     .default([]),

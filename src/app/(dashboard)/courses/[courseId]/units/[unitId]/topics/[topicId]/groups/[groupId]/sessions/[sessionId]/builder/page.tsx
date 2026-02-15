@@ -92,8 +92,7 @@ export default function SessionBuilderPage({
           sequence: sIdx,
           actions: (s.actions || []).map((a: any, aIdx: number) => ({
             id: `act-${sIdx}-${aIdx}-${Date.now()}`,
-            type: a.type,
-            ...a.content,
+            ...a,
             sequence: aIdx,
           })),
         }),
@@ -120,8 +119,7 @@ export default function SessionBuilderPage({
           actions: s.actions.map((a, aIdx) => {
             const { id, sequence, ...actionData } = a;
             return {
-              type: a.type,
-              content: actionData,
+              ...actionData,
               sequence: aIdx,
             };
           }),
