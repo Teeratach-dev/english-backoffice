@@ -50,6 +50,7 @@ interface SortableActionItemProps {
   onEdit: () => void;
   onDelete: () => void;
   index: number;
+  showPreview: boolean;
 }
 
 export function SortableActionItem({
@@ -58,8 +59,14 @@ export function SortableActionItem({
   onEdit,
   onDelete,
   index,
+  showPreview,
 }: SortableActionItemProps) {
-  const [showPreview, setShowPreview] = useState(true);
+  const [internalShowPreview, setInternalShowPreview] = useState(showPreview);
+
+  React.useEffect(() => {
+    setInternalShowPreview(showPreview);
+  }, [showPreview]);
+
   const {
     attributes,
     listeners,
@@ -81,20 +88,21 @@ export function SortableActionItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group/action relative flex flex-col gap-3 p-4 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
+        "group/action relative flex flex-col gap-3 p-4 pt-6 mt-3 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
         isEditing ? "ring-2 ring-primary shadow-2xl" : "",
       )}
       onClick={onEdit}
     >
+      <div
+        {...attributes}
+        {...listeners}
+        className="absolute left-1/2 -top-3 -translate-x-1/2 cursor-grab opacity-0 group-hover/action:opacity-100 transition-opacity p-1 z-10 bg-background border rounded-md shadow-sm hover:ring-2 hover:ring-primary/20"
+      >
+        <GripHorizontal className="h-4 w-4 text-muted-foreground" />
+      </div>
+
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div
-            {...attributes}
-            {...listeners}
-            className="cursor-grab p-1 hover:bg-muted rounded transition-colors group-hover/action:text-primary"
-          >
-            <GripHorizontal className="h-4 w-4 text-muted-foreground/50" />
-          </div>
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
               {ACTION_ICONS[action.type as ActionType]}
@@ -114,17 +122,17 @@ export function SortableActionItem({
             size="icon"
             className={cn(
               "h-8 w-8 transition-colors",
-              showPreview
+              internalShowPreview
                 ? "text-primary hover:bg-primary/10"
                 : "text-muted-foreground hover:bg-muted",
             )}
             onClick={(e) => {
               e.stopPropagation();
-              setShowPreview(!showPreview);
+              setInternalShowPreview(!internalShowPreview);
             }}
-            title={showPreview ? "Hide Preview" : "Show Preview"}
+            title={internalShowPreview ? "Hide Preview" : "Show Preview"}
           >
-            {showPreview ? (
+            {internalShowPreview ? (
               <Eye className="h-4 w-4" />
             ) : (
               <EyeOff className="h-4 w-4" />
@@ -144,7 +152,7 @@ export function SortableActionItem({
         </div>
       </div>
 
-      {showPreview && (
+      {internalShowPreview && (
         <div className="rounded-lg overflow-hidden border border-muted/20 animate-in fade-in slide-in-from-top-1 duration-200">
           <SessionPreview action={action} />
         </div>

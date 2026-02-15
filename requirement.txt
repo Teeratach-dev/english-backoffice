@@ -277,10 +277,3 @@ Course
     }
 
 
-
-
-----
-
-ตอนแก้ไข action form explain ในส่วนของ content text
-
-อยากให้เขียนแบบ richtext eidtor ได้

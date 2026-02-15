@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -64,6 +64,7 @@ export default function SessionBuilderPage({
   const [templateName, setTemplateName] = useState("");
   const [availableTemplates, setAvailableTemplates] = useState<any[]>([]);
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(true);
   const [sessionForm, setSessionForm] = useState({
     name: "",
     type: "reading",
@@ -485,6 +486,19 @@ export default function SessionBuilderPage({
         <div className="flex items-center mt-6 mb-4">
           <h2 className="text-xl font-semibold">Screens</h2>
           <div className="ml-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              className="mr-2"
+              onClick={() => setShowPreview(!showPreview)}
+            >
+              {showPreview ? (
+                <Eye className="mr-2 h-4 w-4" />
+              ) : (
+                <EyeOff className="mr-2 h-4 w-4" />
+              )}
+              {showPreview ? "Preview On" : "Preview Off"}
+            </Button>
             <Button onClick={addScreen} size="sm">
               <Plus className="mr-2 h-4 w-4" /> Add Screen
             </Button>
@@ -517,6 +531,7 @@ export default function SessionBuilderPage({
                     reorderActions(screen.id, activeId, overId)
                   }
                   onUpdateAction={updateActionContent}
+                  showPreview={showPreview}
                 />
               ))}
             </SortableContext>
