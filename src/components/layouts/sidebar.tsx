@@ -14,7 +14,6 @@ import {
   ListChecks,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { UserProfileButton } from "@/components/layouts/user-profile-button";
 
 // Helper to check if a segment exists AND is followed by another segment (path continues deeper)
 const isRecursiveSegment = (pathname: string, segment: string) => {
@@ -121,7 +120,6 @@ export function Sidebar({ className }: { className?: string }) {
           </div>
         </div>
       </div>
-      <UserProfileButton />
     </div>
   );
 }
