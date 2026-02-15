@@ -234,7 +234,7 @@ Course
 
     export type ReorderAction = {
       type: 'reorder'
-      items: items: { 
+      items: { 
         text: Word, 
         sequence: number 
       }[]
@@ -242,7 +242,7 @@ Course
 
     export type MatchCardAction = {
       type: 'match_card'
-      items: items: {
+      items: {
         left: { text?: string, audioUrl?: string },
         right: { text?: string, audioUrl?: string }
       }[]
@@ -259,21 +259,54 @@ Course
     export type FillSentenceWithChoice = {
       type: 'fill_sentence_with_choice'
       sentence: {
-        text: string,
+        text: Word,
         isBlank: bool,
-        choice?: Word[]
+        inSentence: bool,
       }[]
     }
 
     export type WriteSentence = {
       type: 'write_sentence'
       sentence: string[]
+      expectSentence: string[]
     }
 
     export type WriteSentenceInChat = {
       type: 'write_sentence_in_chat'
       sentence: string[]
+      expectSentence: string[]
       position: 'left' | 'right'
     }
 
 
+---
+
+จาก @schema_type_reference.txt
+
+สร้าง fill-sentence-by-choice-action-form ไว้ใน @src/components/features/sessions/builder/forms 
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/action-content-editor.tsx 
+
+สร้าง fill-sentence-by-choice-preview ไว้ใน @src/components/features/sessions/builder/previews
+อ้างอิงหน้าตาเหมือนใน @src/components/features/sessions/builder/action-type-selector.tsx#L35-387
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/session-preview.tsx 
+
+
+
+จาก @schema_type_reference.txt
+
+สร้าง write-sentence-action-form ไว้ใน @src/components/features/sessions/builder/forms 
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/action-content-editor.tsx 
+
+สร้าง write-sentence-preview ไว้ใน @src/components/features/sessions/builder/previews
+อ้างอิงหน้าตาเหมือนใน @src/components/features/sessions/builder/action-type-selector.tsx#L35-387
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/session-preview.tsx 
+
+
+จาก @schema_type_reference.txt
+
+สร้าง write-sentence-in-chat-action-form ไว้ใน @src/components/features/sessions/builder/forms 
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/action-content-editor.tsx 
+
+สร้าง write-sentence-in-chat-preview ไว้ใน @src/components/features/sessions/builder/previews
+อ้างอิงหน้าตาเหมือนใน @src/components/features/sessions/builder/action-type-selector.tsx#L35-387
+แล้วเรียกใช้ใน @src/components/features/sessions/builder/session-preview.tsx 
