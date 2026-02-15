@@ -191,21 +191,19 @@ export default function UnitsPage({
               rows={3}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="course-price">Price</Label>
-              <Input
-                id="course-price"
-                type="number"
-                value={courseForm.price}
-                onChange={(e) =>
-                  setCourseForm({
-                    ...courseForm,
-                    price: Number(e.target.value),
-                  })
-                }
-              />
-            </div>
+          <div className="grid gap-2">
+            <Label htmlFor="course-price">Price</Label>
+            <Input
+              id="course-price"
+              type="number"
+              value={courseForm.price}
+              onChange={(e) =>
+                setCourseForm({
+                  ...courseForm,
+                  price: Number(e.target.value),
+                })
+              }
+            />
           </div>
           <div className="flex flex-wrap gap-6 mt-2">
             <div className="flex items-center space-x-2">

@@ -158,7 +158,7 @@ export default function SessionsPage({
     );
   }
 
-  http: return (
+  return (
     <div className="pb-20 space-y-6">
       <PageHeader title="Session Group" />
       <Breadcrumb
