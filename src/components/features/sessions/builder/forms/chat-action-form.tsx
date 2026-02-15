@@ -76,11 +76,17 @@ export function ChatActionForm({ action, onChange }: ChatActionFormProps) {
             className="w-full"
           >
             <TabsList className="grid w-full grid-cols-2 h-8 p-1 bg-muted/50">
-              <TabsTrigger value="left" className="text-[10px] h-6 flex gap-2">
+              <TabsTrigger
+                value="left"
+                className="text-[10px] h-6 flex gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-colors hover:bg-orange-500/10 hover:text-orange-500 cursor-pointer"
+              >
                 <AlignLeft className="h-3.5 w-3.5" />
                 Left
               </TabsTrigger>
-              <TabsTrigger value="right" className="text-[10px] h-6 flex gap-2">
+              <TabsTrigger
+                value="right"
+                className="text-[10px] h-6 flex gap-2 data-[state=active]:bg-orange-500 data-[state=active]:text-white transition-colors hover:bg-orange-500/10 hover:text-orange-500 cursor-pointer"
+              >
                 Right
                 <AlignRight className="h-3.5 w-3.5" />
               </TabsTrigger>
