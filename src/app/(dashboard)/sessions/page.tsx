@@ -260,15 +260,15 @@ export default function SessionsListPage() {
                         {session.cefrLevel}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between gap-2 col-span-2">
-                      <span className="text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground pr-2">
                         Session Group
                       </span>
-                      <span className="font-medium truncate text-right max-w-[60%]">
+                      <span className="font-medium truncate text-right">
                         {session.sessionGroupName || "—"}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between gap-2 col-span-2">
+                    <div className="flex items-center justify-between gap-2">
                       <span className="text-xs text-muted-foreground">
                         Status
                       </span>

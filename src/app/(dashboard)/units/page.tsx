@@ -212,11 +212,11 @@ export default function UnitsListPage() {
 
                   {/* Content Grid */}
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div className="flex items-center justify-between gap-2 col-span-2">
-                      <span className="text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground pr-2">
                         Course
                       </span>
-                      <span className="font-medium truncate text-right max-w-[60%]">
+                      <span className="font-medium truncate text-right">
                         {unit.courseName || "—"}
                       </span>
                     </div>
