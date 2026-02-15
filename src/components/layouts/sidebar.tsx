@@ -86,9 +86,38 @@ const sidebarItems = [
   },
 ];
 
-export function Sidebar({ className }: { className?: string }) {
+export function SidebarRoutes() {
   const pathname = usePathname();
 
+  return (
+    <div className="flex flex-col w-full">
+      <div className="px-3 py-2">
+        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+          English Backoffice
+        </h2>
+        <div className="space-y-1">
+          {sidebarItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                buttonVariants({
+                  variant: item.isActive(pathname) ? "secondary" : "ghost",
+                }),
+                "w-full justify-start",
+              )}
+            >
+              <item.icon className="mr-2 h-4 w-4" />
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Sidebar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
@@ -97,28 +126,7 @@ export function Sidebar({ className }: { className?: string }) {
       )}
     >
       <div className="space-y-4 py-4 flex-1">
-        <div className="px-3 py-2">
-          <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
-            English Backoffice
-          </h2>
-          <div className="space-y-1">
-            {sidebarItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  buttonVariants({
-                    variant: item.isActive(pathname) ? "secondary" : "ghost",
-                  }),
-                  "w-full justify-start",
-                )}
-              >
-                <item.icon className="mr-2 h-4 w-4" />
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </div>
+        <SidebarRoutes />
       </div>
     </div>
   );

@@ -110,7 +110,7 @@ export function SearchAndFilter({
 
   return (
     <div className="flex flex-wrap items-center gap-4">
-      <div className="relative flex-1 min-w-[300px] max-w-lg">
+      <div className="relative flex-1 min-w-45 max-w-lg">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder={placeholder}
