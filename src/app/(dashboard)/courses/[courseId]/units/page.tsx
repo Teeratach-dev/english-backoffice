@@ -16,6 +16,8 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
+import { PageHeader } from "@/components/layouts/page-header";
+
 export default function UnitsPage({
   params,
 }: {
@@ -91,30 +93,13 @@ export default function UnitsPage({
 
   return (
     <div className="space-y-6">
+      <PageHeader title={course ? `Units: ${course.name}` : "Units"} />
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
           { label: `Units: ${course?.name || ""}`, href: "#" },
         ]}
       />
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href="/courses">
-            <ChevronLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Units: {course?.name}
-          </h1>
-          <p className="text-muted-foreground">
-            Manage lessons and order for this course.
-          </p>
-        </div>
-        <Button className="ml-auto" onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" /> Add Unit
-        </Button>
-      </div>
 
       <UnitSortableList
         courseId={courseId}
@@ -122,6 +107,11 @@ export default function UnitsPage({
         onReorder={(newItems) => setUnits(newItems)}
         onEdit={handleEdit}
         onDelete={handleDelete}
+        addButton={
+          <Button onClick={handleAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add Unit
+          </Button>
+        }
       />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

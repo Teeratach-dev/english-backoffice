@@ -15,6 +15,13 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/layouts/page-header";
 
 export default function SessionGroupsPage({
   params,
@@ -22,9 +29,16 @@ export default function SessionGroupsPage({
   params: Promise<{ courseId: string; unitId: string; topicId: string }>;
 }) {
   const { courseId, unitId, topicId } = use(params);
+  const router = useRouter();
   const [groups, setGroups] = useState<any[]>([]);
   const [topic, setTopic] = useState<any>(null);
+  const [topicForm, setTopicForm] = useState({
+    name: "",
+    description: "",
+    isActive: true,
+  });
   const [loading, setLoading] = useState(true);
+  const [savingTopic, setSavingTopic] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
 
@@ -46,10 +60,54 @@ export default function SessionGroupsPage({
 
       setGroups(groupsData);
       setTopic(topicData);
+      setTopicForm({
+        name: topicData.name || "",
+        description: topicData.description || "",
+        isActive: topicData.isActive ?? true,
+      });
     } catch (error) {
       toast.error("Error loading data");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleSaveTopic() {
+    setSavingTopic(true);
+    try {
+      const res = await fetch(`/api/topics/${topicId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(topicForm),
+      });
+
+      if (!res.ok) throw new Error("Failed to save topic");
+
+      toast.success("Topic updated successfully");
+      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+    } catch (error) {
+      toast.error("Error saving topic");
+    } finally {
+      setSavingTopic(false);
+    }
+  }
+
+  async function handleDeleteTopic() {
+    if (
+      !confirm(
+        "Are you sure you want to delete this topic? This will also delete all session groups within it.",
+      )
+    )
+      return;
+
+    try {
+      const res = await fetch(`/api/topics/${topicId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete topic");
+
+      toast.success("Topic deleted successfully");
+      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+    } catch (error) {
+      toast.error("Error deleting topic");
     }
   }
 
@@ -92,7 +150,8 @@ export default function SessionGroupsPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="pb-20 space-y-6">
+      <PageHeader title={topic ? `Groups: ${topic.name}` : "Groups"} />
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
@@ -101,37 +160,102 @@ export default function SessionGroupsPage({
             label: "Topics",
             href: `/courses/${courseId}/units/${unitId}/topics`,
           },
-          { label: `Groups: ${topic?.name || ""}`, href: "#" },
+          {
+            label: `Groups: ${topicForm.name || topic?.name || ""}`,
+            href: "#",
+          },
         ]}
       />
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link href={`/courses/${courseId}/units/${unitId}/topics`}>
-            <ChevronLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Session Groups: {topic?.name}
-          </h1>
-          <p className="text-muted-foreground">
-            Manage session groups for this topic.
-          </p>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Topic Details</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-2">
+            <Label htmlFor="topic-name">Topic Name</Label>
+            <Input
+              id="topic-name"
+              value={topicForm.name}
+              onChange={(e) =>
+                setTopicForm({ ...topicForm, name: e.target.value })
+              }
+              placeholder="Enter topic name"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="topic-desc">Description</Label>
+            <Textarea
+              id="topic-desc"
+              value={topicForm.description}
+              onChange={(e) =>
+                setTopicForm({ ...topicForm, description: e.target.value })
+              }
+              placeholder="Enter topic description"
+              rows={3}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="topic-active"
+              checked={topicForm.isActive}
+              onCheckedChange={(checked) =>
+                setTopicForm({ ...topicForm, isActive: checked })
+              }
+            />
+            <Label htmlFor="topic-active">Active Status</Label>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="pt-4 border-t">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Session Groups</h2>
+          <Button onClick={handleAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add Group
+          </Button>
         </div>
-        <Button className="ml-auto" onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" /> Add Group
-        </Button>
+
+        <SessionGroupSortableList
+          courseId={courseId}
+          unitId={unitId}
+          topicId={topicId}
+          groups={groups}
+          onReorder={(newItems) => setGroups(newItems)}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       </div>
 
-      <SessionGroupSortableList
-        courseId={courseId}
-        unitId={unitId}
-        topicId={topicId}
-        groups={groups}
-        onReorder={(newItems) => setGroups(newItems)}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-      />
+      {/* Sticky Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-10 border-t bg-background/80 backdrop-blur-md">
+        <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
+          <Button
+            variant="destructive"
+            onClick={handleDeleteTopic}
+            className="gap-2"
+          >
+            Delete Topic
+          </Button>
+          <div className="flex gap-4">
+            <Button
+              variant="outline"
+              onClick={() =>
+                router.push(`/courses/${courseId}/units/${unitId}/topics`)
+              }
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSaveTopic}
+              disabled={savingTopic}
+              className="min-w-[100px]"
+            >
+              {savingTopic ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </div>
+      </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

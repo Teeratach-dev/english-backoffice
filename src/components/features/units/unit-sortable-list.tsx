@@ -27,6 +27,7 @@ interface UnitSortableListProps {
   onReorder: (newUnits: LocalUnit[]) => void;
   onEdit: (unit: LocalUnit) => void;
   onDelete: (id: string) => void;
+  addButton?: React.ReactNode;
 }
 
 export function UnitSortableList({
@@ -35,6 +36,7 @@ export function UnitSortableList({
   onReorder,
   onEdit,
   onDelete,
+  addButton,
 }: UnitSortableListProps) {
   const [items, setItems] = useState<LocalUnit[]>(units);
   const [statusFilter, setStatusFilter] = useState("all");
@@ -89,16 +91,17 @@ export function UnitSortableList({
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center gap-4">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
+        {addButton && <div className="ml-auto">{addButton}</div>}
       </div>
 
       <DndContext

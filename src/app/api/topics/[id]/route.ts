@@ -15,6 +15,26 @@ async function getUserIdFromRequest(req: NextRequest) {
   }
 }
 
+export async function GET(
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
+) {
+  const { params } = context;
+  try {
+    const { id } = await params;
+    const topic = await topicService.getTopicById(id);
+    if (!topic) {
+      return NextResponse.json({ message: "Topic not found" }, { status: 404 });
+    }
+    return NextResponse.json(topic);
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PUT(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
