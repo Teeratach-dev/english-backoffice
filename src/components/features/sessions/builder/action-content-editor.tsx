@@ -13,6 +13,7 @@ import {
   ReorderAction,
   MatchCardAction,
   FillSentenceByTypingAction,
+  FillSentenceWithChoiceAction,
 } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,6 +32,7 @@ import { ChoiceActionForm } from "./forms/choice-action-form";
 import { ReorderActionForm } from "./forms/reorder-action-form";
 import { MatchCardActionForm } from "./forms/match-card-action-form";
 import { FillSentenceByTypingActionForm } from "./forms/fill-sentence-by-typing-action-form";
+import { FillSentenceWithChoiceActionForm } from "./forms/fill-sentence-by-choice-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -169,93 +171,12 @@ export function ActionContentEditor({
 
     case ActionType.FillSentenceWithChoice:
       return (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs uppercase font-bold text-muted-foreground">
-              Sentence Segments
-            </Label>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                updateAction({
-                  sentence: [
-                    ...(action.sentence || []),
-                    { text: "", isBlank: false },
-                  ],
-                })
-              }
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add Segment
-            </Button>
-          </div>
-          {action.sentence?.map((seg: any, idx: number) => (
-            <div key={idx} className="space-y-2 bg-muted/20 p-2 rounded">
-              <div className="flex items-center gap-3">
-                <Input
-                  value={seg.text}
-                  onChange={(e) => {
-                    const sentence = [...action.sentence];
-                    sentence[idx].text = e.target.value;
-                    updateAction({ sentence });
-                  }}
-                  className="flex-1"
-                  placeholder="Segment text"
-                />
-                <div className="flex items-center space-x-2 bg-background border rounded px-2 h-10 whitespace-nowrap">
-                  <Switch
-                    checked={seg.isBlank}
-                    onCheckedChange={(c) => {
-                      const sentence = [...action.sentence];
-                      sentence[idx].isBlank = c;
-                      updateAction({ sentence });
-                    }}
-                  />
-                  <Label className="text-xs font-normal">Blank</Label>
-                </div>
-                <Button
-                  size="icon"
-                  variant="ghost"
-                  className=""
-                  onClick={() => {
-                    const sentence = action.sentence.filter(
-                      (_: any, i: number) => i !== idx,
-                    );
-                    updateAction({ sentence });
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
-              {seg.isBlank &&
-                action.type === ActionType.FillSentenceWithChoice && (
-                  <div className="pl-4 border-l-2 ml-2">
-                    <Label className="text-[10px] mb-1 block">
-                      Choices for this blank (comma separated)
-                    </Label>
-                    <Input
-                      value={
-                        seg.choice?.map((w: any) => w.text).join(", ") || ""
-                      }
-                      onChange={(e) => {
-                        const sentence = [...action.sentence];
-                        sentence[idx].choice = e.target.value
-                          .split(",")
-                          .map((t) => ({
-                            text: t.trim(),
-                            translation: [],
-                            isBlank: false,
-                          }));
-                        updateAction({ sentence });
-                      }}
-                      placeholder="Choice A, Choice B..."
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                )}
-            </div>
-          ))}
-        </div>
+        <FillSentenceWithChoiceActionForm
+          action={action as FillSentenceWithChoiceAction}
+          onChange={(updates: Partial<FillSentenceWithChoiceAction>) =>
+            updateAction(updates)
+          }
+        />
       );
 
     default:

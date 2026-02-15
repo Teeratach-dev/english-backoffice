@@ -158,9 +158,9 @@ export type FillSentenceByTypingAction = {
 export type FillSentenceWithChoiceAction = {
   type: "fill_sentence_with_choice";
   sentence: {
-    text: string;
+    text: Word;
     isBlank: boolean;
-    choice?: Word[];
+    inSentence: boolean;
   }[];
 };
 
