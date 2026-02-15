@@ -126,7 +126,7 @@ export default function TopicsListPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search topics or unit name..."
+        placeholder="Search topics..."
         filters={FILTER_CONFIG}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

@@ -167,7 +167,7 @@ export default function SessionsListPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search sessions or group name..."
+        placeholder="Search session details..."
         filters={SESSION_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

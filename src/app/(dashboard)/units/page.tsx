@@ -145,7 +145,7 @@ export default function UnitsListPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search units or course name..."
+        placeholder="Search units..."
         filters={UNIT_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

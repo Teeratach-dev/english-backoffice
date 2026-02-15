@@ -123,7 +123,10 @@ export function SearchAndFilter({
       {filters.length > 0 && (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="gap-2 border-dashed">
+            <Button
+              variant="outline"
+              className="gap-2 border-dashed focus:border-solid focus:ring-2 focus:ring-ring focus:ring-offset-0 data-[state=open]:border-solid data-[state=open]:ring-2 data-[state=open]:ring-ring data-[state=open]:ring-offset-0"
+            >
               <ListFilter className="h-4 w-4" />
               Filters
               {getActiveFilterCount() > 0 && (
@@ -172,7 +175,7 @@ export function SearchAndFilter({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="h-auto rounded-full border px-3 py-1.5 text-xs bg-primary hover:bg-primary/80"
+                      className="h-auto rounded-full border px-3 py-1.5 text-xs text-primary-foreground bg-primary hover:bg-primary/80"
                       onClick={() => {
                         filters.forEach((f) => onFilterChange?.(f.key, []));
                       }}

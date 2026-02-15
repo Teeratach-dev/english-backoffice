@@ -131,7 +131,7 @@ export default function SessionGroupsListPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search groups or topic name..."
+        placeholder="Search session groups..."
         filters={SESSION_GROUP_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

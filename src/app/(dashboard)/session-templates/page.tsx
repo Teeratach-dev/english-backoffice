@@ -184,7 +184,7 @@ export default function SessionTemplatesPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search templates..."
+        placeholder="Search session templates..."
         filters={TEMPLATE_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}
@@ -225,10 +225,9 @@ export default function SessionTemplatesPage() {
                     </span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center">
-                      <Layout className="mr-2 h-4 w-4" />
-                      {template.screens?.length || 0} Screens
-                    </div>
+                    <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                      {template.screens?.length || 0}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <button

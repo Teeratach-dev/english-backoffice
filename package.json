@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "seed": "npx tsx --env-file=.env seed.ts",
     "lint": "eslint"
   },
   "dependencies": {
