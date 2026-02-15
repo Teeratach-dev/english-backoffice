@@ -18,6 +18,7 @@ import {
   SearchAndFilter,
   FilterGroup,
 } from "@/components/common/search-and-filter";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface UserData {
   _id: string;
@@ -56,6 +57,9 @@ export function UserTable({
     {},
   );
   const [search, setSearch] = useState("");
+  const isCardView = useMediaQuery(
+    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
+  );
 
   const isSuperadmin = currentUserRole === "superadmin";
 
@@ -134,75 +138,158 @@ export function UserTable({
         {addButton}
       </SearchAndFilter>
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Joined At</TableHead>
-              {isSuperadmin && (
-                <TableHead className="text-right">Actions</TableHead>
-              )}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredUsers.length === 0 ? (
+      {isCardView ? (
+        <div className="space-y-4">
+          {filteredUsers.length === 0 ? (
+            <div className="text-center p-8 border rounded-md text-muted-foreground">
+              No users found.
+            </div>
+          ) : (
+            filteredUsers.map((user) => (
+              <div
+                key={user._id}
+                className="rounded-lg border bg-card text-card-foreground shadow-sm"
+              >
+                <div className="p-4 space-y-4">
+                  {/* Header: User Info & Actions */}
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
+                        <span className="text-sm font-medium uppercase">
+                          {user.name.slice(0, 2)}
+                        </span>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold leading-none tracking-tight">
+                          {user.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {formatDate(user.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                    {isSuperadmin && (
+                      <div className="flex items-center">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8"
+                          onClick={() => onEdit?.(user)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          onClick={() => handleDelete(user._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Content: Details */}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center justify-between py-1 border-b last:border-0">
+                      <span className="text-muted-foreground">Email</span>
+                      <span className="font-medium">{user.email}</span>
+                    </div>
+                    <div className="flex items-center justify-between py-1">
+                      <span className="text-muted-foreground">Role</span>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          user.role === "superadmin"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary text-secondary-foreground"
+                        }`}
+                      >
+                        {user.role === "superadmin" ? (
+                          <Shield className="mr-1 h-3 w-3" />
+                        ) : (
+                          <UserIcon className="mr-1 h-3 w-3" />
+                        )}
+                        {user.role}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+      ) : (
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
               <TableRow>
-                <TableCell
-                  colSpan={isSuperadmin ? 5 : 4}
-                  className="h-24 text-center"
-                >
-                  No users found.
-                </TableCell>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Joined At</TableHead>
+                {isSuperadmin && (
+                  <TableHead className="text-right">Actions</TableHead>
+                )}
               </TableRow>
-            ) : (
-              filteredUsers.map((user) => (
-                <TableRow key={user._id}>
-                  <TableCell className="font-medium">{user.name}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        user.role === "superadmin"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-secondary text-secondary-foreground"
-                      }`}
-                    >
-                      {user.role === "superadmin" ? (
-                        <Shield className="mr-1 h-3 w-3" />
-                      ) : (
-                        <UserIcon className="mr-1 h-3 w-3" />
-                      )}
-                      {user.role}
-                    </span>
+            </TableHeader>
+            <TableBody>
+              {filteredUsers.length === 0 ? (
+                <TableRow>
+                  <TableCell
+                    colSpan={isSuperadmin ? 5 : 4}
+                    className="h-24 text-center"
+                  >
+                    No users found.
                   </TableCell>
-                  <TableCell>{formatDate(user.createdAt)}</TableCell>
-                  {isSuperadmin && (
-                    <TableCell className="text-right space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onEdit?.(user)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDelete(user._id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
-                  )}
                 </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+              ) : (
+                filteredUsers.map((user) => (
+                  <TableRow key={user._id}>
+                    <TableCell className="font-medium">{user.name}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          user.role === "superadmin"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-secondary text-secondary-foreground"
+                        }`}
+                      >
+                        {user.role === "superadmin" ? (
+                          <Shield className="mr-1 h-3 w-3" />
+                        ) : (
+                          <UserIcon className="mr-1 h-3 w-3" />
+                        )}
+                        {user.role}
+                      </span>
+                    </TableCell>
+                    <TableCell>{formatDate(user.createdAt)}</TableCell>
+                    {isSuperadmin && (
+                      <TableCell className="text-right space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => onEdit?.(user)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDelete(user._id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    )}
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
+      )}
     </div>
   );
 }

@@ -36,6 +36,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface Template {
   _id: string;
@@ -73,6 +74,9 @@ export default function SessionTemplatesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
+  const isCardView = useMediaQuery(
+    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
+  );
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
@@ -188,6 +192,101 @@ export default function SessionTemplatesPage() {
       {loading ? (
         <div className="space-y-4">
           <Skeleton className="h-96 w-full" />
+        </div>
+      ) : isCardView ? (
+        <div className="space-y-4">
+          {templates.length === 0 ? (
+            <div className="text-center p-8 border rounded-md text-muted-foreground">
+              No templates found.
+            </div>
+          ) : (
+            templates.map((template: Template) => (
+              <div
+                key={template._id}
+                className="rounded-lg border bg-card text-card-foreground shadow-sm"
+              >
+                <div className="p-4 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold leading-none tracking-tight">
+                        {template.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {formatDate(template.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => handleEdit(template)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={() => handleDelete(template._id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Content Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Type
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
+                        {SESSION_TYPE_LABELS[
+                          template.type as keyof typeof SESSION_TYPE_LABELS
+                        ] || template.type}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Screens
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                        {template.screens?.length || 0}
+                      </span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-xs text-muted-foreground block">
+                        Status
+                      </span>
+                      <button
+                        onClick={() =>
+                          handleToggleStatus(template._id, template.isActive)
+                        }
+                        className={cn(
+                          "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                          template.isActive
+                            ? "bg-success text-success-foreground hover:bg-success/80"
+                            : "bg-error text-error-foreground hover:bg-error/80",
+                        )}
+                      >
+                        {template.isActive ? (
+                          <>
+                            <CheckCircle2 className="mr-1 h-3 w-3" /> Active
+                          </>
+                        ) : (
+                          <>
+                            <XCircle className="mr-1 h-3 w-3" /> Inactive
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       ) : (
         <div className="rounded-md border">

@@ -28,6 +28,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface UnitItem {
   _id: string;
@@ -57,6 +58,9 @@ export default function UnitsListPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
+  const isCardView = useMediaQuery(
+    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
+  );
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
@@ -149,6 +153,100 @@ export default function UnitsListPage() {
       {loading ? (
         <div className="space-y-4">
           <Skeleton className="h-96 w-full" />
+        </div>
+      ) : isCardView ? (
+        <div className="space-y-4">
+          {units.length === 0 ? (
+            <div className="text-center p-8 border rounded-md text-muted-foreground">
+              No units found.
+            </div>
+          ) : (
+            units.map((unit) => (
+              <div
+                key={unit._id}
+                className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() => {
+                  if (unit.courseId) {
+                    router.push(
+                      `/courses/${unit.courseId}/units/${unit._id}/topics`,
+                    );
+                  }
+                }}
+              >
+                <div className="p-4 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold leading-none tracking-tight">
+                        {unit.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {formatDate(unit.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(unit);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(unit._id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Content Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Course
+                      </span>
+                      <span className="font-medium truncate block">
+                        {unit.courseName || "—"}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Topics
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                        {unit.topicCount}
+                      </span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-xs text-muted-foreground block">
+                        Status
+                      </span>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          unit.isActive
+                            ? "bg-success text-success-foreground"
+                            : "bg-error text-error-foreground"
+                        }`}
+                      >
+                        {unit.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       ) : (
         <div className="rounded-md border">

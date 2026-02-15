@@ -28,6 +28,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface SessionGroupItem {
   _id: string;
@@ -60,6 +61,9 @@ export default function SessionGroupsListPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
+  const isCardView = useMediaQuery(
+    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
+  );
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
@@ -145,6 +149,98 @@ export default function SessionGroupsListPage() {
         <div className="space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-32 w-full" />
+        </div>
+      ) : isCardView ? (
+        <div className="space-y-4">
+          {groups.length === 0 ? (
+            <div className="text-center p-8 border rounded-md text-muted-foreground">
+              No session groups found.
+            </div>
+          ) : (
+            groups.map((group) => (
+              <div
+                key={group._id}
+                className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() =>
+                  router.push(
+                    `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
+                  )
+                }
+              >
+                <div className="p-4 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold leading-none tracking-tight">
+                        {group.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {formatDate(group.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingGroup(group);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingGroup(group);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Content Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Topic
+                      </span>
+                      <span className="font-medium truncate block">
+                        {group.topicName || "—"}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Sessions
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
+                        {group.sessionCount}
+                      </span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-xs text-muted-foreground block">
+                        Status
+                      </span>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          group.isActive
+                            ? "bg-success text-success-foreground"
+                            : "bg-error text-error-foreground"
+                        }`}
+                      >
+                        {group.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       ) : (
         <div className="rounded-md border">

@@ -33,6 +33,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useMediaQuery } from "@/hooks/use-media-query";
 
 interface SessionItem {
   _id: string;
@@ -86,6 +87,9 @@ export default function SessionsListPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
+  const isCardView = useMediaQuery(
+    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
+  );
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
@@ -181,6 +185,108 @@ export default function SessionsListPage() {
         <div className="space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-32 w-full" />
+        </div>
+      ) : isCardView ? (
+        <div className="space-y-4">
+          {sessions.length === 0 ? (
+            <div className="text-center p-8 border rounded-md text-muted-foreground">
+              No sessions found.
+            </div>
+          ) : (
+            sessions.map((session) => (
+              <div
+                key={session._id}
+                className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
+                onClick={() =>
+                  router.push(
+                    `/courses/${session.courseId}/units/${session.unitId}/topics/${session.topicId}/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
+                  )
+                }
+              >
+                <div className="p-4 space-y-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-semibold leading-none tracking-tight">
+                        {session.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {formatDate(session.createdAt)}
+                      </p>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingSession(session);
+                        }}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive hover:text-destructive"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeletingSession(session);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Content Grid */}
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        Type
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold text-secondary-foreground">
+                        {SESSION_TYPE_LABELS[
+                          session.type as keyof typeof SESSION_TYPE_LABELS
+                        ] || session.type}
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-xs text-muted-foreground block">
+                        CEFR
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-accent px-2.5 py-0.5 text-xs font-semibold text-accent-foreground">
+                        {session.cefrLevel}
+                      </span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-xs text-muted-foreground block">
+                        Session Group
+                      </span>
+                      <span className="font-medium truncate block">
+                        {session.sessionGroupName || "—"}
+                      </span>
+                    </div>
+                    <div className="space-y-1 col-span-2">
+                      <span className="text-xs text-muted-foreground block">
+                        Status
+                      </span>
+                      <span
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          session.isActive
+                            ? "bg-success text-success-foreground"
+                            : "bg-error text-error-foreground"
+                        }`}
+                      >
+                        {session.isActive ? "Active" : "Inactive"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
         </div>
       ) : (
         <div className="rounded-md border">
