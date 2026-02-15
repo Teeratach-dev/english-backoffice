@@ -124,26 +124,25 @@ export function SortableScreenCard({
         >
           <GripVertical className="h-4 w-4 text-muted-foreground rotate-90" />
         </div>
-        <div className="absolute right-2 top-2 flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
-            onClick={onDelete}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-        <CardHeader className="py-2 px-4 border-b bg-muted/5">
+
+        <CardHeader className="py-2 px-4  bg-muted/5 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center">
             <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-[10px] font-bold">
               {sIdx + 1}
             </span>
             Screen {sIdx + 1}
           </CardTitle>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 text-white hover:bg-background/90 shadow-sm"
+            onClick={onDelete}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
         </CardHeader>
         {showPreview && (
-          <CardContent className="p-4 space-y-4">
+          <CardContent className="px-4 space-y-2">
             <>
               <DndContext
                 sensors={sensors}
