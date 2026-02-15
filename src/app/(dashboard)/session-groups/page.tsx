@@ -30,6 +30,8 @@ interface SessionGroupItem {
   name: string;
   topicName?: string;
   topicId?: string;
+  unitId?: string;
+  courseId?: string;
   sessionCount: number;
   isActive: boolean;
   createdAt: string;
@@ -159,7 +161,7 @@ export default function SessionGroupsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/topics/${group.topicId}/groups/${group._id}/sessions`,
+                        `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
                       )
                     }
                   >

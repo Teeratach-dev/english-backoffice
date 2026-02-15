@@ -37,6 +37,7 @@ interface TopicItem {
   name: string;
   unitName?: string;
   unitId?: string;
+  courseId?: string;
   sessionGroupCount: number;
   isActive: boolean;
   sequence: number;
@@ -162,7 +163,7 @@ export default function TopicsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/units/${topic.unitId}/topics/${topic._id}/groups`,
+                        `/courses/${topic.courseId}/units/${topic.unitId}/topics/${topic._id}/groups`,
                       )
                     }
                   >

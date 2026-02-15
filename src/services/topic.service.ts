@@ -14,7 +14,7 @@ export class TopicService {
     const query = search ? { name: { $regex: search, $options: "i" } } : {};
 
     const topics = await Topic.find(query)
-      .populate("unitId", "name")
+      .populate("unitId", "name courseId")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -35,6 +35,7 @@ export class TopicService {
       ...t,
       unitId: t.unitId?._id?.toString() || t.unitId,
       unitName: t.unitId?.name,
+      courseId: t.unitId?.courseId?.toString(),
       sessionGroupCount: countMap.get(t._id.toString()) || 0,
     }));
 
@@ -52,7 +53,7 @@ export class TopicService {
   async getTopicsByUnitId(unitId: string) {
     await dbConnect();
     const topics = await Topic.find({ unitId })
-      .populate("unitId", "name")
+      .populate("unitId", "name courseId")
       .sort({ sequence: 1 })
       .lean();
 
@@ -69,6 +70,7 @@ export class TopicService {
       ...t,
       unitId: t.unitId?._id?.toString() || t.unitId,
       unitName: t.unitId?.name,
+      courseId: t.unitId?.courseId?.toString(),
       sessionGroupCount: countMap.get(t._id.toString()) || 0,
     }));
   }

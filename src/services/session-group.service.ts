@@ -14,7 +14,14 @@ export class SessionGroupService {
     const query = search ? { name: { $regex: search, $options: "i" } } : {};
 
     const groups = await SessionGroup.find(query)
-      .populate("topicId", "name")
+      .populate({
+        path: "topicId",
+        select: "name unitId",
+        populate: {
+          path: "unitId",
+          select: "courseId",
+        },
+      })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -35,6 +42,8 @@ export class SessionGroupService {
       ...g,
       topicId: g.topicId?._id?.toString() || g.topicId,
       topicName: g.topicId?.name,
+      unitId: g.topicId?.unitId?._id?.toString() || g.topicId?.unitId,
+      courseId: g.topicId?.unitId?.courseId?.toString(),
       sessionCount: countMap.get(g._id.toString()) || 0,
     }));
 
@@ -52,7 +61,14 @@ export class SessionGroupService {
   async getGroupsByTopicId(topicId: string) {
     await dbConnect();
     const groups = await SessionGroup.find({ topicId })
-      .populate("topicId", "name")
+      .populate({
+        path: "topicId",
+        select: "name unitId",
+        populate: {
+          path: "unitId",
+          select: "courseId",
+        },
+      })
       .sort({ sequence: 1 })
       .lean();
 
@@ -69,6 +85,8 @@ export class SessionGroupService {
       ...g,
       topicId: g.topicId?._id?.toString() || g.topicId,
       topicName: g.topicId?.name,
+      unitId: g.topicId?.unitId?._id?.toString() || g.topicId?.unitId,
+      courseId: g.topicId?.unitId?.courseId?.toString(),
       sessionCount: countMap.get(g._id.toString()) || 0,
     }));
   }
