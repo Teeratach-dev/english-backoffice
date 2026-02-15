@@ -14,6 +14,7 @@ import {
   ListChecks,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { SidebarUser } from "@/components/layouts/sidebar-user";
 
 // Helper to check if a segment exists AND is followed by another segment (path continues deeper)
 const isRecursiveSegment = (pathname: string, segment: string) => {
@@ -92,11 +93,11 @@ export function Sidebar({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "pb-12 min-h-screen w-64 border-r bg-background",
+        "pb-12 min-h-screen w-64 border-r bg-background flex flex-col",
         className,
       )}
     >
-      <div className="space-y-4 py-4">
+      <div className="space-y-4 py-4 flex-1">
         <div className="px-3 py-2">
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             English Backoffice
@@ -120,6 +121,7 @@ export function Sidebar({ className }: { className?: string }) {
           </div>
         </div>
       </div>
+      <SidebarUser />
     </div>
   );
 }
