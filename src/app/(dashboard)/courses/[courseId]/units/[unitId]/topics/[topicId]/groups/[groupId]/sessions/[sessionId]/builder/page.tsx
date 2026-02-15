@@ -402,38 +402,23 @@ export default function SessionBuilderPage({
         </div>
       </div>
       <div className="flex-1 p-4 md:p-8 bg-muted/5">
-        <div className="max-w-6xl mx-auto">
-          <SessionBuilderHeader
-            courseId={courseId}
-            unitId={unitId}
-            topicId={topicId}
-            groupId={groupId}
-            sessionName={sessionForm.name || session?.name}
-            sessionType={sessionForm.type || session?.type}
-            cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
-            saving={saving}
-            onSave={handleSave}
-            onLoadTemplate={fetchTemplates}
-            onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
-            hasScreens={screens.length > 0}
-          />
-        </div>
-
-        {/* Session Detail Card */}
         <div className="max-w-6xl mx-auto mb-6">
           <Card>
-            <CardHeader
-              className="cursor-pointer flex flex-row items-center justify-between"
-              onClick={() => setShowSessionCard(!showSessionCard)}
-            >
-              <CardTitle>Session Details</CardTitle>
-              {showSessionCard ? (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
-              )}
-            </CardHeader>
-            {showSessionCard && (
+            <SessionBuilderHeader
+              courseId={courseId}
+              unitId={unitId}
+              topicId={topicId}
+              groupId={groupId}
+              sessionName={sessionForm.name || session?.name}
+              sessionType={sessionForm.type || session?.type}
+              cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
+              saving={saving}
+              onSave={handleSave}
+              onLoadTemplate={fetchTemplates}
+              onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
+              hasScreens={screens.length > 0}
+            />
+            {
               <CardContent className="space-y-4">
                 <div className="grid gap-2">
                   <Label htmlFor="session-name">Session Name</Label>
@@ -503,7 +488,7 @@ export default function SessionBuilderPage({
                   <Label htmlFor="session-active">Active Status</Label>
                 </div>
               </CardContent>
-            )}
+            }
           </Card>
         </div>
         <div className="max-w-6xl mx-auto mb-4 flex items-center">
