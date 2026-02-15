@@ -146,7 +146,7 @@ export function CourseTable({
         {addButton}
       </SearchAndFilter>
 
-      {loading || true ? (
+      {loading ? (
         <div className="space-y-4">
           <Skeleton className="h-96 w-full" />
         </div>
