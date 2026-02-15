@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash2, Layers } from "lucide-react";
+import { GripVertical, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -71,7 +71,7 @@ export function SortableUnitItem({
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
           <Link href={`/courses/${courseId}/units/${unit._id}/topics`}>
-            <Layers className="h-4 w-4" />
+            <PenTool className="h-4 w-4" />
           </Link>
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onEdit(unit)}>

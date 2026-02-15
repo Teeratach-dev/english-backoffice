@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash2, LayoutPanelLeft } from "lucide-react";
+import { GripVertical, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -77,7 +77,7 @@ export function SortableSessionGroupItem({
           <Link
             href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${group._id}/sessions`}
           >
-            <LayoutPanelLeft className="h-4 w-4" />
+            <PenTool className="h-4 w-4" />
           </Link>
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onEdit(group)}>

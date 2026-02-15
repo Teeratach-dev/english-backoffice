@@ -3,7 +3,7 @@
 import React from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash2, FolderOpen } from "lucide-react";
+import { GripVertical, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -75,7 +75,7 @@ export function SortableTopicItem({
           <Link
             href={`/courses/${courseId}/units/${unitId}/topics/${topic._id}/groups`}
           >
-            <FolderOpen className="h-4 w-4" />
+            <PenTool className="h-4 w-4" />
           </Link>
         </Button>
         <Button variant="ghost" size="icon" onClick={() => onEdit(topic)}>
