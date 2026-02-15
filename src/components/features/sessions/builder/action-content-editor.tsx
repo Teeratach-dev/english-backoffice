@@ -7,6 +7,8 @@ import {
   ExplainAction,
   AudioAction,
   ChatAction,
+  ImageAction,
+  ColumnAction,
 } from "@/types/action.types";
 import { WordEditor } from "./word-editor";
 import { RichWordEditor } from "./rich-word-editor";
@@ -27,6 +29,8 @@ import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";
 import { AudioActionForm } from "./forms/audio-action-form";
 import { ChatActionForm } from "./forms/chat-action-form";
+import { ImageActionForm } from "./forms/image-action-form";
+import { ColumnActionForm } from "./forms/column-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -69,21 +73,25 @@ export function ActionContentEditor({
 
     case ActionType.Image:
       return (
-        <div className="space-y-2">
-          <Label className="text-xs">Image URL</Label>
-          <Input
-            value={action.url || ""}
-            onChange={(e) => updateAction({ url: e.target.value })}
-            placeholder="https://example.com/image.png"
-          />
-        </div>
+        <ImageActionForm
+          action={action}
+          onChange={(updates: Partial<ImageAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.Chat:
       return (
         <ChatActionForm
-          action={action as ChatAction}
+          action={action}
           onChange={(updates: Partial<ChatAction>) => updateAction(updates)}
+        />
+      );
+
+    case ActionType.Column:
+      return (
+        <ColumnActionForm
+          action={action}
+          onChange={(updates: Partial<ColumnAction>) => updateAction(updates)}
         />
       );
 

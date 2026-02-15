@@ -1,7 +1,7 @@
 "use client";
 
 import { ImageAction } from "@/types/action.types";
-import { ImageIcon } from "lucide-react";
+import { Image as ImageIcon } from "lucide-react";
 
 interface ImagePreviewProps {
   action: ImageAction;
@@ -9,22 +9,18 @@ interface ImagePreviewProps {
 
 export function ImagePreview({ action }: ImagePreviewProps) {
   return (
-    <div className="p-2 border rounded-2xl bg-background shadow-lg overflow-hidden max-w-sm mx-auto">
-      <div className="aspect-video bg-muted rounded-xl relative overflow-hidden flex items-center justify-center border border-muted-foreground/10">
-        {action.url ? (
-          <img
-            src={action.url}
-            alt="Preview"
-            className="w-full h-full object-cover"
-          />
-        ) : (
-          <ImageIcon className="h-16 w-16 text-muted-foreground/20" />
+    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto">
+      <div className="aspect-video bg-muted rounded-md relative overflow-hidden flex items-center justify-center">
+        <ImageIcon className="h-12 w-12 text-muted-foreground" />
+        {action.url && (
+          <div className="absolute inset-0 bg-black/5 flex items-center justify-center">
+            <img
+              src={action.url}
+              alt="Content"
+              className="w-full h-full object-contain"
+            />
+          </div>
         )}
-      </div>
-      <div className="p-3 text-center">
-        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
-          Image Content
-        </p>
       </div>
     </div>
   );

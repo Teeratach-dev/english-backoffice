@@ -8,6 +8,7 @@ import {
   ChatAction,
   ImageAction,
   AudioAction,
+  ColumnAction,
 } from "@/types/action.types";
 import { ImageIcon, Info } from "lucide-react";
 import { ExplainPreview } from "./previews/explain-preview";
@@ -15,6 +16,7 @@ import { ReadingPreview } from "./previews/reading-preview";
 import { ChatPreview } from "./previews/chat-preview";
 import { ImagePreview } from "./previews/image-preview";
 import { AudioPreview } from "./previews/audio-preview";
+import { ColumnPreview } from "./previews/column-preview";
 
 interface SessionPreviewProps {
   action: Action | null;
@@ -49,14 +51,17 @@ export function SessionPreview({ action }: SessionPreviewProps) {
       case ActionType.Reading:
         return <ReadingPreview action={action as ReadingAction} />;
 
+      case ActionType.Audio:
+        return <AudioPreview action={action as AudioAction} />;
+
       case ActionType.Chat:
         return <ChatPreview action={action as ChatAction} />;
 
       case ActionType.Image:
         return <ImagePreview action={action as ImageAction} />;
 
-      case ActionType.Audio:
-        return <AudioPreview action={action as AudioAction} />;
+      case ActionType.Column:
+        return <ColumnPreview action={action as ColumnAction} />;
 
       default:
         return (
