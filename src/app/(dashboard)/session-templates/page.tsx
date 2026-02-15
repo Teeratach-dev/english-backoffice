@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -12,14 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import {
-  Layout,
-  CheckCircle2,
-  XCircle,
-  Plus,
-  Edit,
-  Trash2,
-} from "lucide-react";
+import { CheckCircle2, XCircle, Plus, Edit, Trash2 } from "lucide-react";
 import { SESSION_TYPE_LABELS, SESSION_TYPES } from "@/types/action.types";
 import { cn, formatDate } from "@/lib/utils";
 import {
@@ -70,6 +64,7 @@ const TEMPLATE_FILTERS: FilterGroup[] = [
 ];
 
 export default function SessionTemplatesPage() {
+  const router = useRouter();
   const [templates, setTemplates] = useState<Template[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -79,11 +74,6 @@ export default function SessionTemplatesPage() {
   );
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
-  );
-
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(
-    null,
   );
 
   const fetchTemplates = useCallback(async () => {
@@ -149,19 +139,11 @@ export default function SessionTemplatesPage() {
   }
 
   const handleEdit = (template: Template) => {
-    setSelectedTemplate(template);
-    setIsAddOpen(true);
+    router.push(`/session-templates/${template._id}`);
   };
 
   const handleAdd = () => {
-    setSelectedTemplate(null);
-    setIsAddOpen(true);
-  };
-
-  const handleSuccess = () => {
-    setIsAddOpen(false);
-    setSelectedTemplate(null);
-    fetchTemplates();
+    router.push("/session-templates/new");
   };
 
   const handleFilterChange = (key: string, values: string[]) => {
@@ -203,7 +185,8 @@ export default function SessionTemplatesPage() {
             templates.map((template: Template) => (
               <div
                 key={template._id}
-                className="rounded-lg border bg-card text-card-foreground shadow-sm"
+                className="rounded-lg border bg-card text-card-foreground shadow-sm hover:border-primary/50 cursor-pointer transition-colors"
+                onClick={() => handleEdit(template)}
               >
                 <div className="p-4 space-y-4">
                   {/* Header */}
@@ -216,12 +199,18 @@ export default function SessionTemplatesPage() {
                         {formatDate(template.createdAt)}
                       </p>
                     </div>
-                    <div className="flex items-center space-x-1">
+                    <div
+                      className="flex items-center space-x-1"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <Button
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleEdit(template)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(template);
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -229,7 +218,10 @@ export default function SessionTemplatesPage() {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => handleDelete(template._id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(template._id);
+                        }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -256,14 +248,18 @@ export default function SessionTemplatesPage() {
                         {template.screens?.length || 0}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between gap-2">
+                    <div
+                      className="flex items-center justify-between gap-2"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <span className="text-xs text-muted-foreground">
                         Status
                       </span>
                       <button
-                        onClick={() =>
-                          handleToggleStatus(template._id, template.isActive)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleToggleStatus(template._id, template.isActive);
+                        }}
                         className={cn(
                           "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                           template.isActive
@@ -310,7 +306,11 @@ export default function SessionTemplatesPage() {
                 </TableRow>
               ) : (
                 templates.map((template: Template) => (
-                  <TableRow key={template._id}>
+                  <TableRow
+                    key={template._id}
+                    className="cursor-pointer hover:bg-muted/50"
+                    onClick={() => handleEdit(template)}
+                  >
                     <TableCell className="font-medium">
                       {template.name}
                     </TableCell>
@@ -326,7 +326,7 @@ export default function SessionTemplatesPage() {
                         {template.screens?.length || 0}
                       </span>
                     </TableCell>
-                    <TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() =>
                           handleToggleStatus(template._id, template.isActive)
@@ -350,7 +350,10 @@ export default function SessionTemplatesPage() {
                       </button>
                     </TableCell>
                     <TableCell>{formatDate(template.createdAt)}</TableCell>
-                    <TableCell className="text-right">
+                    <TableCell
+                      className="text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -375,20 +378,6 @@ export default function SessionTemplatesPage() {
           </Table>
         </div>
       )}
-
-      <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedTemplate ? "Edit Template" : "Add New Template"}
-            </DialogTitle>
-          </DialogHeader>
-          <TemplateForm
-            initialData={selectedTemplate}
-            onSuccess={handleSuccess}
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

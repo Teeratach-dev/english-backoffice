@@ -230,7 +230,7 @@ export default function SessionBuilderPage({
     }
   }
 
-  async function handleSaveAsTemplate() {
+  async function handleSaveAsTemplate(overwriteId?: string) {
     if (!templateName) {
       toast.error("Template name is required");
       return;
@@ -240,37 +240,52 @@ export default function SessionBuilderPage({
     try {
       const templateData = {
         name: templateName,
-        type: session.type,
+        type: session.type, // Should we allow changing type? Probably not for session-based save.
+        isActive: true, // Default to active when saving from session?
         screens: screens.map((s, sIdx) => ({
           sequence: sIdx,
           actionTypes: s.actions.map((a) => a.type),
         })),
       };
 
-      const checkRes = await fetch(
-        `/api/templates/check?type=${session.type}&screens=${JSON.stringify(templateData.screens.map((s) => s.actionTypes))}`,
-      );
-      if (checkRes.ok) {
-        const { exists } = await checkRes.json();
-        if (exists) {
-          toast.error(
-            "A session template with same configuration already exists.",
-          );
-          setSaving(false);
-          return;
+      if (overwriteId) {
+        // Overwrite existing
+        const res = await fetch(`/api/templates/${overwriteId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(templateData),
+        });
+        if (!res.ok) throw new Error("Failed to update template");
+        toast.success("Template updated successfully");
+      } else {
+        // Create new
+        const checkRes = await fetch(
+          `/api/templates/check?type=${session.type}&screens=${JSON.stringify(templateData.screens.map((s) => s.actionTypes))}`,
+        );
+        if (checkRes.ok) {
+          const { exists } = await checkRes.json();
+          if (exists) {
+            if (!confirm("A similar template already exists. Create anyway?")) {
+              setSaving(false);
+              return;
+            }
+          }
         }
+
+        const res = await fetch("/api/templates", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(templateData),
+        });
+
+        if (!res.ok) throw new Error("Failed to save template");
+        toast.success("Template saved successfully");
       }
 
-      const res = await fetch("/api/templates", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(templateData),
-      });
-
-      if (!res.ok) throw new Error("Failed to save template");
-      toast.success("Template saved successfully");
       setIsTemplateDialogOpen(false);
       setTemplateName("");
+      // Refresh templates if we have them loaded?
+      fetchTemplates();
     } catch (error) {
       toast.error("Error saving template");
     } finally {
@@ -586,6 +601,9 @@ export default function SessionBuilderPage({
         onTemplateNameChange={setTemplateName}
         onSave={handleSaveAsTemplate}
         saving={saving}
+        templates={availableTemplates}
+        onFetch={fetchTemplates}
+        loading={loading}
       />
 
       <LoadTemplateDialog
