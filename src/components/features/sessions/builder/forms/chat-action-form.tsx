@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlignLeft, AlignRight } from "lucide-react";
-import React from "react";
 
 interface ChatActionFormProps {
   action: ChatAction;
