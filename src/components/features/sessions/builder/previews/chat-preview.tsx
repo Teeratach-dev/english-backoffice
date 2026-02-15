@@ -58,7 +58,7 @@ export function ChatPreview({ action }: ChatPreviewProps) {
         </div>
 
         {/* Bubble Section */}
-        <div className={cn("flex flex-1  relative")}>
+        <div className="flex flex-1 relative">
           <div
             className={cn(
               "rounded-2xl p-4 text-sm shadow-xs transition-all duration-300 relative min-w-[120px]",
@@ -69,7 +69,23 @@ export function ChatPreview({ action }: ChatPreviewProps) {
                 "blur-sm opacity-50 select-none grayscale cursor-help",
             )}
           >
-            {/* 2. Text Content (Only if NOT Audio Only) */}
+            {!isNormalMode && !isBlurryMode && (
+              <div className="flex justify-around">
+                <Volume2
+                  className={cn(
+                    "h-5 w-5 hover:text-primary cursor-pointer transition-colors",
+                    "text-primary animate-pulse",
+                  )}
+                />
+                <Snail
+                  className={cn(
+                    "h-5 w-5 hover:text-primary cursor-pointer transition-colors",
+                    "text-primary animate-pulse",
+                  )}
+                />
+              </div>
+            )}
+
             {!isAudioOnly && (
               <div className="leading-relaxed">
                 {action.text && action.text.length > 0 ? (
@@ -100,41 +116,39 @@ export function ChatPreview({ action }: ChatPreviewProps) {
               </div>
             )}
           </div>
-
-          {/* Eye Reveal Button (Only for Blurred Mode) */}
-          {isBlurryMode && (
-            <button
-              onClick={() => setIsRevealed(!isRevealed)}
-              className="mt-1 p-1.5 rounded-full bg-muted/50 hover:bg-muted transition-all text-muted-foreground active:scale-95 shadow-sm"
-              title={isRevealed ? "Hide content" : "Reveal content"}
-            >
-              {isRevealed ? (
-                <EyeOff className="h-3.5 w-3.5" />
-              ) : (
-                <Eye className="h-3.5 w-3.5" />
-              )}
-            </button>
-          )}
         </div>
 
-        {/* Audio Content Block (Outside Card, Aligned Bottom) */}
-        {action.audioUrl && (
+        {(isNormalMode || isBlurryMode) && (
           <div
             className={cn(
               "flex flex-col gap-5 shrink-0 self-end pb-1",
               action.position === "right" ? "items-end" : "items-start",
             )}
           >
+            {isBlurryMode && (
+              <button
+                type="button"
+                onClick={() => setIsRevealed(!isRevealed)}
+                className={cn(
+                  "hover:text-primary cursor-pointer transition-colors text-muted-foreground active:scale-95 flex items-center justify-center",
+                )}
+                title={isRevealed ? "Hide content" : "Reveal content"}
+              >
+                {isRevealed ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            )}
             <Volume2
               className={cn(
-                "h-5 w-5 hover:text-primary cursor-pointer transition-colors",
-                "text-primary animate-pulse",
+                "h-5 w-5 hover:text-primary cursor-pointer transition-colors text-primary animate-pulse",
               )}
             />
             <Snail
               className={cn(
-                "h-5 w-5 hover:text-primary cursor-pointer transition-colors",
-                "text-primary animate-pulse",
+                "h-5 w-5 hover:text-primary cursor-pointer transition-colors text-primary animate-pulse",
               )}
             />
           </div>
