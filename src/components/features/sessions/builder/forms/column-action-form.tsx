@@ -77,25 +77,35 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
           <Label className="text-sm font-medium text-muted-foreground">
             Columns ({actions.length})
           </Label>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Column Item
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => handleAddAction("image")}>
-                Image
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAddAction("reading")}>
-                Reading
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAddAction("audio")}>
-                Audio
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          {actions.length < 2 && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Column
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => handleAddAction(ActionType.Image as "image")}
+                >
+                  Image
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    handleAddAction(ActionType.Reading as "reading")
+                  }
+                >
+                  Reading
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleAddAction(ActionType.Audio as "audio")}
+                >
+                  Audio
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
 
         <div className="space-y-3">

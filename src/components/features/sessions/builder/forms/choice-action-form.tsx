@@ -38,8 +38,14 @@ export function ChoiceActionForm({ action, onChange }: ChoiceActionFormProps) {
   }
 
   function toggleCorrect(index: number) {
-    const currentItem = items[index];
-    updateItem(index, { isCorrect: !currentItem.isCorrect });
+    // Enforce single correct choice:
+    // If we are selecting a new correct answer, unselect all others.
+    // If we are unselecting the current correct answer, just unselect it.
+    const newItems = items.map((item, i) => ({
+      ...item,
+      isCorrect: i === index ? !item.isCorrect : false,
+    }));
+    onChange({ items: newItems });
   }
 
   function addItem() {

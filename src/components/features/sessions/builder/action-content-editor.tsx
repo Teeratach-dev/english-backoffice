@@ -9,28 +9,24 @@ import {
   ChatAction,
   ImageAction,
   ColumnAction,
+  ChoiceAction,
+  ReorderAction,
 } from "@/types/action.types";
-import { WordEditor } from "./word-editor";
-import { RichWordEditor } from "./rich-word-editor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Plus, Trash2, ChevronDown } from "lucide-react";
-import { cn } from "@/lib/utils";
-import React from "react";
+
+import { Plus, Trash2 } from "lucide-react";
+
 import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";
 import { AudioActionForm } from "./forms/audio-action-form";
 import { ChatActionForm } from "./forms/chat-action-form";
 import { ImageActionForm } from "./forms/image-action-form";
 import { ColumnActionForm } from "./forms/column-action-form";
+import { ChoiceActionForm } from "./forms/choice-action-form";
+import { ReorderActionForm } from "./forms/reorder-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -97,74 +93,18 @@ export function ActionContentEditor({
 
     case ActionType.Choice:
       return (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <Label className="text-xs uppercase font-bold text-muted-foreground">
-              Options
-            </Label>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                updateAction({
-                  items: [
-                    ...(action.items || []),
-                    {
-                      text: { text: "", translation: [], isBlank: false },
-                      isCorrect: false,
-                    },
-                  ],
-                })
-              }
-            >
-              <Plus className="h-4 w-4 mr-1" /> Add Option
-            </Button>
-          </div>
-          {action.items?.map((item: any, idx: number) => (
-            <div
-              key={idx}
-              className="flex items-center gap-4 bg-muted/20 p-2 rounded"
-            >
-              <Input
-                value={item.text?.text || ""}
-                onChange={(e) => {
-                  const items = [...action.items];
-                  items[idx].text = {
-                    ...items[idx].text,
-                    text: e.target.value,
-                  };
-                  updateAction({ items });
-                }}
-                className="flex-1"
-                placeholder="Option text"
-              />
-              <div className="flex items-center space-x-2 bg-background border rounded px-2 h-10">
-                <Switch
-                  checked={item.isCorrect}
-                  onCheckedChange={(c) => {
-                    const items = [...action.items];
-                    items[idx].isCorrect = c;
-                    updateAction({ items });
-                  }}
-                />
-                <Label className="text-xs font-normal">Correct</Label>
-              </div>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => {
-                  const items = action.items.filter(
-                    (_: any, i: number) => i !== idx,
-                  );
-                  updateAction({ items });
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </div>
-          ))}
-        </div>
+        <ChoiceActionForm
+          action={action}
+          onChange={(updates: Partial<ChoiceAction>) => updateAction(updates)}
+        />
+      );
+
+    case ActionType.Reorder:
+      return (
+        <ReorderActionForm
+          action={action}
+          onChange={(updates: Partial<ReorderAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.MatchCard:

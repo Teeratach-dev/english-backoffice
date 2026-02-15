@@ -9,6 +9,8 @@ import {
   ImageAction,
   AudioAction,
   ColumnAction,
+  ChoiceAction,
+  ReorderAction,
 } from "@/types/action.types";
 import { ImageIcon, Info } from "lucide-react";
 import { ExplainPreview } from "./previews/explain-preview";
@@ -17,6 +19,8 @@ import { ChatPreview } from "./previews/chat-preview";
 import { ImagePreview } from "./previews/image-preview";
 import { AudioPreview } from "./previews/audio-preview";
 import { ColumnPreview } from "./previews/column-preview";
+import { ChoicePreview } from "./previews/choice-preview";
+import { ReorderPreview } from "./previews/reorder-preview";
 
 interface SessionPreviewProps {
   action: Action | null;
@@ -62,6 +66,12 @@ export function SessionPreview({ action }: SessionPreviewProps) {
 
       case ActionType.Column:
         return <ColumnPreview action={action as ColumnAction} />;
+
+      case ActionType.Choice:
+        return <ChoicePreview action={action as ChoiceAction} />;
+
+      case ActionType.Reorder:
+        return <ReorderPreview action={action} />;
 
       default:
         return (
