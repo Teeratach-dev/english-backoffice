@@ -120,9 +120,9 @@ export const FillSentenceWithChoiceActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.FillSentenceWithChoice),
   sentence: z.array(
     z.object({
-      text: z.string(),
+      text: WordSchema,
       isBlank: z.boolean(),
-      choice: z.array(WordSchema).optional(),
+      inSentence: z.boolean(),
     }),
   ),
 });

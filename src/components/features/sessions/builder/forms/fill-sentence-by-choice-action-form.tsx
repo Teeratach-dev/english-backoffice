@@ -1,8 +1,6 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FillSentenceWithChoiceAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
-import { Switch } from "@/components/ui/switch";
 
 interface FillSentenceWithChoiceActionFormProps {
   action: FillSentenceWithChoiceAction;
@@ -29,19 +27,22 @@ export function FillSentenceWithChoiceActionForm({
     // Map back to schema structure
     // We need to preserve existing Word properties if they exist
     const newActionSentence = newSegments.map((s, i) => {
-      const existingWord = action.sentence?.[i]?.text;
+      const existingItem = action.sentence?.[i];
+      const existingWord = existingItem?.text;
+
       return {
         text: {
+          ...(existingWord || {}), // Preserve existing Word properties (bold, italic, etc.)
           text: s.text,
           translation: existingWord?.translation || [],
-          isBlank: s.isBlank, // Sync isBlank to Word property as well? Usually redundant but good for consistency
+          isBlank: s.isBlank,
           audioUrl: existingWord?.audioUrl,
         },
         isBlank: s.isBlank,
         inSentence:
           s.inSentence !== undefined
             ? s.inSentence
-            : (action.sentence?.[i]?.inSentence ?? false), // Default to false (in sentence)
+            : (existingItem?.inSentence ?? true), // Default to true (in sentence)
       };
     });
 
@@ -84,7 +85,7 @@ export function FillSentenceWithChoiceActionForm({
                 className={`
                   relative group px-3 py-1.5 rounded-lg text-sm font-medium border transition-all cursor-pointer flex flex-col gap-1 min-w-15
                   ${
-                    segment.inSentence
+                    !segment.inSentence
                       ? "bg-purple-100 border-purple-200 text-purple-700 dark:bg-purple-900/30 dark:border-purple-800 dark:text-purple-300"
                       : "bg-background border-input hover:border-primary/50 text-foreground"
                   }
@@ -96,11 +97,11 @@ export function FillSentenceWithChoiceActionForm({
                     {segment.text?.text}
                   </span>
                   <div
-                    className={`w-2 h-2 rounded-full ${segment.inSentence ? "bg-purple-500" : "bg-muted-foreground/30"}`}
+                    className={`w-2 h-2 rounded-full ${!segment.inSentence ? "bg-purple-500" : "bg-muted-foreground/30"}`}
                   />
                 </div>
                 <span className="text-[9px] uppercase font-bold opacity-70">
-                  {segment.inSentence ? "Choice Only" : "In Sentence"}
+                  {!segment.inSentence ? "Choice Only" : "In Sentence"}
                 </span>
               </div>
             ))}

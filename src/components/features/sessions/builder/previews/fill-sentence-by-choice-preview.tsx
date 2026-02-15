@@ -1,5 +1,4 @@
 import { FillSentenceWithChoiceAction } from "@/types/action.types";
-import { cn } from "@/lib/utils";
 
 interface FillSentenceByChoicePreviewProps {
   action: FillSentenceWithChoiceAction;
@@ -18,7 +17,7 @@ export function FillSentenceByChoicePreview({
             <span className="text-muted-foreground italic">Empty sentence</span>
           ) : (
             sentence
-              .filter((s) => !s.inSentence) // Filter out "Choice Only" items (distractors)
+              .filter((s) => s.inSentence) // Filter out "Choice Only" items (distractors)
               .map((segment, idx) => (
                 <span key={idx}>
                   {segment.isBlank ? (
@@ -37,7 +36,7 @@ export function FillSentenceByChoicePreview({
 
         <div className="flex flex-wrap gap-2 justify-center">
           {(() => {
-            const choices = sentence.filter((s) => s.isBlank || s.inSentence);
+            const choices = sentence.filter((s) => s.isBlank || !s.inSentence);
 
             if (choices.length === 0) {
               return (

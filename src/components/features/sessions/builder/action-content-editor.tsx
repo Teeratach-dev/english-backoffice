@@ -17,10 +17,6 @@ import {
 } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-
-import { Plus, Trash2 } from "lucide-react";
 
 import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";
@@ -123,7 +119,28 @@ export function ActionContentEditor({
         />
       );
 
+    case ActionType.FillSentenceByTyping:
+      return (
+        <FillSentenceByTypingActionForm
+          action={action as FillSentenceByTypingAction}
+          onChange={(updates: Partial<FillSentenceByTypingAction>) =>
+            updateAction(updates)
+          }
+        />
+      );
+
+    case ActionType.FillSentenceWithChoice:
+      return (
+        <FillSentenceWithChoiceActionForm
+          action={action as FillSentenceWithChoiceAction}
+          onChange={(updates: Partial<FillSentenceWithChoiceAction>) =>
+            updateAction(updates)
+          }
+        />
+      );
+
     case ActionType.WriteSentence:
+
     case ActionType.WriteSentenceInChat:
       return (
         <div className="space-y-4">
@@ -157,26 +174,6 @@ export function ActionContentEditor({
             />
           </div>
         </div>
-      );
-
-    case ActionType.FillSentenceByTyping:
-      return (
-        <FillSentenceByTypingActionForm
-          action={action as FillSentenceByTypingAction}
-          onChange={(updates: Partial<FillSentenceByTypingAction>) =>
-            updateAction(updates)
-          }
-        />
-      );
-
-    case ActionType.FillSentenceWithChoice:
-      return (
-        <FillSentenceWithChoiceActionForm
-          action={action as FillSentenceWithChoiceAction}
-          onChange={(updates: Partial<FillSentenceWithChoiceAction>) =>
-            updateAction(updates)
-          }
-        />
       );
 
     default:
