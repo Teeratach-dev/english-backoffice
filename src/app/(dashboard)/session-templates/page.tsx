@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { TemplateForm } from "@/components/features/templates/template-form";
 import { PageHeader } from "@/components/layouts/page-header";
+import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
 interface Template {
   _id: string;
@@ -141,6 +142,7 @@ export default function SessionTemplatesPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Session Templates" />
+      <Breadcrumb items={[{ label: "Session Templates", href: "#" }]} />
 
       <div className="flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[300px]">

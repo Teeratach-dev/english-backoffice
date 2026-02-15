@@ -13,7 +13,18 @@ export class SessionDetailService {
     const query = search ? { name: { $regex: search, $options: "i" } } : {};
 
     const sessions = await SessionDetail.find(query)
-      .populate("sessionGroupId", "name")
+      .populate({
+        path: "sessionGroupId",
+        select: "name topicId",
+        populate: {
+          path: "topicId",
+          select: "name unitId",
+          populate: {
+            path: "unitId",
+            select: "courseId",
+          },
+        },
+      })
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
@@ -25,6 +36,12 @@ export class SessionDetailService {
       ...s,
       sessionGroupId: s.sessionGroupId?._id?.toString() || s.sessionGroupId,
       sessionGroupName: s.sessionGroupId?.name,
+      topicId:
+        s.sessionGroupId?.topicId?._id?.toString() || s.sessionGroupId?.topicId,
+      unitId:
+        s.sessionGroupId?.topicId?.unitId?._id?.toString() ||
+        s.sessionGroupId?.topicId?.unitId,
+      courseId: s.sessionGroupId?.topicId?.unitId?.courseId?.toString(),
     }));
 
     return {

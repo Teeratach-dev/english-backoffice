@@ -37,6 +37,9 @@ interface SessionItem {
   cefrLevel: string;
   sessionGroupName?: string;
   sessionGroupId?: string;
+  topicId?: string;
+  unitId?: string;
+  courseId?: string;
   isActive: boolean;
   sequence: number;
   createdAt: string;
@@ -198,7 +201,7 @@ export default function SessionsListPage() {
                     className="cursor-pointer hover:bg-muted/50"
                     onClick={() =>
                       router.push(
-                        `/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
+                        `/courses/${session.courseId}/units/${session.unitId}/topics/${session.topicId}/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
                       )
                     }
                   >

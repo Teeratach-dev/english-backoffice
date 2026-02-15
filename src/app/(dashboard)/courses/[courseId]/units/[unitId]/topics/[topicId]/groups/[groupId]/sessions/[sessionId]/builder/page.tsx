@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -20,12 +20,25 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { ActionType, Action, Screen, getDefaultContent } from "@/types/action.types";
+import {
+  ActionType,
+  Action,
+  Screen,
+  getDefaultContent,
+  SESSION_TYPE_LABELS,
+  SESSION_TYPES,
+  CEFR_LEVELS,
+} from "@/types/action.types";
 import { SessionBuilderHeader } from "@/components/features/sessions/builder/session-builder-header";
 import { SessionBuilderSidebar } from "@/components/features/sessions/builder/session-builder-sidebar";
 import { SaveTemplateDialog } from "@/components/features/sessions/builder/save-template-dialog";
 import { LoadTemplateDialog } from "@/components/features/sessions/builder/load-template-dialog";
 import { SortableScreenCard } from "@/components/features/sessions/builder/sortable-screen-card";
+import { Breadcrumb } from "@/components/layouts/breadcrumb";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export default function SessionBuilderPage({
   params,
@@ -48,6 +61,13 @@ export default function SessionBuilderPage({
   const [templateName, setTemplateName] = useState("");
   const [availableTemplates, setAvailableTemplates] = useState<any[]>([]);
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
+  const [showSessionCard, setShowSessionCard] = useState(true);
+  const [sessionForm, setSessionForm] = useState({
+    name: "",
+    type: "reading",
+    cefrLevel: "A1",
+    isActive: true,
+  });
 
   async function fetchSession() {
     setLoading(true);
@@ -56,6 +76,12 @@ export default function SessionBuilderPage({
       if (!res.ok) throw new Error("Failed to fetch session");
       const data = await res.json();
       setSession(data);
+      setSessionForm({
+        name: data.name || "",
+        type: data.type || "reading",
+        cefrLevel: data.cefrLevel || "A1",
+        isActive: data.isActive ?? true,
+      });
 
       const mappedScreens = (data.screens || []).map(
         (s: any, sIdx: number) => ({
@@ -85,6 +111,7 @@ export default function SessionBuilderPage({
     setSaving(true);
     try {
       const dataToSave = {
+        ...sessionForm,
         screens: screens.map((s, sIdx) => ({
           sequence: sIdx,
           actions: s.actions.map((a, aIdx) => {
@@ -308,23 +335,138 @@ export default function SessionBuilderPage({
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
-      <SessionBuilderHeader
-        courseId={courseId}
-        unitId={unitId}
-        topicId={topicId}
-        groupId={groupId}
-        sessionName={session?.name}
-        sessionType={session?.type}
-        cefrLevel={session?.cefrLevel}
-        saving={saving}
-        onSave={handleSave}
-        onLoadTemplate={fetchTemplates}
-        onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
-        hasScreens={screens.length > 0}
-      />
+      {/* Breadcrumb — always visible at top */}
+      <div className="border-b px-8 py-3 bg-background shrink-0">
+        <div className="max-w-3xl mx-auto">
+          <Breadcrumb
+            items={[
+              { label: "Courses", href: "/courses" },
+              { label: "Units", href: `/courses/${courseId}/units` },
+              {
+                label: "Topics",
+                href: `/courses/${courseId}/units/${unitId}/topics`,
+              },
+              {
+                label: "Groups",
+                href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
+              },
+              {
+                label: "Sessions",
+                href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
+              },
+              {
+                label: sessionForm.name || session?.name || "",
+                href: "#",
+              },
+            ]}
+          />
+        </div>
+      </div>
 
       <div className="flex-1 flex overflow-hidden">
         <div className="flex-1 overflow-y-auto p-8 bg-muted/5 custom-scrollbar">
+          <SessionBuilderHeader
+            courseId={courseId}
+            unitId={unitId}
+            topicId={topicId}
+            groupId={groupId}
+            sessionName={sessionForm.name || session?.name}
+            sessionType={sessionForm.type || session?.type}
+            cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
+            saving={saving}
+            onSave={handleSave}
+            onLoadTemplate={fetchTemplates}
+            onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
+            hasScreens={screens.length > 0}
+          />
+
+          {/* Session Detail Card */}
+          <div className="max-w-3xl mx-auto mb-6">
+            <Card>
+              <CardHeader
+                className="cursor-pointer flex flex-row items-center justify-between"
+                onClick={() => setShowSessionCard(!showSessionCard)}
+              >
+                <CardTitle>Session Details</CardTitle>
+                {showSessionCard ? (
+                  <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                ) : (
+                  <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                )}
+              </CardHeader>
+              {showSessionCard && (
+                <CardContent className="space-y-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="session-name">Session Name</Label>
+                    <Input
+                      id="session-name"
+                      value={sessionForm.name}
+                      onChange={(e) =>
+                        setSessionForm({ ...sessionForm, name: e.target.value })
+                      }
+                      placeholder="Enter session name"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="session-type">Type</Label>
+                      <select
+                        id="session-type"
+                        value={sessionForm.type}
+                        onChange={(e) =>
+                          setSessionForm({
+                            ...sessionForm,
+                            type: e.target.value,
+                          })
+                        }
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        {SESSION_TYPES.map((type) => (
+                          <option key={type} value={type}>
+                            {
+                              SESSION_TYPE_LABELS[
+                                type as keyof typeof SESSION_TYPE_LABELS
+                              ]
+                            }
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="session-cefr">CEFR Level</Label>
+                      <select
+                        id="session-cefr"
+                        value={sessionForm.cefrLevel}
+                        onChange={(e) =>
+                          setSessionForm({
+                            ...sessionForm,
+                            cefrLevel: e.target.value,
+                          })
+                        }
+                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                      >
+                        {CEFR_LEVELS.map((level) => (
+                          <option key={level} value={level}>
+                            {level}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="session-active"
+                      checked={sessionForm.isActive}
+                      onCheckedChange={(checked) =>
+                        setSessionForm({ ...sessionForm, isActive: checked })
+                      }
+                    />
+                    <Label htmlFor="session-active">Active Status</Label>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
+          </div>
           <div className="max-w-3xl mx-auto space-y-6 pb-20">
             <DndContext
               sensors={sensors}
