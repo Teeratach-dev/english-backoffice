@@ -6,6 +6,7 @@ import {
   ReadingAction,
   ExplainAction,
   AudioAction,
+  ChatAction,
 } from "@/types/action.types";
 import { WordEditor } from "./word-editor";
 import { RichWordEditor } from "./rich-word-editor";
@@ -25,6 +26,7 @@ import React from "react";
 import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";
 import { AudioActionForm } from "./forms/audio-action-form";
+import { ChatActionForm } from "./forms/chat-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -79,68 +81,10 @@ export function ActionContentEditor({
 
     case ActionType.Chat:
       return (
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <Label className="text-xs">Sender Name</Label>
-              <Input
-                value={action.sender?.name || ""}
-                onChange={(e) =>
-                  updateAction({
-                    sender: { ...action.sender, name: e.target.value },
-                  })
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Sender Image URL</Label>
-              <Input
-                value={action.sender?.imageUrl || ""}
-                onChange={(e) =>
-                  updateAction({
-                    sender: {
-                      ...action.sender,
-                      imageUrl: e.target.value,
-                    },
-                  })
-                }
-              />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-xs">Position</Label>
-              <select
-                value={action.position || "left"}
-                onChange={(e) =>
-                  updateAction({ position: e.target.value as "left" | "right" })
-                }
-                className="w-full h-8 rounded-md border bg-background px-2 text-xs"
-              >
-                <option value="left">Left</option>
-                <option value="right">Right</option>
-              </select>
-            </div>
-            <div className="space-y-1 flex items-end gap-4 pb-1">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={action.isDisplay}
-                  onCheckedChange={(c) => updateAction({ isDisplay: c })}
-                />
-                <Label className="text-xs font-normal">Display</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={action.isReadable}
-                  onCheckedChange={(c) => updateAction({ isReadable: c })}
-                />
-                <Label className="text-xs font-normal">Readable</Label>
-              </div>
-            </div>
-          </div>
-          <WordEditor
-            words={action.text || []}
-            onChange={(words) => updateAction({ text: words })}
-          />
-        </div>
+        <ChatActionForm
+          action={action as ChatAction}
+          onChange={(updates: Partial<ChatAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.Choice:
