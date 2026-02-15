@@ -55,10 +55,25 @@ export function ActionContentEditor({
               />
             </div>
           </div>
-          <WordEditor
-            words={action.text || []}
-            onChange={(words) => updateAction({ text: words })}
-          />
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold">Content Text</Label>
+            <textarea
+              className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              value={action.text?.map((w: any) => w.text).join(" ") || ""}
+              onChange={(e) => {
+                const words = e.target.value
+                  .split(/\s+/)
+                  .filter((t) => t !== "")
+                  .map((t) => ({
+                    text: t,
+                    translation: [],
+                    isBlank: false,
+                  }));
+                updateAction({ text: words });
+              }}
+              placeholder="Enter English text here. The system will automatically split it into words."
+            />
+          </div>
         </div>
       );
 

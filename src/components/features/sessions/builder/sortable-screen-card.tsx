@@ -18,7 +18,7 @@ import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
-  horizontalListSortingStrategy,
+  verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
   Screen,
@@ -161,12 +161,15 @@ export function SortableScreenCard({
               >
                 <SortableContext
                   items={screen.actions.map((a) => a.id)}
-                  strategy={horizontalListSortingStrategy}
+                  strategy={verticalListSortingStrategy}
                 >
-                  <div className="flex flex-wrap gap-2 min-h-25 p-2 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20">
+                  <div className="flex flex-col gap-3 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20">
                     {screen.actions.length === 0 ? (
-                      <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground">
-                        <p className="text-xs">No actions added yet</p>
+                      <div className="flex-1 flex flex-col items-center justify-center py-8 text-muted-foreground">
+                        <Plus className="h-8 w-8 mb-2 opacity-10" />
+                        <p className="text-xs font-medium">
+                          No actions added to this screen yet
+                        </p>
                       </div>
                     ) : (
                       screen.actions.map((action) => (
@@ -235,31 +238,13 @@ export function SortableScreenCard({
                   Close Editor
                 </Button>
               </CardHeader>
-              <CardContent className="p-0">
-                <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-border">
-                  {/* Form Column */}
-                  <div className="p-4 lg:p-6 space-y-4">
-                    <ActionContentEditor
-                      action={activeActionInScreen}
-                      onChange={(updates) =>
-                        onUpdateAction(activeActionInScreen.id, updates)
-                      }
-                    />
-                  </div>
-
-                  {/* Preview Column */}
-                  <div className="p-4 lg:p-6 bg-muted/5">
-                    <div className="sticky top-4">
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
-                          Live Preview
-                        </span>
-                        <div className="h-px flex-1 bg-border/40" />
-                      </div>
-                      <SessionPreview action={activeActionInScreen} />
-                    </div>
-                  </div>
-                </div>
+              <CardContent className="p-4 lg:p-6">
+                <ActionContentEditor
+                  action={activeActionInScreen}
+                  onChange={(updates) =>
+                    onUpdateAction(activeActionInScreen.id, updates)
+                  }
+                />
               </CardContent>
             </Card>
           )}
