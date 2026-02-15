@@ -177,15 +177,37 @@ export default function SessionBuilderPage({
     }
   };
 
-  async function fetchTemplates() {
+  async function fetchTemplates(filters?: { isActive: boolean; type: string }) {
+    setLoading(true);
     try {
-      const res = await fetch(`/api/templates?type=${session?.type}`);
+      const params = new URLSearchParams();
+      // Default to filters or session type if not provided (though dialog provides defaults)
+      const isActive = filters?.isActive ?? true;
+      // If filter type is 'all' or undefined, don't send type param (or handle in API).
+      // Existing API supports array of types.
+      const type = filters?.type;
+
+      if (isActive) params.append("isActive", "true");
+
+      if (type && type !== "all") {
+        params.append("type", type);
+      } else if (!type) {
+        // Fallback if called without filters (initial load) - maybe all or current session type?
+        // Plan said default to 'all' in dialog, so we might want to fetch 'all' here too or rely on dialog's first call.
+        // Let's just default to "all" behavior (no type param) if not specified, or current session type if we want that behavior.
+        // Let's use current session type as default if no filters passed, but dialog passes {type: 'all'} explicitly.
+        if (session?.type) params.append("type", session.type);
+      }
+
+      const res = await fetch(`/api/templates?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch templates");
       const data = await res.json();
       setAvailableTemplates(data);
-      setIsLoadDialogOpen(true);
+      // setIsLoadDialogOpen(true); // Don't auto open, just fetch
     } catch (error) {
       toast.error("Error loading templates");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -407,7 +429,7 @@ export default function SessionBuilderPage({
             cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
             saving={saving}
             onSave={handleSave}
-            onLoadTemplate={fetchTemplates}
+            onLoadTemplate={() => setIsLoadDialogOpen(true)}
             onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
             hasScreens={screens.length > 0}
           />
@@ -571,6 +593,8 @@ export default function SessionBuilderPage({
         onOpenChange={setIsLoadDialogOpen}
         templates={availableTemplates}
         onApplyTemplate={handleApplyTemplate}
+        onFetch={fetchTemplates}
+        loading={loading}
       />
     </div>
   );
