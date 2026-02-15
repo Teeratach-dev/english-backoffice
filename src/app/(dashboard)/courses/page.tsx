@@ -9,7 +9,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
 import { PageHeader } from "@/components/layouts/page-header";

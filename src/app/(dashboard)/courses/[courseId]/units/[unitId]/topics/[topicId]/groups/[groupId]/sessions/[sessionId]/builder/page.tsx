@@ -377,7 +377,7 @@ export default function SessionBuilderPage({
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <PageHeader title="Session detail" />
+      <PageHeader title="Session" />
       {/* Breadcrumb — always visible at top */}
       <div className="px-4 md:px-8 py-4 sticky top-0 z-50 shrink-0">
         <div className="max-w-6xl mx-auto">
@@ -394,7 +394,7 @@ export default function SessionBuilderPage({
                 href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
               },
               {
-                label: sessionForm.name || session?.name || "",
+                label: "Session",
                 href: "#",
               },
             ]}

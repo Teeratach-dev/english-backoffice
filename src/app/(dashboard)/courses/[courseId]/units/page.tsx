@@ -155,9 +155,8 @@ export default function UnitsPage({
       <PageHeader title="Course" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
           {
-            label: courseForm.name || course?.name || "",
+            label: "Course",
             href: "#",
           },
         ]}

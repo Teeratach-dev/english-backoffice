@@ -152,9 +152,8 @@ export default function TopicsPage({
       <PageHeader title="Unit" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
-          { label: "Units", href: `/courses/${courseId}/units` },
-          { label: unitForm.name || unit?.name || "", href: "#" },
+          { label: "Courses", href: `/courses/${courseId}/units` },
+          { label: "Unit", href: "#" },
         ]}
       />
 

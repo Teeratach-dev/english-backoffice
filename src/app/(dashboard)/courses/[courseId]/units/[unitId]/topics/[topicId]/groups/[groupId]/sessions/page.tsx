@@ -157,7 +157,7 @@ export default function SessionsPage({
     );
   }
 
-  return (
+  http: return (
     <div className="pb-20 space-y-6">
       <PageHeader title="Session Group" />
       <Breadcrumb
@@ -166,10 +166,10 @@ export default function SessionsPage({
           { label: "Units", href: `/courses/${courseId}/units` },
           {
             label: "Topics",
-            href: `/courses/${courseId}/units/${unitId}/topics`,
+            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
           },
           {
-            label: groupForm.name || group?.name || "",
+            label: "Group",
             href: "#",
           },
         ]}

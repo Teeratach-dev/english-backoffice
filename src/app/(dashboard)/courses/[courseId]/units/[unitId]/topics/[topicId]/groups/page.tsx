@@ -155,13 +155,12 @@ export default function SessionGroupsPage({
       <Breadcrumb
         items={[
           { label: "Courses", href: "/courses" },
-          { label: "Units", href: `/courses/${courseId}/units` },
           {
-            label: "Topics",
+            label: "Units",
             href: `/courses/${courseId}/units/${unitId}/topics`,
           },
           {
-            label: topicForm.name || topic?.name || "",
+            label: "Topic",
             href: "#",
           },
         ]}
@@ -220,7 +219,7 @@ export default function SessionGroupsPage({
           onDelete={handleDelete}
           addButton={
             <Button onClick={handleAdd}>
-              <Plus className="mr-2 h-4 w-4" /> Add
+              <Plus className="mr-2 h-4 w-4" /> + Add
             </Button>
           }
         />
