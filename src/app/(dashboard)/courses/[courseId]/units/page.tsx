@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { StickyFooter } from "@/components/layouts/sticky-footer";
 
 export default function UnitsPage({
   params,
@@ -248,29 +249,27 @@ export default function UnitsPage({
       </div>
 
       {/* Sticky Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 border-t bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
-          <Button
-            variant="destructive"
-            onClick={handleDeleteCourse}
-            className="gap-2"
-          >
-            Delete Course
+      <StickyFooter>
+        <Button
+          variant="destructive"
+          onClick={handleDeleteCourse}
+          className="gap-2"
+        >
+          Delete Course
+        </Button>
+        <div className="flex gap-4">
+          <Button variant="outline" onClick={() => router.push("/courses")}>
+            Cancel
           </Button>
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={() => router.push("/courses")}>
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSaveCourse}
-              disabled={savingCourse}
-              className="min-w-[100px]"
-            >
-              {savingCourse ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <Button
+            onClick={handleSaveCourse}
+            disabled={savingCourse}
+            className="min-w-[100px]"
+          >
+            {savingCourse ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
-      </div>
+      </StickyFooter>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

@@ -21,6 +21,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
+import { StickyFooter } from "@/components/layouts/sticky-footer";
 
 export default function SessionsPage({
   params,
@@ -236,36 +237,34 @@ export default function SessionsPage({
       </div>
 
       {/* Sticky Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-10 border-t bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
+      <StickyFooter>
+        <Button
+          variant="destructive"
+          onClick={handleDeleteGroup}
+          className="gap-2"
+        >
+          Delete Group
+        </Button>
+        <div className="flex gap-4">
           <Button
-            variant="destructive"
-            onClick={handleDeleteGroup}
-            className="gap-2"
+            variant="outline"
+            onClick={() =>
+              router.push(
+                `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
+              )
+            }
           >
-            Delete Group
+            Cancel
           </Button>
-          <div className="flex gap-4">
-            <Button
-              variant="outline"
-              onClick={() =>
-                router.push(
-                  `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-                )
-              }
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSaveGroup}
-              disabled={savingGroup}
-              className="min-w-[100px]"
-            >
-              {savingGroup ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <Button
+            onClick={handleSaveGroup}
+            disabled={savingGroup}
+            className="min-w-[100px]"
+          >
+            {savingGroup ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
-      </div>
+      </StickyFooter>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

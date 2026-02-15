@@ -2,10 +2,9 @@
 
 import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DndContext,
   closestCenter,
@@ -27,22 +26,21 @@ import {
   Screen,
   getDefaultContent,
   SESSION_TYPE_LABELS,
-  ACTION_TYPE_LABELS,
   SESSION_TYPES,
   CEFR_LEVELS,
 } from "@/types/action.types";
 import { SessionBuilderHeader } from "@/components/features/sessions/builder/session-builder-header";
-import { SessionPreview } from "@/components/features/sessions/builder/session-preview";
 import { SaveTemplateDialog } from "@/components/features/sessions/builder/save-template-dialog";
 import { LoadTemplateDialog } from "@/components/features/sessions/builder/load-template-dialog";
 import { SortableScreenCard } from "@/components/features/sessions/builder/sortable-screen-card";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
+import { StickyFooter } from "@/components/layouts/sticky-footer";
 
 export default function SessionBuilderPage({
   params,
@@ -379,7 +377,7 @@ export default function SessionBuilderPage({
     <div className="min-h-screen flex flex-col bg-background">
       <PageHeader title="Session" />
       {/* Breadcrumb — always visible at top */}
-      <div className="px-4 md:px-8 py-4 sticky top-0 z-50 shrink-0">
+      <div className="px-4 md:px-8 py-4  top-0 z-50 shrink-0">
         <div className="max-w-6xl mx-auto">
           <Breadcrumb
             items={[
@@ -532,26 +530,24 @@ export default function SessionBuilderPage({
       </div>
 
       {/* Sticky Footer */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background/80 backdrop-blur-md">
-        <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-            disabled={saving}
-            className="gap-2"
-          >
-            Delete Session
+      <StickyFooter>
+        <Button
+          variant="destructive"
+          onClick={handleDelete}
+          disabled={saving}
+          className="gap-2"
+        >
+          Delete Session
+        </Button>
+        <div className="flex gap-4">
+          <Button variant="outline" onClick={handleCancel} disabled={saving}>
+            Cancel
           </Button>
-          <div className="flex gap-4">
-            <Button variant="outline" onClick={handleCancel} disabled={saving}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={saving} className="min-w-25">
-              {saving ? "Saving..." : "Save Changes"}
-            </Button>
-          </div>
+          <Button onClick={handleSave} disabled={saving} className="min-w-25">
+            {saving ? "Saving..." : "Save Changes"}
+          </Button>
         </div>
-      </div>
+      </StickyFooter>
 
       <SaveTemplateDialog
         open={isTemplateDialogOpen}
