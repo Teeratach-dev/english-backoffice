@@ -173,7 +173,7 @@ export type ChoiceAction = {
 
 export type ReorderAction = {
     type: 'reorder'
-    items: items: { 
+    items: { 
     text: Word, 
     sequence: number 
     }[]
@@ -181,37 +181,39 @@ export type ReorderAction = {
 
 export type MatchCardAction = {
     type: 'match_card'
-    items: items: {
-    left: { text?: string, audioUrl?: string },
-    right: { text?: string, audioUrl?: string }
+    items: {
+        left: { text?: string, audioUrl?: string },
+        right: { text?: string, audioUrl?: string }
     }[]
 }
 
 export type FillSentenceByTyping = {
     type: 'fill_sentence_by_typing'
     sentence: {
-    text: string,
-    isBlank: bool,
+        text: string,
+        isBlank: bool,
     }[]
 }
 
 export type FillSentenceWithChoice = {
     type: 'fill_sentence_with_choice'
     sentence: {
-    text: string,
-    isBlank: bool,
-    choice?: Word[]
+        text: Word,
+        isBlank: bool,
+        inSentence: bool,
     }[]
 }
 
 export type WriteSentence = {
     type: 'write_sentence'
     sentence: string[]
+    expectSentence: string[]
 }
 
 export type WriteSentenceInChat = {
     type: 'write_sentence_in_chat'
     sentence: string[]
+    expectSentence: string[]
     position: 'left' | 'right'
 }
 
