@@ -135,7 +135,7 @@ export function SortableScreenCard({
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-white hover:bg-background/90 shadow-sm"
+            className="h-8 w-8  hover:bg-background/90 shadow-sm"
             onClick={onDelete}
           >
             <Trash2 className="h-4 w-4" />
