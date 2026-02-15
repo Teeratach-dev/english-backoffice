@@ -64,7 +64,7 @@ export default function SessionBuilderPage({
   const [templateName, setTemplateName] = useState("");
   const [availableTemplates, setAvailableTemplates] = useState<any[]>([]);
   const [activeActionId, setActiveActionId] = useState<string | null>(null);
-  const [showPreview, setShowPreview] = useState(true);
+  const [showPreview, setShowPreview] = useState(false);
   const [sessionForm, setSessionForm] = useState({
     name: "",
     type: "reading",

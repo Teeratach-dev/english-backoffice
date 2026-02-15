@@ -22,6 +22,7 @@ import { Screen, ActionType, ACTION_TYPE_LABELS } from "@/types/action.types";
 import { SortableActionItem } from "./sortable-action-item";
 import { ActionTypeSelector } from "./action-type-selector";
 import { ActionContentEditor } from "./action-content-editor";
+import { PhonePreview } from "./phone-preview";
 import {
   Volume2,
   Image as ImageIcon,
@@ -141,14 +142,16 @@ export function SortableScreenCard({
             <Trash2 className="h-4 w-4" />
           </Button>
         </CardHeader>
-        {showPreview && (
-          <CardContent className="px-4 space-y-2">
-            <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleActionDragEnd}
-              >
+        <CardContent className="px-4 space-y-2">
+          <>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleActionDragEnd}
+            >
+              {showPreview ? (
+                <PhonePreview actions={screen.actions} />
+              ) : (
                 <SortableContext
                   items={screen.actions.map((a) => a.id)}
                   strategy={verticalListSortingStrategy}
@@ -220,8 +223,10 @@ export function SortableScreenCard({
                     </div>
                   )}
                 </SortableContext>
-              </DndContext>
+              )}
+            </DndContext>
 
+            {!showPreview && (
               <Button
                 variant="outline"
                 className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
@@ -230,9 +235,9 @@ export function SortableScreenCard({
                 <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
                 <span className="text-xs font-semibold">Add Action</span>
               </Button>
-            </>
-          </CardContent>
-        )}
+            )}
+          </>
+        </CardContent>
       </Card>
 
       <ActionTypeSelector
