@@ -88,7 +88,7 @@ export function SortableActionItem({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group/action relative flex flex-col gap-3 p-4 pt-6 mt-3 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
+        "group/action relative flex flex-col gap-3 p-4 pt-6 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
         isEditing ? "ring-2 ring-primary shadow-2xl" : "",
       )}
       onClick={onEdit}
@@ -101,7 +101,7 @@ export function SortableActionItem({
         <GripHorizontal className="h-4 w-4 text-muted-foreground" />
       </div>
 
-      <div className="flex items-center justify-between">
+      <div className="flex  items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
@@ -151,12 +151,7 @@ export function SortableActionItem({
           </Button>
         </div>
       </div>
-
-      {internalShowPreview && (
-        <div className="rounded-lg overflow-hidden border border-muted/20 animate-in fade-in slide-in-from-top-1 duration-200">
-          <SessionPreview action={action} />
-        </div>
-      )}
+      {internalShowPreview && <SessionPreview action={action} />}
     </div>
   );
 }

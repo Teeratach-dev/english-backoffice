@@ -35,7 +35,7 @@ export function SessionPreview({ action }: SessionPreviewProps) {
             <div className="rounded-md p-4 relative bg-card shadow-sm">
               <p
                 className={cn(
-                  "text-card-foreground leading-loose font-medium",
+                  "text-card-foreground leading-loose font-medium ",
                   action.alignment === "center"
                     ? "text-center"
                     : action.alignment === "right"
