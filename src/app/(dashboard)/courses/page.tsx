@@ -12,6 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Plus } from "lucide-react";
+import { PageHeader } from "@/components/layouts/page-header";
 
 export default function CoursesPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -35,19 +36,17 @@ export default function CoursesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Courses</h1>
-          <p className="text-muted-foreground">
-            Manage your educational courses and settings.
-          </p>
-        </div>
-        <Button onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" /> Add Course
-        </Button>
-      </div>
+      <PageHeader title="Courses" />
 
-      <CourseTable key={refreshKey} onEdit={handleEdit} />
+      <CourseTable
+        key={refreshKey}
+        onEdit={handleEdit}
+        addButton={
+          <Button onClick={handleAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add Course
+          </Button>
+        }
+      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

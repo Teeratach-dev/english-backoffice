@@ -28,7 +28,13 @@ interface Course {
   createdAt: string;
 }
 
-export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
+export function CourseTable({
+  onEdit,
+  addButton,
+}: {
+  onEdit: (course: Course) => void;
+  addButton?: React.ReactNode;
+}) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -90,7 +96,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -118,6 +124,7 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
           <option value="yes">Yes</option>
           <option value="no">No</option>
         </select>
+        {addButton && <div className="ml-auto">{addButton}</div>}
       </div>
       <div className="rounded-md border">
         <Table>

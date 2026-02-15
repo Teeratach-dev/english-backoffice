@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SessionGroupForm } from "@/components/features/session-groups/session-group-form";
+import { PageHeader } from "@/components/layouts/page-header";
 
 interface SessionGroupItem {
   _id: string;
@@ -95,26 +96,18 @@ export default function SessionGroupsListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Session Groups</h1>
-          <p className="text-muted-foreground">
-            View and manage all session groups across all topics.
-          </p>
-        </div>
-        <Button onClick={() => setIsAddOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add Group
-        </Button>
-      </div>
+      <PageHeader title="Session Groups" />
 
-      <div className="flex gap-4">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search groups or topic name..."
             className="pl-8"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
           />
         </div>
         <select
@@ -126,6 +119,11 @@ export default function SessionGroupsListPage() {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
+        <div className="ml-auto">
+          <Button onClick={() => setIsAddOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Add Group
+          </Button>
+        </div>
       </div>
 
       {loading ? (

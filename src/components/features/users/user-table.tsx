@@ -10,9 +10,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { Shield, User as UserIcon, Edit, Trash } from "lucide-react";
+import { Shield, User as UserIcon, Edit, Trash, Search } from "lucide-react";
 
 interface UserData {
   _id: string;
@@ -27,10 +28,15 @@ interface UserTableProps {
   onEdit?: (user: UserData) => void;
 }
 
-export function UserTable({ currentUserRole, onEdit }: UserTableProps) {
+export function UserTable({
+  currentUserRole,
+  onEdit,
+  addButton,
+}: UserTableProps & { addButton?: React.ReactNode }) {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [roleFilter, setRoleFilter] = useState("all");
+  const [search, setSearch] = useState("");
 
   const isSuperadmin = currentUserRole === "superadmin";
 
@@ -70,8 +76,11 @@ export function UserTable({ currentUserRole, onEdit }: UserTableProps) {
   }
 
   const filteredUsers = users.filter((user) => {
-    if (roleFilter === "all") return true;
-    return user.role === roleFilter;
+    const matchesRole = roleFilter === "all" || user.role === roleFilter;
+    const matchesSearch =
+      user.name.toLowerCase().includes(search.toLowerCase()) ||
+      user.email.toLowerCase().includes(search.toLowerCase());
+    return matchesRole && matchesSearch;
   });
 
   if (loading) {
@@ -85,16 +94,28 @@ export function UserTable({ currentUserRole, onEdit }: UserTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative flex-1 min-w-[250px]">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search users..."
+            className="pl-8"
+            value={search}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
+          />
+        </div>
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         >
           <option value="all">All Roles</option>
           <option value="admin">Admin</option>
           <option value="superadmin">Superadmin</option>
         </select>
+        {addButton && <div className="ml-auto">{addButton}</div>}
       </div>
 
       <div className="rounded-md border">

@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { TopicForm } from "@/components/features/topics/topic-form";
+import { PageHeader } from "@/components/layouts/page-header";
 
 interface TopicItem {
   _id: string;
@@ -98,26 +99,18 @@ export default function TopicsListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Topics</h1>
-          <p className="text-muted-foreground">
-            View and manage all topics across all units.
-          </p>
-        </div>
-        <Button onClick={() => setIsAddOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add Topic
-        </Button>
-      </div>
+      <PageHeader title="Topics" />
 
-      <div className="flex gap-4">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search topics or unit name..."
             className="pl-8"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
           />
         </div>
         <select
@@ -129,6 +122,11 @@ export default function TopicsListPage() {
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
+        <div className="ml-auto">
+          <Button onClick={() => setIsAddOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Add Topic
+          </Button>
+        </div>
       </div>
 
       {loading ? (

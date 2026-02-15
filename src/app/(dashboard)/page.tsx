@@ -1,16 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/layouts/page-header";
 
 export default function DashboardPage() {
   return (
     <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">
-          Dashboard Overview
-        </h1>
-        <p className="text-muted-foreground">
-          Welcome back to English Backoffice. Here is what's happening.
-        </p>
-      </div>
+      <PageHeader title="Dashboard Overview" />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>

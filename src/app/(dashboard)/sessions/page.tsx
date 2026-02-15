@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SessionForm } from "@/components/features/sessions/session-form";
+import { PageHeader } from "@/components/layouts/page-header";
 
 interface SessionItem {
   _id: string;
@@ -105,26 +106,18 @@ export default function SessionsListPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Session Details</h1>
-          <p className="text-muted-foreground">
-            View and manage all session details across all groups.
-          </p>
-        </div>
-        <Button onClick={() => setIsAddOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add Session
-        </Button>
-      </div>
+      <PageHeader title="Session Details" />
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap items-center gap-4">
         <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search sessions or group name..."
             className="pl-8"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
           />
         </div>
         <div className="flex gap-2">
@@ -136,7 +129,7 @@ export default function SessionsListPage() {
             <option value="all">All Types</option>
             {SESSION_TYPES.map((type) => (
               <option key={type} value={type}>
-                {SESSION_TYPE_LABELS[type]}
+                {SESSION_TYPE_LABELS[type as keyof typeof SESSION_TYPE_LABELS]}
               </option>
             ))}
           </select>
@@ -163,6 +156,11 @@ export default function SessionsListPage() {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
+        </div>
+        <div className="ml-auto">
+          <Button onClick={() => setIsAddOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" /> Add Session
+          </Button>
         </div>
       </div>
 

@@ -1,14 +1,10 @@
 import { ChangePasswordForm } from "@/components/features/auth/change-password-form";
+import { PageHeader } from "@/components/layouts/page-header";
 
 export default function ChangePasswordPage() {
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Security</h1>
-        <p className="text-muted-foreground">
-          Manage your account security and password.
-        </p>
-      </div>
+      <PageHeader title="Security" />
 
       <div className="flex justify-center pt-10">
         <ChangePasswordForm />

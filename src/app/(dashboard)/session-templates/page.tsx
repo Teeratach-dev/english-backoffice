@@ -33,6 +33,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { TemplateForm } from "@/components/features/templates/template-form";
+import { PageHeader } from "@/components/layouts/page-header";
 
 interface Template {
   _id: string;
@@ -139,22 +140,10 @@ export default function SessionTemplatesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">
-            Session Templates
-          </h1>
-          <p className="text-muted-foreground">
-            View and manage reusable session configurations.
-          </p>
-        </div>
-        <Button onClick={handleAdd}>
-          <Plus className="mr-2 h-4 w-4" /> Add Template
-        </Button>
-      </div>
+      <PageHeader title="Session Templates" />
 
-      <div className="flex flex-wrap gap-4">
-        <div className="relative flex-1 min-w-75">
+      <div className="flex flex-wrap items-center gap-4">
+        <div className="relative flex-1 min-w-[300px]">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search templates..."
@@ -188,6 +177,11 @@ export default function SessionTemplatesPage() {
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
           </select>
+        </div>
+        <div className="ml-auto">
+          <Button onClick={handleAdd}>
+            <Plus className="mr-2 h-4 w-4" /> Add Template
+          </Button>
         </div>
       </div>
 
