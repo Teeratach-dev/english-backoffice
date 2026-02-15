@@ -128,7 +128,10 @@ export function ChatPreview({ action }: ChatPreviewProps) {
             {isBlurryMode && (
               <button
                 type="button"
-                onClick={() => setIsRevealed(!isRevealed)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsRevealed(!isRevealed);
+                }}
                 className={cn(
                   "hover:text-primary cursor-pointer transition-colors text-muted-foreground active:scale-95 flex items-center justify-center",
                 )}
