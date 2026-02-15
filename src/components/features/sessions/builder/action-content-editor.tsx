@@ -5,6 +5,7 @@ import {
   ActionType,
   ReadingAction,
   ExplainAction,
+  AudioAction,
 } from "@/types/action.types";
 import { WordEditor } from "./word-editor";
 import { RichWordEditor } from "./rich-word-editor";
@@ -23,6 +24,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";
+import { AudioActionForm } from "./forms/audio-action-form";
 
 interface ActionContentEditorProps {
   action: Action;
@@ -57,14 +59,10 @@ export function ActionContentEditor({
 
     case ActionType.Audio:
       return (
-        <div className="space-y-2">
-          <Label className="text-xs">Audio URL</Label>
-          <Input
-            value={action.audio || ""}
-            onChange={(e) => updateAction({ audio: e.target.value })}
-            placeholder="https://example.com/audio.mp3"
-          />
-        </div>
+        <AudioActionForm
+          action={action}
+          onChange={(updates: Partial<AudioAction>) => updateAction(updates)}
+        />
       );
 
     case ActionType.Image:

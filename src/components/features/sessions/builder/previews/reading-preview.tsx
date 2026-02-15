@@ -78,7 +78,7 @@ export function ReadingPreview({ action }: ReadingPreviewProps) {
           className={cn(
             "flex-1 transition-all duration-300",
             isBlurry &&
-              "blur-[4px] opacity-40 grayscale select-none pointer-events-none",
+              "blur-xs opacity-40 grayscale select-none pointer-events-none",
           )}
         >
           <p className="text-[11px] leading-relaxed text-card-foreground">
