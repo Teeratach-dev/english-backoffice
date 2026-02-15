@@ -24,7 +24,7 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
 
         {/* Screen Content */}
         <ScrollArea className="flex-1 w-full relative">
-          <div className="px-4 py-4 space-y-6 ">
+          <div className="px-4 py-4 space-y-4 ">
             {actions.map((action, idx) => (
               <div
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
