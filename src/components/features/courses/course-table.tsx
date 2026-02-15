@@ -32,6 +32,8 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [purchaseableFilter, setPurchaseableFilter] = useState("all");
   const router = useRouter();
 
   async function fetchCourses() {
@@ -65,9 +67,17 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
     }
   }
 
-  const filteredCourses = courses.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredCourses = courses.filter((c) => {
+    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" ? c.isActive : !c.isActive);
+    const matchesPurchaseable =
+      purchaseableFilter === "all" ||
+      (purchaseableFilter === "yes" ? c.purchaseable : !c.purchaseable);
+
+    return matchesSearch && matchesStatus && matchesPurchaseable;
+  });
 
   if (loading) {
     return (
@@ -80,14 +90,34 @@ export function CourseTable({ onEdit }: { onEdit: (course: Course) => void }) {
 
   return (
     <div className="space-y-4">
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search courses..."
-          className="pl-8"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-wrap gap-2">
+        <div className="relative flex-1 min-w-[200px]">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search courses..."
+            className="pl-8"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select
+          value={purchaseableFilter}
+          onChange={(e) => setPurchaseableFilter(e.target.value)}
+          className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <option value="all">All Purchaseable</option>
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
+        </select>
       </div>
       <div className="rounded-md border">
         <Table>

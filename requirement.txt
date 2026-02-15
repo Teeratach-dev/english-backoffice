@@ -48,7 +48,6 @@
 ------ Typescript rule ------
 ทุกไฟล์ให้เชคด้วย ห้ามมีไฟล์ไหน error typescript
 
-
 ------ Email & Password ------
 role: superadmin
 email: teeratach@english.com

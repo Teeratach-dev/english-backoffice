@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { cn } from "@/lib/utils";
 import {
   DndContext,
   closestCenter,
@@ -42,6 +43,7 @@ export function SessionSortableList({
   onDelete,
 }: SessionSortableListProps) {
   const [items, setItems] = useState<LocalSession[]>(sessions);
+  const [statusFilter, setStatusFilter] = useState("all");
 
   useEffect(() => {
     setItems(sessions);
@@ -84,36 +86,70 @@ export function SessionSortableList({
     }
   }
 
+  const displayedItems = items.filter((item) => {
+    if (statusFilter === "all") return true;
+    return statusFilter === "active" ? item.isActive : !item.isActive;
+  });
+
+  const isFiltered = statusFilter !== "all";
+
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={items.map((i) => i._id)}
-        strategy={verticalListSortingStrategy}
+    <div className="space-y-4">
+      <div className="flex justify-end">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
       >
-        <div className="space-y-2">
-          {items.map((session) => (
-            <SortableSessionItem
-              key={session._id}
-              session={session}
-              courseId={courseId}
-              unitId={unitId}
-              topicId={topicId}
-              groupId={groupId}
-              onEdit={onEdit}
-              onDelete={onDelete}
-            />
-          ))}
-          {items.length === 0 && (
-            <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
-              No sessions found. Click "Add Session" to start.
-            </div>
-          )}
-        </div>
-      </SortableContext>
-    </DndContext>
+        <SortableContext
+          items={displayedItems.map((i) => i._id)}
+          strategy={verticalListSortingStrategy}
+          disabled={isFiltered}
+        >
+          <div
+            className={cn(
+              "space-y-2",
+              isFiltered && "opacity-80 grayscale-[0.2]",
+            )}
+          >
+            {displayedItems.map((session) => (
+              <SortableSessionItem
+                key={session._id}
+                session={session}
+                courseId={courseId}
+                unitId={unitId}
+                topicId={topicId}
+                groupId={groupId}
+                onEdit={onEdit}
+                onDelete={onDelete}
+              />
+            ))}
+            {displayedItems.length === 0 && (
+              <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
+                {isFiltered
+                  ? "No sessions match the filter."
+                  : "No sessions found. Click 'Add Session' to start."}
+              </div>
+            )}
+            {isFiltered && (
+              <p className="text-xs text-muted-foreground italic text-center">
+                Manual reordering is disabled while filtering.
+              </p>
+            )}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
   );
 }

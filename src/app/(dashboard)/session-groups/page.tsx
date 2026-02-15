@@ -39,6 +39,7 @@ export default function SessionGroupsListPage() {
   const [groups, setGroups] = useState<SessionGroupItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<SessionGroupItem | null>(
@@ -81,11 +82,16 @@ export default function SessionGroupsListPage() {
     }
   }
 
-  const filteredGroups = groups.filter(
-    (g) =>
+  const filteredGroups = groups.filter((g) => {
+    const matchesSearch =
       g.name.toLowerCase().includes(search.toLowerCase()) ||
-      (g.topicName || "").toLowerCase().includes(search.toLowerCase()),
-  );
+      (g.topicName || "").toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" ? g.isActive : !g.isActive);
+
+    return matchesSearch && matchesStatus;
+  });
 
   return (
     <div className="space-y-6">
@@ -101,14 +107,25 @@ export default function SessionGroupsListPage() {
         </Button>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search groups or topic name..."
-          className="pl-8"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search groups or topic name..."
+            className="pl-8"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <option value="all">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
       </div>
 
       {loading ? (

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -13,10 +12,8 @@ import {
   Settings,
   Folder,
   ListChecks,
-  Search,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
 const sidebarItems = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -35,11 +32,6 @@ const sidebarItems = [
 
 export function Sidebar({ className }: { className?: string }) {
   const pathname = usePathname();
-  const [filter, setFilter] = useState("");
-
-  const filteredItems = sidebarItems.filter((item) =>
-    item.name.toLowerCase().includes(filter.toLowerCase()),
-  );
 
   return (
     <div
@@ -53,17 +45,8 @@ export function Sidebar({ className }: { className?: string }) {
           <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
             English Backoffice
           </h2>
-          <div className="relative mb-3 px-1">
-            <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Filter menu..."
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-              className="pl-8 h-9 text-sm"
-            />
-          </div>
           <div className="space-y-1">
-            {filteredItems.map((item) => (
+            {sidebarItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -82,11 +65,6 @@ export function Sidebar({ className }: { className?: string }) {
                 {item.name}
               </Link>
             ))}
-            {filteredItems.length === 0 && (
-              <p className="px-4 py-2 text-sm text-muted-foreground">
-                No menu found.
-              </p>
-            )}
           </div>
         </div>
       </div>

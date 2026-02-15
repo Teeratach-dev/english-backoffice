@@ -14,7 +14,11 @@ import { Input } from "@/components/ui/input";
 import { Search, Plus, Edit, Trash2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { SESSION_TYPE_LABELS } from "@/types/action.types";
+import {
+  SESSION_TYPE_LABELS,
+  SESSION_TYPES,
+  CEFR_LEVELS,
+} from "@/types/action.types";
 import {
   Dialog,
   DialogContent,
@@ -41,6 +45,9 @@ export default function SessionsListPage() {
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
+  const [cefrFilter, setCefrFilter] = useState("all");
 
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingSession, setEditingSession] = useState<SessionItem | null>(
@@ -83,11 +90,18 @@ export default function SessionsListPage() {
     }
   }
 
-  const filteredSessions = sessions.filter(
-    (s) =>
+  const filteredSessions = sessions.filter((s) => {
+    const matchesSearch =
       s.name.toLowerCase().includes(search.toLowerCase()) ||
-      (s.sessionGroupName || "").toLowerCase().includes(search.toLowerCase()),
-  );
+      (s.sessionGroupName || "").toLowerCase().includes(search.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" ? s.isActive : !s.isActive);
+    const matchesType = typeFilter === "all" || s.type === typeFilter;
+    const matchesCefr = cefrFilter === "all" || s.cefrLevel === cefrFilter;
+
+    return matchesSearch && matchesStatus && matchesType && matchesCefr;
+  });
 
   return (
     <div className="space-y-6">
@@ -103,14 +117,53 @@ export default function SessionsListPage() {
         </Button>
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search sessions or group name..."
-          className="pl-8"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-wrap gap-4">
+        <div className="relative flex-1 min-w-[300px]">
+          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search sessions or group name..."
+            className="pl-8"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <select
+            value={typeFilter}
+            onChange={(e) => setTypeFilter(e.target.value)}
+            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="all">All Types</option>
+            {SESSION_TYPES.map((type) => (
+              <option key={type} value={type}>
+                {SESSION_TYPE_LABELS[type]}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={cefrFilter}
+            onChange={(e) => setCefrFilter(e.target.value)}
+            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="all">All CEFR</option>
+            {CEFR_LEVELS.map((level) => (
+              <option key={level} value={level}>
+                {level}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="flex h-10 w-32 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
       </div>
 
       {loading ? (
