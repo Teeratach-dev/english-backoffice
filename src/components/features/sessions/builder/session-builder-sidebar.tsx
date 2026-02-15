@@ -23,10 +23,10 @@ export function SessionBuilderSidebar({
   return (
     <div
       className={cn(
-        "w-[450px] border-l bg-background shadow-2xl transition-all duration-300 ease-in-out flex flex-col overflow-hidden",
+        "fixed lg:relative inset-y-0 right-0 z-[60] lg:z-0 w-full lg:w-[450px] border-l bg-background shadow-2xl lg:shadow-none transition-transform duration-300 ease-in-out flex flex-col overflow-hidden",
         activeActionId
           ? "translate-x-0"
-          : "translate-x-full fixed right-0 h-full",
+          : "translate-x-full lg:absolute lg:right-0 lg:h-full lg:pointer-events-none",
       )}
     >
       {activeAction ? (
@@ -40,20 +40,14 @@ export function SessionBuilderSidebar({
                 Configure Action Content
               </p>
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onClose}
-            >
+            <Button variant="ghost" size="icon" onClick={onClose}>
               <Plus className="h-4 w-4 rotate-45" />
             </Button>
           </div>
           <ScrollArea className="flex-1 p-6">
             <ActionContentEditor
               action={activeAction}
-              onChange={(updates) =>
-                onUpdateAction(activeAction.id, updates)
-              }
+              onChange={(updates) => onUpdateAction(activeAction.id, updates)}
             />
             <div className="h-10" />
           </ScrollArea>

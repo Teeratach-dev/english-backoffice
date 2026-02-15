@@ -39,6 +39,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { useRouter } from "next/navigation";
 
 export default function SessionBuilderPage({
   params,
@@ -52,6 +53,7 @@ export default function SessionBuilderPage({
   }>;
 }) {
   const { courseId, unitId, topicId, groupId, sessionId } = use(params);
+  const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [screens, setScreens] = useState<Screen[]>([]);
   const [loading, setLoading] = useState(true);
@@ -138,6 +140,43 @@ export default function SessionBuilderPage({
       setSaving(false);
     }
   }
+
+  async function handleDelete() {
+    if (
+      !confirm(
+        "Are you sure you want to delete this session? This action cannot be undone.",
+      )
+    )
+      return;
+
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/sessions/${sessionId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete session");
+      toast.success("Session deleted successfully");
+      router.push(
+        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
+      );
+    } catch (error) {
+      toast.error("Error deleting session");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const handleCancel = () => {
+    if (
+      confirm(
+        "Are you sure you want to cancel? Any unsaved changes will be lost.",
+      )
+    ) {
+      router.push(
+        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
+      );
+    }
+  };
 
   async function fetchTemplates() {
     try {
@@ -336,8 +375,8 @@ export default function SessionBuilderPage({
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-background">
       {/* Breadcrumb — always visible at top */}
-      <div className="border-b px-8 py-3 bg-background shrink-0">
-        <div className="max-w-3xl mx-auto">
+      <div className="border-b px-4 md:px-8 py-3 bg-background shrink-0">
+        <div className="max-w-5xl mx-auto">
           <Breadcrumb
             items={[
               { label: "Courses", href: "/courses" },
@@ -348,10 +387,6 @@ export default function SessionBuilderPage({
               },
               {
                 label: "Groups",
-                href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-              },
-              {
-                label: "Sessions",
                 href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
               },
               {
@@ -363,25 +398,27 @@ export default function SessionBuilderPage({
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-8 bg-muted/5 custom-scrollbar">
-          <SessionBuilderHeader
-            courseId={courseId}
-            unitId={unitId}
-            topicId={topicId}
-            groupId={groupId}
-            sessionName={sessionForm.name || session?.name}
-            sessionType={sessionForm.type || session?.type}
-            cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
-            saving={saving}
-            onSave={handleSave}
-            onLoadTemplate={fetchTemplates}
-            onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
-            hasScreens={screens.length > 0}
-          />
+      <div className="flex-1 flex overflow-hidden relative">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-muted/5 custom-scrollbar">
+          <div className="max-w-5xl mx-auto">
+            <SessionBuilderHeader
+              courseId={courseId}
+              unitId={unitId}
+              topicId={topicId}
+              groupId={groupId}
+              sessionName={sessionForm.name || session?.name}
+              sessionType={sessionForm.type || session?.type}
+              cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
+              saving={saving}
+              onSave={handleSave}
+              onLoadTemplate={fetchTemplates}
+              onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
+              hasScreens={screens.length > 0}
+            />
+          </div>
 
           {/* Session Detail Card */}
-          <div className="max-w-3xl mx-auto mb-6">
+          <div className="max-w-5xl mx-auto mb-6">
             <Card>
               <CardHeader
                 className="cursor-pointer flex flex-row items-center justify-between"
@@ -467,7 +504,7 @@ export default function SessionBuilderPage({
               )}
             </Card>
           </div>
-          <div className="max-w-3xl mx-auto mb-4 flex items-center">
+          <div className="max-w-5xl mx-auto mb-4 flex items-center">
             <h2 className="text-xl font-semibold">Screens</h2>
             <div className="ml-auto">
               <Button onClick={addScreen}>
@@ -476,7 +513,7 @@ export default function SessionBuilderPage({
             </div>
           </div>
 
-          <div className="max-w-3xl mx-auto space-y-6 pb-20">
+          <div className="max-w-5xl mx-auto space-y-6 pb-20">
             <DndContext
               sensors={sensors}
               collisionDetection={closestCenter}
@@ -514,6 +551,32 @@ export default function SessionBuilderPage({
           onClose={() => setActiveActionId(null)}
           onUpdateAction={updateActionContent}
         />
+      </div>
+
+      {/* Sticky Footer */}
+      <div className="fixed bottom-0 left-0 right-0 z-[70] border-t bg-background/80 backdrop-blur-md">
+        <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
+          <Button
+            variant="destructive"
+            onClick={handleDelete}
+            disabled={saving}
+            className="gap-2"
+          >
+            Delete Session
+          </Button>
+          <div className="flex gap-4">
+            <Button variant="outline" onClick={handleCancel} disabled={saving}>
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="min-w-[100px]"
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </div>
       </div>
 
       <SaveTemplateDialog

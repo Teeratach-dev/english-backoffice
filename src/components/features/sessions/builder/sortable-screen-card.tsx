@@ -85,19 +85,19 @@ export function SortableScreenCard({
         <div
           {...attributes}
           {...listeners}
-          className="absolute -left-10 top-1/2 -translate-y-1/2 cursor-grab opacity-0 group-hover:opacity-100 transition-opacity p-2"
+          className="absolute left-1 top-2 lg:-left-10 lg:top-1/2 lg:-translate-y-1/2 cursor-grab opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity p-2 z-10"
         >
           <GripVertical className="h-5 w-5 text-muted-foreground" />
         </div>
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="absolute right-2 top-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity z-10"
           onClick={onDelete}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
-        <CardHeader className="py-4">
+        <CardHeader className="py-4 pl-10 lg:pl-6">
           <CardTitle className="text-sm font-medium flex items-center">
             <span className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-xs">
               {sIdx + 1}
