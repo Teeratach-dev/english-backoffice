@@ -104,7 +104,7 @@ export function ReorderPreview({
           {shuffledRemaining.map((word, i) => (
             <div
               key={i}
-              className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground"
+              className="px-3 py-1 bg-muted/60 border rounded-lg text-sm text-card-foreground"
             >
               {word}
             </div>

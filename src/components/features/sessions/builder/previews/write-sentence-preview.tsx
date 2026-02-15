@@ -22,7 +22,6 @@ export function WriteSentencePreview({
         useBorder ? "border" : "border-none",
       )}
     >
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-orange-400/5 rounded-full blur-3xl pointer-events-none" />
       <p className="text-sm font-medium text-foreground leading-relaxed italic">
         {sentence}
       </p>

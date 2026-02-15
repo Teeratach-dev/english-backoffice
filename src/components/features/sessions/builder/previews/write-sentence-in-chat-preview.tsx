@@ -38,7 +38,7 @@ export function WriteSentenceInChatPreview({
             </span>
           </div>
           <div className="p-3 border-2 border-orange-400/50 rounded-xl rounded-tl-none bg-muted/30 flex-1">
-            <p className="text-xs text-card-foreground">{sentence}</p>
+            <p className="text-sm text-card-foreground">{sentence}</p>
           </div>
         </div>
       )}
@@ -46,7 +46,7 @@ export function WriteSentenceInChatPreview({
       {isRight && (
         <div className="flex items-end gap-2 justify-end">
           <div className="p-3 border-2 border-orange-400/50 rounded-xl rounded-tr-none bg-muted/30 flex-1">
-            <p className="text-xs text-card-foreground">{sentence}</p>
+            <p className="text-sm text-card-foreground">{sentence}</p>
           </div>
           <div className="shrink-0 flex flex-col items-center">
             <div className="h-8 w-8 rounded-full bg-blue-100 overflow-hidden border border-blue-200">
