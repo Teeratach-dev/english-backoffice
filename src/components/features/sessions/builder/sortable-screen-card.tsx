@@ -156,63 +156,72 @@ export function SortableScreenCard({
         {!isCollapsed && (
           <CardContent className="px-4 space-y-2">
             <>
-              <div className="flex flex-col gap-2">
-                {screen.actions.map((action, idx) => (
-                  <React.Fragment key={action.id}>
-                    <SortableActionItem
-                      action={action}
-                      index={idx}
-                      isEditing={activeActionId === action.id}
-                      onEdit={() =>
-                        onEditAction(
-                          activeActionId === action.id ? "" : action.id,
-                        )
-                      }
-                      onDelete={() => onDeleteAction(action.id)}
-                      onMoveUp={() => handleMoveAction(action.id, "up")}
-                      onMoveDown={() => handleMoveAction(action.id, "down")}
-                      isFirst={idx === 0}
-                      isLast={idx === screen.actions.length - 1}
-                      showPreview={showPreview}
-                    />
-                    {activeActionInScreen &&
-                      activeActionInScreen.id === action.id && (
-                        <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
-                          <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
-                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
-                              <div className="relative">
-                                <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-                                <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
-                              </div>
-                              {
-                                ACTION_TYPE_LABELS[
-                                  activeActionInScreen.type as ActionType
-                                ]
-                              }{" "}
-                              Editor
-                            </CardTitle>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
-                              onClick={() => onEditAction("")}
-                            >
-                              Close Editor
-                            </Button>
-                          </CardHeader>
-                          <CardContent className="p-4 lg:p-6">
-                            <ActionContentEditor
-                              action={activeActionInScreen}
-                              onChange={(updates) =>
-                                onUpdateAction(activeActionInScreen.id, updates)
-                              }
-                            />
-                          </CardContent>
-                        </Card>
-                      )}
-                  </React.Fragment>
-                ))}
-              </div>
+              {showPreview ? (
+                <div className="flex justify-center py-4">
+                  <PhonePreview actions={screen.actions} />
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  {screen.actions.map((action, idx) => (
+                    <React.Fragment key={action.id}>
+                      <SortableActionItem
+                        action={action}
+                        index={idx}
+                        isEditing={activeActionId === action.id}
+                        onEdit={() =>
+                          onEditAction(
+                            activeActionId === action.id ? "" : action.id,
+                          )
+                        }
+                        onDelete={() => onDeleteAction(action.id)}
+                        onMoveUp={() => handleMoveAction(action.id, "up")}
+                        onMoveDown={() => handleMoveAction(action.id, "down")}
+                        isFirst={idx === 0}
+                        isLast={idx === screen.actions.length - 1}
+                        showPreview={showPreview}
+                      />
+                      {activeActionInScreen &&
+                        activeActionInScreen.id === action.id && (
+                          <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
+                            <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
+                              <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+                                <div className="relative">
+                                  <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                                  <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
+                                </div>
+                                {
+                                  ACTION_TYPE_LABELS[
+                                    activeActionInScreen.type as ActionType
+                                  ]
+                                }{" "}
+                                Editor
+                              </CardTitle>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
+                                onClick={() => onEditAction("")}
+                              >
+                                Close Editor
+                              </Button>
+                            </CardHeader>
+                            <CardContent className="p-4 lg:p-6">
+                              <ActionContentEditor
+                                action={activeActionInScreen}
+                                onChange={(updates) =>
+                                  onUpdateAction(
+                                    activeActionInScreen.id,
+                                    updates,
+                                  )
+                                }
+                              />
+                            </CardContent>
+                          </Card>
+                        )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              )}
 
               {!showPreview && (
                 <Button

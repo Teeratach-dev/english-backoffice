@@ -9,8 +9,8 @@ import {
   Trash2,
   X,
   Save,
-  Eye,
-  EyeOff,
+  ChevronsUp,
+  ChevronsDown,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -559,9 +559,9 @@ export default function SessionBuilderPage({
               disabled={screens.length === 0}
             >
               {screens.some((s) => !s.isCollapsed) ? (
-                <EyeOff className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <ChevronsUp className="h-4 w-4 mr-0 min-[450px]:mr-2" />
               ) : (
-                <Eye className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <ChevronsDown className="h-4 w-4 mr-0 min-[450px]:mr-2" />
               )}
               <span className="hidden min-[450px]:inline">
                 {screens.some((s) => !s.isCollapsed)
