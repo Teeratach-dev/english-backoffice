@@ -137,14 +137,32 @@ export function SearchAndFilter({
               )}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[400px] p-0 mr-6" align="start">
+          <PopoverContent
+            className="w-[calc(100vw-32px)] min-[450px]:w-[400px] p-0 mr-4 min-[450px]:mr-6"
+            align="start"
+          >
             <Tabs
               value={activeTab}
               onValueChange={setActiveTab}
               className="w-full"
             >
-              <div className="flex w-full overflow-x-auto border-b px-4 py-2">
-                <TabsList className="h-auto w-full justify-start gap-2 bg-transparent p-0">
+              <div className="flex flex-col gap-2 border-b px-4 py-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-sm">Filters</span>
+                  {getActiveFilterCount() > 0 && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-auto px-2 py-1 text-xs text-primary hover:bg-primary/10"
+                      onClick={() => {
+                        filters.forEach((f) => onFilterChange?.(f.key, []));
+                      }}
+                    >
+                      Clear all
+                    </Button>
+                  )}
+                </div>
+                <TabsList className="h-auto w-full flex-wrap justify-start gap-2 bg-transparent p-0">
                   {filters.map((filter) => {
                     const isActive =
                       (activeFilters[filter.key]?.length || 0) > 0;
@@ -168,30 +186,16 @@ export function SearchAndFilter({
                     );
                   })}
                 </TabsList>
-                <div className="flex items-center justify-between">
-                  {getActiveFilterCount() > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-auto rounded-full border px-3 py-1.5 text-xs text-primary-foreground bg-primary hover:bg-primary/80"
-                      onClick={() => {
-                        filters.forEach((f) => onFilterChange?.(f.key, []));
-                      }}
-                    >
-                      Clear all
-                    </Button>
-                  )}
-                </div>
               </div>
 
               {filters.map((filter) => (
                 <TabsContent
                   key={filter.key}
                   value={filter.key}
-                  className="mt-0 max-h-[300px] overflow-y-auto px-4 py-2"
+                  className="mt-0 max-h-[60vh] min-[450px]:max-h-[300px] overflow-y-auto px-4 py-2"
                 >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">
+                  <div className="mb-2 flex items-center justify-between sticky top-0 pt-2 pb-2 z-10">
+                    <span className="text-sm font-medium text-muted-foreground">
                       Select options
                     </span>
                     {filter.allowMultiple && (
@@ -211,7 +215,7 @@ export function SearchAndFilter({
                       </div>
                     )}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1 pb-2">
                     {filter.options.map((option) => {
                       const isSelected = (
                         activeFilters[filter.key] || []
@@ -219,7 +223,14 @@ export function SearchAndFilter({
                       return (
                         <div
                           key={option.value}
-                          className="flex items-center space-x-2 rounded-sm p-1 hover:bg-muted/50"
+                          className="flex items-center space-x-3 rounded-md p-2 hover:bg-muted/50 transition-colors"
+                          onClick={() =>
+                            handleCheckboxChange(
+                              filter.key,
+                              option.value,
+                              !isSelected,
+                            )
+                          }
                         >
                           <Checkbox
                             id={`${filter.key}-${option.value}`}
@@ -237,6 +248,7 @@ export function SearchAndFilter({
                           <label
                             htmlFor={`${filter.key}-${option.value}`}
                             className="flex-1 cursor-pointer text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {option.label}
                           </label>
