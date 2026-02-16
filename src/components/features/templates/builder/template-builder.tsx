@@ -41,27 +41,34 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 
+interface TemplateData {
+  _id?: string;
+  name?: string;
+  type?: SessionType;
+  isActive?: boolean;
+  screens?: {
+    sequence: number;
+    actionTypes: string[];
+  }[];
+}
+
 interface TemplateBuilderProps {
-  initialData?: any;
+  initialData?: TemplateData;
 }
 
 function transformInitialScreens(
-  initialData: any,
+  initialData?: TemplateData,
 ): (Screen & { isCollapsed?: boolean })[] {
   const rawScreens = initialData?.screens || [];
-  return rawScreens.map(function (s: any, sIdx: number) {
+  return rawScreens.map(function (s, sIdx: number) {
     return {
       id: `scr-${sIdx}-${Date.now()}`,
       sequence: sIdx,
       isCollapsed: false,
-      actions: (s.actions || s.actionTypes || []).map(function (
-        a: any,
-        aIdx: number,
-      ) {
-        const actionType = typeof a === "string" ? a : a.type;
+      actions: (s.actionTypes || []).map(function (a: string, aIdx: number) {
         return {
           id: `act-${sIdx}-${aIdx}-${Date.now()}`,
-          ...getDefaultContent(actionType as ActionType),
+          ...getDefaultContent(a as ActionType),
           sequence: aIdx,
         };
       }),
@@ -210,7 +217,7 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
     });
   }
 
-  function updateActionContent(actionId: string, updates: any) {
+  function updateActionContent(actionId: string, updates: Partial<Action>) {
     setScreens(function (prev) {
       return prev.map(function (s) {
         return {
@@ -260,7 +267,7 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
 
       toast.success("Template saved successfully");
       router.push("/session-templates");
-    } catch (error) {
+    } catch {
       toast.error("Error saving template");
     } finally {
       setLoading(false);
