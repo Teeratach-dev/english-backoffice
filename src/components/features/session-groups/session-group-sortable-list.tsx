@@ -2,21 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { SortableSessionGroupItem } from "./sortable-session-group-item";
 import { toast } from "sonner";
 import { LocalSessionGroup } from "@/types/local.types";
@@ -71,40 +57,31 @@ export function SessionGroupSortableList({
     setItems(groups);
   }, [groups]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  async function handleMove(id: string, direction: "up" | "down") {
+    const oldIndex = items.findIndex((i) => i._id === id);
+    const newIndex = direction === "up" ? oldIndex - 1 : oldIndex + 1;
 
-  async function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+    if (newIndex < 0 || newIndex >= items.length) return;
 
-    if (active.id !== over?.id) {
-      const oldIndex = items.findIndex((i) => i._id === active.id);
-      const newIndex = items.findIndex((i) => i._id === over?.id);
+    const newItems = arrayMove(items, oldIndex, newIndex);
+    setItems(newItems);
+    onReorder(newItems);
 
-      const newItems = arrayMove(items, oldIndex, newIndex);
-      setItems(newItems);
-      onReorder(newItems);
+    try {
+      const res = await fetch("/api/session-groups/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          topicId,
+          groupIds: newItems.map((i) => i._id),
+        }),
+      });
 
-      try {
-        const res = await fetch("/api/session-groups/reorder", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            topicId,
-            groupIds: newItems.map((i) => i._id),
-          }),
-        });
-
-        if (!res.ok) throw new Error("Failed to reorder groups");
-        toast.success("Groups reordered");
-      } catch (error) {
-        toast.error("Error saving new order");
-        setItems(groups); // Revert
-      }
+      if (!res.ok) throw new Error("Failed to reorder groups");
+      toast.success("Groups reordered");
+    } catch (error) {
+      toast.error("Error saving new order");
+      setItems(groups); // Revert
     }
   }
 
@@ -143,36 +120,28 @@ export function SessionGroupSortableList({
         {addButton}
       </SearchAndFilter>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={displayedItems.map((i) => i._id)}
-          strategy={verticalListSortingStrategy}
-          disabled={false}
-        >
-          <div className={cn("space-y-2")}>
-            {displayedItems.map((group) => (
-              <SortableSessionGroupItem
-                key={group._id}
-                group={group}
-                courseId={courseId}
-                unitId={unitId}
-                topicId={topicId}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            ))}
-            {displayedItems.length === 0 && (
-              <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
-                No session groups found. Click &apos;Add Group&apos; to start.
-              </div>
-            )}
+      <div className={cn("space-y-2")}>
+        {displayedItems.map((group, idx) => (
+          <SortableSessionGroupItem
+            key={group._id}
+            group={group}
+            courseId={courseId}
+            unitId={unitId}
+            topicId={topicId}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onMoveUp={() => handleMove(group._id, "up")}
+            onMoveDown={() => handleMove(group._id, "down")}
+            isFirst={idx === 0}
+            isLast={idx === displayedItems.length - 1}
+          />
+        ))}
+        {displayedItems.length === 0 && (
+          <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
+            No session groups found. Click &apos;Add Group&apos; to start.
           </div>
-        </SortableContext>
-      </DndContext>
+        )}
+      </div>
     </div>
   );
 }

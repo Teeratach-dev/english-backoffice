@@ -5,8 +5,8 @@ import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  GripHorizontal,
-  Settings,
+  ChevronUp,
+  ChevronDown,
   Trash2,
   Volume2,
   Image as ImageIcon,
@@ -49,6 +49,10 @@ interface SortableActionItemProps {
   isEditing: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
   index: number;
   showPreview: boolean;
 }
@@ -58,6 +62,10 @@ export function SortableActionItem({
   isEditing,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
   index,
   showPreview,
 }: SortableActionItemProps) {
@@ -67,38 +75,39 @@ export function SortableActionItem({
     setInternalShowPreview(showPreview);
   }, [showPreview]);
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: action.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 10 : 1,
-  };
-
   return (
     <div
-      ref={setNodeRef}
-      style={style}
       className={cn(
         "group/action relative flex flex-col gap-3 p-4 pt-6 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
         isEditing ? "ring-2 ring-primary shadow-2xl" : "",
       )}
       onClick={onEdit}
     >
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute left-1/2 -top-3 -translate-x-1/2 cursor-grab opacity-0 group-hover/action:opacity-100 transition-opacity p-1 z-10 bg-background border rounded-md shadow-sm hover:ring-2 hover:ring-primary/20"
-      >
-        <GripHorizontal className="h-4 w-4 text-muted-foreground" />
+      <div className="absolute left-1/2 -top-4 -translate-x-1/2 flex gap-1 opacity-0 group-hover/action:opacity-100 transition-all z-10">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-background shadow-md hover:bg-primary/10 hover:text-primary transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveUp?.();
+          }}
+          disabled={isFirst}
+        >
+          <ChevronUp className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-8 w-8 bg-background shadow-md hover:bg-primary/10 hover:text-primary transition-colors"
+          onClick={(e) => {
+            e.stopPropagation();
+            onMoveDown?.();
+          }}
+          disabled={isLast}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="flex  items-center justify-between">

@@ -9,20 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { Screen, ActionType, ACTION_TYPE_LABELS } from "@/types/action.types";
 import { SortableActionItem } from "./sortable-action-item";
 import { ActionTypeSelector } from "./action-type-selector";
@@ -104,18 +91,15 @@ export function SortableScreenCard({
     (a) => a.id === activeActionId,
   );
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  function handleMoveAction(actionId: string, direction: "up" | "down") {
+    const oldIndex = screen.actions.findIndex((a) => a.id === actionId);
+    const newIndex = direction === "up" ? oldIndex - 1 : oldIndex + 1;
 
-  function handleActionDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      onReorderActions(active.id as string, over?.id as string);
-    }
+    if (newIndex < 0 || newIndex >= screen.actions.length) return;
+
+    const newActions = arrayMove(screen.actions, oldIndex, newIndex);
+    // Since screen actions are passed from parent, we should use onReorderActions to inform parent
+    onReorderActions(actionId, screen.actions[newIndex].id);
   }
 
   return (
@@ -172,86 +156,63 @@ export function SortableScreenCard({
         {!isCollapsed && (
           <CardContent className="px-4 space-y-2">
             <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleActionDragEnd}
-              >
-                {showPreview ? (
-                  <PhonePreview actions={screen.actions} />
-                ) : (
-                  <SortableContext
-                    items={screen.actions.map((a) => a.id)}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {screen.actions.length === 0 ? (
-                      <div className="flex flex-col gap-4 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20 items-center justify-center py-12 text-muted-foreground">
-                        <Plus className="h-8 w-8 mb-2 opacity-10" />
-                        <p className="text-xs font-medium">
-                          No actions added to this screen yet
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col gap-2">
-                        {screen.actions.map((action, idx) => (
-                          <React.Fragment key={action.id}>
-                            <SortableActionItem
-                              action={action}
-                              index={idx}
-                              isEditing={activeActionId === action.id}
-                              onEdit={() =>
-                                onEditAction(
-                                  activeActionId === action.id ? "" : action.id,
-                                )
+              <div className="flex flex-col gap-2">
+                {screen.actions.map((action, idx) => (
+                  <React.Fragment key={action.id}>
+                    <SortableActionItem
+                      action={action}
+                      index={idx}
+                      isEditing={activeActionId === action.id}
+                      onEdit={() =>
+                        onEditAction(
+                          activeActionId === action.id ? "" : action.id,
+                        )
+                      }
+                      onDelete={() => onDeleteAction(action.id)}
+                      onMoveUp={() => handleMoveAction(action.id, "up")}
+                      onMoveDown={() => handleMoveAction(action.id, "down")}
+                      isFirst={idx === 0}
+                      isLast={idx === screen.actions.length - 1}
+                      showPreview={showPreview}
+                    />
+                    {activeActionInScreen &&
+                      activeActionInScreen.id === action.id && (
+                        <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
+                          <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
+                            <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+                              <div className="relative">
+                                <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                                <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
+                              </div>
+                              {
+                                ACTION_TYPE_LABELS[
+                                  activeActionInScreen.type as ActionType
+                                ]
+                              }{" "}
+                              Editor
+                            </CardTitle>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
+                              onClick={() => onEditAction("")}
+                            >
+                              Close Editor
+                            </Button>
+                          </CardHeader>
+                          <CardContent className="p-4 lg:p-6">
+                            <ActionContentEditor
+                              action={activeActionInScreen}
+                              onChange={(updates) =>
+                                onUpdateAction(activeActionInScreen.id, updates)
                               }
-                              onDelete={() => onDeleteAction(action.id)}
-                              showPreview={showPreview}
                             />
-                            {activeActionInScreen &&
-                              activeActionInScreen.id === action.id && (
-                                <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
-                                  <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
-                                    <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
-                                      <div className="relative">
-                                        <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-                                        <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
-                                      </div>
-                                      {
-                                        ACTION_TYPE_LABELS[
-                                          activeActionInScreen.type as ActionType
-                                        ]
-                                      }{" "}
-                                      Editor
-                                    </CardTitle>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
-                                      onClick={() => onEditAction("")}
-                                    >
-                                      Close Editor
-                                    </Button>
-                                  </CardHeader>
-                                  <CardContent className="p-4 lg:p-6">
-                                    <ActionContentEditor
-                                      action={activeActionInScreen}
-                                      onChange={(updates) =>
-                                        onUpdateAction(
-                                          activeActionInScreen.id,
-                                          updates,
-                                        )
-                                      }
-                                    />
-                                  </CardContent>
-                                </Card>
-                              )}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                    )}
-                  </SortableContext>
-                )}
-              </DndContext>
+                          </CardContent>
+                        </Card>
+                      )}
+                  </React.Fragment>
+                ))}
+              </div>
 
               {!showPreview && (
                 <Button

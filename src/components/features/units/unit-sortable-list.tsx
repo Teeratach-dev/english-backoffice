@@ -2,21 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import { SortableUnitItem } from "./sortable-unit-item";
 import { toast } from "sonner";
 import { LocalUnit } from "@/types/local.types";
@@ -66,40 +52,31 @@ export function UnitSortableList({
     setItems(units);
   }, [units]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
+  async function handleMove(id: string, direction: "up" | "down") {
+    const oldIndex = items.findIndex((i) => i._id === id);
+    const newIndex = direction === "up" ? oldIndex - 1 : oldIndex + 1;
 
-  async function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
+    if (newIndex < 0 || newIndex >= items.length) return;
 
-    if (active.id !== over?.id) {
-      const oldIndex = items.findIndex((i) => i._id === active.id);
-      const newIndex = items.findIndex((i) => i._id === over?.id);
+    const newItems = arrayMove(items, oldIndex, newIndex);
+    setItems(newItems);
+    onReorder(newItems);
 
-      const newItems = arrayMove(items, oldIndex, newIndex);
-      setItems(newItems);
-      onReorder(newItems);
+    try {
+      const res = await fetch("/api/units/reorder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          courseId,
+          unitIds: newItems.map((i) => i._id),
+        }),
+      });
 
-      try {
-        const res = await fetch("/api/units/reorder", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            courseId,
-            unitIds: newItems.map((i) => i._id),
-          }),
-        });
-
-        if (!res.ok) throw new Error("Failed to reorder units");
-        toast.success("Units reordered");
-      } catch (error) {
-        toast.error("Error saving new order");
-        setItems(units); // Revert on failure
-      }
+      if (!res.ok) throw new Error("Failed to reorder units");
+      toast.success("Units reordered");
+    } catch (error) {
+      toast.error("Error saving new order");
+      setItems(units); // Revert on failure
     }
   }
 
@@ -142,36 +119,28 @@ export function UnitSortableList({
         {addButton}
       </SearchAndFilter>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleDragEnd}
-      >
-        <SortableContext
-          items={displayedItems.map((i) => i._id)}
-          strategy={verticalListSortingStrategy}
-          disabled={false}
-        >
-          <div className={cn("space-y-2")}>
-            {displayedItems.map((unit) => (
-              <SortableUnitItem
-                key={unit._id}
-                unit={unit}
-                courseId={courseId}
-                onEdit={onEdit}
-                onDelete={onDelete}
-              />
-            ))}
-            {displayedItems.length === 0 && (
-              <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
-                {isFiltered
-                  ? "No units match the filter."
-                  : "No units found. Click 'Add Unit' to start."}
-              </div>
-            )}
+      <div className={cn("space-y-2")}>
+        {displayedItems.map((unit, idx) => (
+          <SortableUnitItem
+            key={unit._id}
+            unit={unit}
+            courseId={courseId}
+            onEdit={onEdit}
+            onDelete={onDelete}
+            onMoveUp={() => handleMove(unit._id, "up")}
+            onMoveDown={() => handleMove(unit._id, "down")}
+            isFirst={idx === 0}
+            isLast={idx === displayedItems.length - 1}
+          />
+        ))}
+        {displayedItems.length === 0 && (
+          <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
+            {isFiltered
+              ? "No units match the filter."
+              : "No units found. Click 'Add Unit' to start."}
           </div>
-        </SortableContext>
-      </DndContext>
+        )}
+      </div>
     </div>
   );
 }

@@ -1,9 +1,7 @@
 "use client";
 
 import React from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Edit, Trash2, PenTool } from "lucide-react";
+import { ChevronUp, ChevronDown, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -15,41 +13,42 @@ export function SortableTopicItem({
   unitId,
   onEdit,
   onDelete,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
 }: {
   topic: LocalTopic;
   courseId: string;
   unitId: string;
   onEdit: (topic: LocalTopic) => void;
   onDelete: (id: string) => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  isFirst?: boolean;
+  isLast?: boolean;
 }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: topic._id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 10 : 1,
-  };
-
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm mb-2"
-    >
-      <div
-        {...attributes}
-        {...listeners}
-        className="cursor-grab active:cursor-grabbing"
-      >
-        <GripVertical className="h-5 w-5" />
+    <div className="flex items-center gap-4 p-4 border rounded-lg bg-card shadow-sm mb-2">
+      <div className="flex flex-col gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-primary/10"
+          onClick={onMoveUp}
+          disabled={isFirst}
+        >
+          <ChevronUp className="h-4 w-4" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 hover:bg-primary/10"
+          onClick={onMoveDown}
+          disabled={isLast}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </Button>
       </div>
 
       <div className="flex-1 min-w-0">
