@@ -167,10 +167,10 @@ export default function SessionGroupsPage({
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-[450px]:px-3">
           <CardTitle>Topic Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
             <Label htmlFor="topic-name">Topic Name</Label>
             <Input

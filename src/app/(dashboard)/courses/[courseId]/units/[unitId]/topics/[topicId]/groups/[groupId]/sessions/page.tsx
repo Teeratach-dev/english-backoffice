@@ -177,10 +177,10 @@ export default function SessionsPage({
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-[450px]:px-3">
           <CardTitle>Session Group Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
             <Label htmlFor="group-name">Group Name</Label>
             <Input

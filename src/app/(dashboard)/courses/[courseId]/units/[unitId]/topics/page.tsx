@@ -159,10 +159,10 @@ export default function TopicsPage({
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-[450px]:px-3">
           <CardTitle>Unit Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
             <Label htmlFor="unit-name">Unit Name</Label>
             <Input

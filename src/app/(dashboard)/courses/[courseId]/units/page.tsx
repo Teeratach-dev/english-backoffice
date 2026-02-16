@@ -164,10 +164,10 @@ export default function UnitsPage({
       />
 
       <Card>
-        <CardHeader>
+        <CardHeader className="max-[450px]:px-3">
           <CardTitle>Course Details</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
             <Label htmlFor="course-name">Course Name</Label>
             <Input
