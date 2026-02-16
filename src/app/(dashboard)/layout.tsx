@@ -15,7 +15,7 @@ export default function DashboardLayout({
           <Sidebar className="hidden min-[801px]:block" />
           <div className="flex-1 flex flex-col">
             <Navbar />
-            <main className="flex-1 p-6">{children}</main>
+            <main className="flex-1 p-3 min-[450px]:p-6">{children}</main>
           </div>
         </div>
       </AuthProvider>
