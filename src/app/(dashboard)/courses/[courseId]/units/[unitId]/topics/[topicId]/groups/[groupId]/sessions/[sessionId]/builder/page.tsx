@@ -5,23 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Plus, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  DragEndEvent,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { arrayMove } from "@dnd-kit/sortable";
 import {
   ActionType,
+  Action,
   Action,
   Screen,
   getDefaultContent,
@@ -56,7 +43,8 @@ export default function SessionBuilderPage({
   const { courseId, unitId, topicId, groupId, sessionId } = use(params);
   const router = useRouter();
   const [session, setSession] = useState<any>(null);
-  const [screens, setScreens] = useState<Screen[]>([]);
+  const [screens, setScreens] = useState<(Screen & { localId?: number })[]>([]);
+  const [nextScreenId, setNextScreenId] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
@@ -90,6 +78,7 @@ export default function SessionBuilderPage({
         (s: any, sIdx: number) => ({
           id: `scr-${sIdx}-${Date.now()}`,
           sequence: sIdx,
+          localId: sIdx + 1,
           actions: (s.actions || []).map((a: any, aIdx: number) => ({
             id: `act-${sIdx}-${aIdx}-${Date.now()}`,
             ...a,
@@ -98,6 +87,7 @@ export default function SessionBuilderPage({
         }),
       );
       setScreens(mappedScreens);
+      setNextScreenId(mappedScreens.length + 1);
     } catch (error) {
       toast.error("Error loading session");
     } finally {
@@ -214,6 +204,7 @@ export default function SessionBuilderPage({
   function handleApplyTemplate(template: any) {
     const newScreens = template.screens.map((ts: any, sIdx: number) => ({
       id: `scr-tmp-${sIdx}-${Date.now()}`,
+      localId: sIdx + 1,
       actions: ts.actionTypes.map((type: string, aIdx: number) => ({
         id: `act-tmp-${sIdx}-${aIdx}-${Date.now()}`,
         ...getDefaultContent(type as ActionType),
@@ -226,6 +217,7 @@ export default function SessionBuilderPage({
       )
     ) {
       setScreens(newScreens);
+      setNextScreenId(newScreens.length + 1);
       setIsLoadDialogOpen(false);
     }
   }
@@ -293,23 +285,23 @@ export default function SessionBuilderPage({
     }
   }
 
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  function handleScreenDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (active.id !== over?.id) {
-      setScreens((prev) => {
-        const oldIndex = prev.findIndex((s) => s.id === active.id);
-        const newIndex = prev.findIndex((s) => s.id === over?.id);
-        return arrayMove(prev, oldIndex, newIndex);
-      });
-    }
-  }
+  const moveScreen = (index: number, direction: "up" | "down") => {
+    setScreens((prev) => {
+      const newScreens = [...prev];
+      if (direction === "up" && index > 0) {
+        [newScreens[index], newScreens[index - 1]] = [
+          newScreens[index - 1],
+          newScreens[index],
+        ];
+      } else if (direction === "down" && index < newScreens.length - 1) {
+        [newScreens[index], newScreens[index + 1]] = [
+          newScreens[index + 1],
+          newScreens[index],
+        ];
+      }
+      return newScreens;
+    });
+  };
 
   const addScreen = () => {
     setScreens([
@@ -317,9 +309,11 @@ export default function SessionBuilderPage({
       {
         id: `scr-${Date.now()}`,
         sequence: screens.length,
+        localId: nextScreenId,
         actions: [],
       },
     ]);
+    setNextScreenId((prev) => prev + 1);
   };
 
   const deleteScreen = (id: string) => {
@@ -541,36 +535,28 @@ export default function SessionBuilderPage({
         </div>
 
         <div className="space-y-6">
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleScreenDragEnd}
-          >
-            <SortableContext
-              items={screens.map((s) => s.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              {screens.map((screen, sIdx) => (
-                <SortableScreenCard
-                  key={screen.id}
-                  screen={screen}
-                  sIdx={sIdx}
-                  activeActionId={activeActionId}
-                  onDelete={() => deleteScreen(screen.id)}
-                  onAddAction={(type) => addActionToScreen(screen.id, type)}
-                  onDeleteAction={(actionId) =>
-                    deleteAction(screen.id, actionId)
-                  }
-                  onEditAction={(actionId) => setActiveActionId(actionId)}
-                  onReorderActions={(activeId, overId) =>
-                    reorderActions(screen.id, activeId, overId)
-                  }
-                  onUpdateAction={updateActionContent}
-                  showPreview={showPreview}
-                />
-              ))}
-            </SortableContext>
-          </DndContext>
+          {screens.map((screen, sIdx) => (
+            <SortableScreenCard
+              key={screen.id}
+              screen={screen}
+              sIdx={sIdx}
+              activeActionId={activeActionId}
+              onDelete={() => deleteScreen(screen.id)}
+              onAddAction={(type) => addActionToScreen(screen.id, type)}
+              onDeleteAction={(actionId) => deleteAction(screen.id, actionId)}
+              onEditAction={(actionId) => setActiveActionId(actionId)}
+              onReorderActions={(activeId, overId) =>
+                reorderActions(screen.id, activeId, overId)
+              }
+              onUpdateAction={updateActionContent}
+              showPreview={showPreview}
+              onMoveUp={() => moveScreen(sIdx, "up")}
+              onMoveDown={() => moveScreen(sIdx, "down")}
+              isFirst={sIdx === 0}
+              isLast={sIdx === screens.length - 1}
+              screenNumber={screen.localId || sIdx + 1}
+            />
+          ))}
         </div>
       </div>
 

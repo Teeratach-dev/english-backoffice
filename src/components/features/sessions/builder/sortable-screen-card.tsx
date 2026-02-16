@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { GripVertical, Trash2, Plus } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import {
+  Trash2,
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
@@ -65,6 +70,11 @@ interface SortableScreenCardProps {
   onEditAction: (actionId: string) => void;
   onUpdateAction: (actionId: string, updates: any) => void;
   showPreview: boolean;
+  onMoveUp: () => void;
+  onMoveDown: () => void;
+  isFirst: boolean;
+  isLast: boolean;
+  screenNumber: number;
 }
 
 export function SortableScreenCard({
@@ -78,28 +88,18 @@ export function SortableScreenCard({
   onEditAction,
   onUpdateAction,
   showPreview,
+  onMoveUp,
+  onMoveDown,
+  isFirst,
+  isLast,
+  screenNumber,
 }: SortableScreenCardProps) {
   const [isActionSelectorOpen, setIsActionSelectorOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const activeActionInScreen = screen.actions.find(
     (a) => a.id === activeActionId,
   );
-
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: screen.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-    zIndex: isDragging ? 20 : 1,
-  };
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -116,128 +116,154 @@ export function SortableScreenCard({
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="relative">
+    <div className="relative">
       <Card className="relative group overflow-visible">
-        <div
-          {...attributes}
-          {...listeners}
-          className="absolute left-1/2 -top-3 -translate-x-1/2 cursor-grab opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity p-1 z-10 bg-background border rounded-md shadow-sm"
-        >
-          <GripVertical className="h-4 w-4 text-muted-foreground rotate-90" />
-        </div>
-
         <CardHeader className="py-2 px-4  bg-muted/5 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center">
-            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-[10px] font-bold">
-              {sIdx + 1}
+            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-xxs font-bold">
+              {screenNumber}
             </span>
-            Screen {sIdx + 1}
+            Screen {screenNumber}
           </CardTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8  hover:bg-background/90 shadow-sm"
-            onClick={onDelete}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent className="px-4 space-y-2">
-          <>
-            <DndContext
-              sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={handleActionDragEnd}
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-background/90"
+              onClick={onMoveUp}
+              disabled={isFirst}
             >
-              {showPreview ? (
-                <PhonePreview actions={screen.actions} />
+              <ChevronUp className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-background/90"
+              onClick={onMoveDown}
+              disabled={isLast}
+            >
+              <ChevronDown className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 hover:bg-background/90 ml-2"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              {isCollapsed ? (
+                <EyeOff className="h-4 w-4 text-muted-foreground" />
               ) : (
-                <SortableContext
-                  items={screen.actions.map((a) => a.id)}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {screen.actions.length === 0 ? (
-                    <div className="flex flex-col gap-4 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20 items-center justify-center py-12 text-muted-foreground">
-                      <Plus className="h-8 w-8 mb-2 opacity-10" />
-                      <p className="text-xs font-medium">
-                        No actions added to this screen yet
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col gap-2">
-                      {screen.actions.map((action, idx) => (
-                        <>
-                          <SortableActionItem
-                            key={action.id}
-                            action={action}
-                            index={idx}
-                            isEditing={activeActionId === action.id}
-                            onEdit={() =>
-                              onEditAction(
-                                activeActionId === action.id ? "" : action.id,
-                              )
-                            }
-                            onDelete={() => onDeleteAction(action.id)}
-                            showPreview={showPreview}
-                          />
-                          {activeActionInScreen &&
-                            activeActionInScreen.id === action.id && (
-                              <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
-                                <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
-                                  <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
-                                    <div className="relative">
-                                      <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-                                      <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
-                                    </div>
-                                    {
-                                      ACTION_TYPE_LABELS[
-                                        activeActionInScreen.type as ActionType
-                                      ]
-                                    }{" "}
-                                    Editor
-                                  </CardTitle>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="h-7 text-[10px] hover:bg-primary/10 hover:text-primary transition-colors"
-                                    onClick={() => onEditAction("")}
-                                  >
-                                    Close Editor
-                                  </Button>
-                                </CardHeader>
-                                <CardContent className="p-4 lg:p-6">
-                                  <ActionContentEditor
-                                    action={activeActionInScreen}
-                                    onChange={(updates) =>
-                                      onUpdateAction(
-                                        activeActionInScreen.id,
-                                        updates,
-                                      )
-                                    }
-                                  />
-                                </CardContent>
-                              </Card>
-                            )}
-                        </>
-                      ))}
-                    </div>
-                  )}
-                </SortableContext>
+                <Eye className="h-4 w-4" />
               )}
-            </DndContext>
-
-            {!showPreview && (
-              <Button
-                variant="outline"
-                className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
-                onClick={() => setIsActionSelectorOpen(true)}
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8  hover:bg-background/90 shadow-sm"
+              onClick={onDelete}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        </CardHeader>
+        {!isCollapsed && (
+          <CardContent className="px-4 space-y-2">
+            <>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleActionDragEnd}
               >
-                <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                <span className="text-xs font-semibold">Add Action</span>
-              </Button>
-            )}
-          </>
-        </CardContent>
+                {showPreview ? (
+                  <PhonePreview actions={screen.actions} />
+                ) : (
+                  <SortableContext
+                    items={screen.actions.map((a) => a.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {screen.actions.length === 0 ? (
+                      <div className="flex flex-col gap-4 min-h-25 p-3 bg-muted/10 rounded-xl border-2 border-dashed border-muted transition-colors hover:border-muted-foreground/20 items-center justify-center py-12 text-muted-foreground">
+                        <Plus className="h-8 w-8 mb-2 opacity-10" />
+                        <p className="text-xs font-medium">
+                          No actions added to this screen yet
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col gap-2">
+                        {screen.actions.map((action, idx) => (
+                          <>
+                            <SortableActionItem
+                              key={action.id}
+                              action={action}
+                              index={idx}
+                              isEditing={activeActionId === action.id}
+                              onEdit={() =>
+                                onEditAction(
+                                  activeActionId === action.id ? "" : action.id,
+                                )
+                              }
+                              onDelete={() => onDeleteAction(action.id)}
+                              showPreview={showPreview}
+                            />
+                            {activeActionInScreen &&
+                              activeActionInScreen.id === action.id && (
+                                <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
+                                  <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
+                                    <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+                                      <div className="relative">
+                                        <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                                        <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
+                                      </div>
+                                      {
+                                        ACTION_TYPE_LABELS[
+                                          activeActionInScreen.type as ActionType
+                                        ]
+                                      }{" "}
+                                      Editor
+                                    </CardTitle>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
+                                      onClick={() => onEditAction("")}
+                                    >
+                                      Close Editor
+                                    </Button>
+                                  </CardHeader>
+                                  <CardContent className="p-4 lg:p-6">
+                                    <ActionContentEditor
+                                      action={activeActionInScreen}
+                                      onChange={(updates) =>
+                                        onUpdateAction(
+                                          activeActionInScreen.id,
+                                          updates,
+                                        )
+                                      }
+                                    />
+                                  </CardContent>
+                                </Card>
+                              )}
+                          </>
+                        ))}
+                      </div>
+                    )}
+                  </SortableContext>
+                )}
+              </DndContext>
+
+              {!showPreview && (
+                <Button
+                  variant="outline"
+                  className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                  onClick={() => setIsActionSelectorOpen(true)}
+                >
+                  <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                  <span className="text-xs font-semibold">Add Action</span>
+                </Button>
+              )}
+            </>
+          </CardContent>
+        )}
       </Card>
 
       <ActionTypeSelector
