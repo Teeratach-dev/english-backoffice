@@ -32,6 +32,23 @@ interface TopicSortableListProps {
   addButton?: React.ReactNode;
 }
 
+import {
+  SearchAndFilter,
+  FilterGroup,
+} from "@/components/common/search-and-filter";
+
+const TOPIC_FILTERS: FilterGroup[] = [
+  {
+    key: "status",
+    title: "Status",
+    options: [
+      { label: "Active", value: "active" },
+      { label: "Inactive", value: "inactive" },
+    ],
+    allowMultiple: true,
+  },
+];
+
 export function TopicSortableList({
   title,
   courseId,
@@ -43,7 +60,10 @@ export function TopicSortableList({
   addButton,
 }: TopicSortableListProps) {
   const [items, setItems] = useState<LocalTopic[]>(topics);
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
+    {},
+  );
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     setItems(topics);
@@ -87,29 +107,39 @@ export function TopicSortableList({
   }
 
   const displayedItems = items.filter((item) => {
-    if (statusFilter === "all") return true;
-    return statusFilter === "active" ? item.isActive : !item.isActive;
+    const statusValues = activeFilters["status"] || [];
+    const matchesStatus =
+      statusValues.length === 0 ||
+      (statusValues.includes("active") && item.isActive) ||
+      (statusValues.includes("inactive") && !item.isActive);
+
+    const matchesSearch = item.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    return matchesStatus && matchesSearch;
   });
 
-  const isFiltered = statusFilter !== "all";
+  const handleFilterChange = (key: string, values: string[]) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: values,
+    }));
+  };
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-4">
-        {title && <h2 className="text-xl font-semibold">{title}</h2>}
-        <div className="ml-auto flex items-center gap-4">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex h-10 w-36 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <option value="all">All Status</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-          {addButton}
-        </div>
-      </div>
+      {title && <h2 className="text-xl font-semibold">{title}</h2>}
+
+      <SearchAndFilter
+        searchQuery={search}
+        onSearchChange={setSearch}
+        filters={TOPIC_FILTERS}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+      >
+        {addButton}
+      </SearchAndFilter>
 
       <DndContext
         sensors={sensors}
@@ -119,14 +149,9 @@ export function TopicSortableList({
         <SortableContext
           items={displayedItems.map((i) => i._id)}
           strategy={verticalListSortingStrategy}
-          disabled={isFiltered}
+          disabled={false}
         >
-          <div
-            className={cn(
-              "space-y-2",
-              isFiltered && "opacity-80 grayscale-[0.2]",
-            )}
-          >
+          <div className={cn("space-y-2")}>
             {displayedItems.map((topic) => (
               <SortableTopicItem
                 key={topic._id}
@@ -139,15 +164,8 @@ export function TopicSortableList({
             ))}
             {displayedItems.length === 0 && (
               <div className="text-center py-10 border-2 border-dashed rounded-lg text-muted-foreground">
-                {isFiltered
-                  ? "No topics match the filter."
-                  : "No topics found. Click 'Add Topic' to start."}
+                No topics found. Click &apos;Add Topic&apos; to start.
               </div>
-            )}
-            {isFiltered && (
-              <p className="text-xs text-muted-foreground italic text-center">
-                Manual reordering is disabled while filtering.
-              </p>
             )}
           </div>
         </SortableContext>
