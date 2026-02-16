@@ -1,4 +1,11 @@
 import mongoose from "mongoose";
+import "@/models/User";
+import "@/models/Course";
+import "@/models/Unit";
+import "@/models/Topic";
+import "@/models/SessionGroup";
+import "@/models/SessionDetail";
+import "@/models/SessionTemplate";
 
 const MONGODB_URI =
   process.env.MONGO_URI || "mongodb://localhost:27017/english-backoffice";
