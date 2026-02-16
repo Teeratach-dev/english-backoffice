@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, EyeOff } from "lucide-react";
+import { Plus, Eye, EyeOff, Trash2, X, Save } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -570,14 +570,23 @@ export default function SessionBuilderPage({
           disabled={saving}
           className="gap-2 text-muted-foreground/60 hover:bg-destructive/10 hover:text-destructive"
         >
-          Delete
+          <Trash2 className="h-4 w-4" />
+          <span className="hidden min-[450px]:inline">Delete</span>
         </Button>
         <div className="flex gap-4">
           <Button variant="outline" onClick={handleCancel} disabled={saving}>
-            Cancel
+            <X className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+            <span className="hidden min-[450px]:inline">Cancel</span>
           </Button>
-          <Button onClick={handleSave} disabled={saving} className="min-w-25">
-            {saving ? "Saving..." : "Save Changes"}
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="min-w-10 min-[450px]:min-w-25"
+          >
+            <Save className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+            <span className="hidden min-[450px]:inline">
+              {saving ? "Saving..." : "Save Changes"}
+            </span>
           </Button>
         </div>
       </StickyFooter>

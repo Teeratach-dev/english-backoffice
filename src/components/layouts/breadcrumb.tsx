@@ -54,7 +54,7 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
     <nav
       aria-label="Breadcrumb"
       className={cn(
-        "flex items-center text-sm text-muted-foreground",
+        "flex items-center text-sm text-muted-foreground overflow-x-auto whitespace-nowrap no-scrollbar",
         className,
       )}
     >
@@ -72,13 +72,13 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
           <span key={item.href} className="flex items-center">
             <ChevronRight className="h-4 w-4 mx-1.5 shrink-0" />
             {isLast ? (
-              <span className="font-medium text-foreground truncate max-w-[200px]">
+              <span className="font-medium text-foreground truncate max-w-50">
                 {item.label}
               </span>
             ) : (
               <Link
                 href={item.href}
-                className="hover:text-foreground transition-colors truncate max-w-[200px]"
+                className="hover:text-foreground transition-colors truncate max-w-50"
               >
                 {item.label}
               </Link>
