@@ -9,7 +9,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import {
   ActionType,
   Action,
-  Action,
   Screen,
   getDefaultContent,
   SESSION_TYPE_LABELS,
@@ -522,14 +521,17 @@ export default function SessionBuilderPage({
               onClick={() => setShowPreview(!showPreview)}
             >
               {showPreview ? (
-                <Eye className="mr-2 h-4 w-4" />
+                <Eye className="h-4 w-4 mr-0 min-[450px]:mr-2" />
               ) : (
-                <EyeOff className="mr-2 h-4 w-4" />
+                <EyeOff className="h-4 w-4 mr-0 min-[450px]:mr-2" />
               )}
-              {showPreview ? "Preview On" : "Preview Off"}
+              <span className="hidden min-[450px]:inline">
+                {showPreview ? "Preview On" : "Preview Off"}
+              </span>
             </Button>
             <Button onClick={addScreen} size="sm">
-              <Plus className="mr-2 h-4 w-4" /> Add Screen
+              <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+              <span className="hidden min-[450px]:inline">Add Screen</span>
             </Button>
           </div>
         </div>
