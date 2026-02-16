@@ -14,11 +14,13 @@ if (!MONGODB_URI) {
  * in development. This prevents connections growing exponentially
  * during API Route usage.
  */
-// @ts-ignore
+declare global {
+  var mongoose: any; // eslint-disable-line no-var
+}
+
 let cached = global.mongoose;
 
 if (!cached) {
-  // @ts-ignore
   cached = global.mongoose = { conn: null, promise: null };
 }
 
@@ -29,17 +31,23 @@ async function dbConnect() {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false,
+      bufferCommands: true, // Enable buffering to handle short temporary connection issues
+      maxPoolSize: 10, // Limit pool size for serverless functions
+      serverSelectionTimeoutMS: 10000, // Timeout to wait for server selection (Atlas wake up)
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log("New MongoDB connection established");
       return mongoose;
     });
   }
+
   try {
     cached.conn = await cached.promise;
   } catch (e) {
     cached.promise = null;
+    console.error("MongoDB connection error:", e);
     throw e;
   }
 
