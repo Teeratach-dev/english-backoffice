@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Trash2,
   Plus,
@@ -75,6 +75,8 @@ interface SortableScreenCardProps {
   isFirst: boolean;
   isLast: boolean;
   screenNumber: number;
+  isCollapsed?: boolean;
+  onToggleCollapse: () => void;
 }
 
 export function SortableScreenCard({
@@ -93,9 +95,10 @@ export function SortableScreenCard({
   isFirst,
   isLast,
   screenNumber,
+  isCollapsed,
+  onToggleCollapse,
 }: SortableScreenCardProps) {
   const [isActionSelectorOpen, setIsActionSelectorOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
 
   const activeActionInScreen = screen.actions.find(
     (a) => a.id === activeActionId,
@@ -148,7 +151,7 @@ export function SortableScreenCard({
               variant="ghost"
               size="icon"
               className="h-8 w-8 hover:bg-background/90 ml-2"
-              onClick={() => setIsCollapsed(!isCollapsed)}
+              onClick={onToggleCollapse}
             >
               {isCollapsed ? (
                 <EyeOff className="h-4 w-4 text-muted-foreground" />
@@ -191,9 +194,8 @@ export function SortableScreenCard({
                     ) : (
                       <div className="flex flex-col gap-2">
                         {screen.actions.map((action, idx) => (
-                          <>
+                          <React.Fragment key={action.id}>
                             <SortableActionItem
-                              key={action.id}
                               action={action}
                               index={idx}
                               isEditing={activeActionId === action.id}
@@ -243,7 +245,7 @@ export function SortableScreenCard({
                                   </CardContent>
                                 </Card>
                               )}
-                          </>
+                          </React.Fragment>
                         ))}
                       </div>
                     )}

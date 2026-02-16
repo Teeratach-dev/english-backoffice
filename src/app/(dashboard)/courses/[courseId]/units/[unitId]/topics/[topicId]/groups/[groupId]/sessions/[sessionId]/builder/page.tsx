@@ -2,7 +2,16 @@
 
 import { useEffect, useState, use } from "react";
 import { Button } from "@/components/ui/button";
-import { Plus, Eye, EyeOff, Trash2, X, Save } from "lucide-react";
+import {
+  Plus,
+  Smartphone,
+  PenTool,
+  Trash2,
+  X,
+  Save,
+  Eye,
+  EyeOff,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -42,7 +51,9 @@ export default function SessionBuilderPage({
   const { courseId, unitId, topicId, groupId, sessionId } = use(params);
   const router = useRouter();
   const [session, setSession] = useState<any>(null);
-  const [screens, setScreens] = useState<(Screen & { localId?: number })[]>([]);
+  const [screens, setScreens] = useState<
+    (Screen & { localId?: number; isCollapsed?: boolean })[]
+  >([]);
   const [nextScreenId, setNextScreenId] = useState(1);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -78,6 +89,7 @@ export default function SessionBuilderPage({
           id: `scr-${sIdx}-${Date.now()}`,
           sequence: sIdx,
           localId: sIdx + 1,
+          isCollapsed: false,
           actions: (s.actions || []).map((a: any, aIdx: number) => ({
             id: `act-${sIdx}-${aIdx}-${Date.now()}`,
             ...a,
@@ -154,7 +166,7 @@ export default function SessionBuilderPage({
     }
   }
 
-  const handleCancel = () => {
+  function handleCancel() {
     if (
       confirm(
         "Are you sure you want to cancel? Any unsaved changes will be lost.",
@@ -164,7 +176,7 @@ export default function SessionBuilderPage({
         `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
       );
     }
-  };
+  }
 
   async function fetchTemplates(filters?: { isActive: boolean; type: string }) {
     setLoading(true);
@@ -204,6 +216,7 @@ export default function SessionBuilderPage({
     const newScreens = template.screens.map((ts: any, sIdx: number) => ({
       id: `scr-tmp-${sIdx}-${Date.now()}`,
       localId: sIdx + 1,
+      isCollapsed: false,
       actions: ts.actionTypes.map((type: string, aIdx: number) => ({
         id: `act-tmp-${sIdx}-${aIdx}-${Date.now()}`,
         ...getDefaultContent(type as ActionType),
@@ -284,7 +297,7 @@ export default function SessionBuilderPage({
     }
   }
 
-  const moveScreen = (index: number, direction: "up" | "down") => {
+  function moveScreen(index: number, direction: "up" | "down") {
     setScreens((prev) => {
       const newScreens = [...prev];
       if (direction === "up" && index > 0) {
@@ -300,26 +313,39 @@ export default function SessionBuilderPage({
       }
       return newScreens;
     });
-  };
+  }
 
-  const addScreen = () => {
+  function addScreen() {
     setScreens([
       ...screens,
       {
         id: `scr-${Date.now()}`,
         sequence: screens.length,
         localId: nextScreenId,
+        isCollapsed: false,
         actions: [],
       },
     ]);
     setNextScreenId((prev) => prev + 1);
-  };
+  }
 
-  const deleteScreen = (id: string) => {
+  function deleteScreen(id: string) {
     setScreens(screens.filter((s) => s.id !== id));
-  };
+  }
 
-  const addActionToScreen = (screenId: string, type: ActionType) => {
+  function toggleScreenCollapse(id: string) {
+    setScreens(
+      screens.map((s) =>
+        s.id === id ? { ...s, isCollapsed: !s.isCollapsed } : s,
+      ),
+    );
+  }
+
+  function toggleAllScreens(collapse: boolean) {
+    setScreens(screens.map((s) => ({ ...s, isCollapsed: collapse })));
+  }
+
+  function addActionToScreen(screenId: string, type: ActionType) {
     setScreens(
       screens.map((s) => {
         if (s.id === screenId) {
@@ -339,13 +365,9 @@ export default function SessionBuilderPage({
         return s;
       }),
     );
-  };
+  }
 
-  const reorderActions = (
-    screenId: string,
-    activeId: string,
-    overId: string,
-  ) => {
+  function reorderActions(screenId: string, activeId: string, overId: string) {
     setScreens((prev) =>
       prev.map((s) => {
         if (s.id === screenId) {
@@ -356,9 +378,9 @@ export default function SessionBuilderPage({
         return s;
       }),
     );
-  };
+  }
 
-  const deleteAction = (screenId: string, actionId: string) => {
+  function deleteAction(screenId: string, actionId: string) {
     setScreens(
       screens.map((s) => {
         if (s.id === screenId) {
@@ -368,9 +390,9 @@ export default function SessionBuilderPage({
       }),
     );
     if (activeActionId === actionId) setActiveActionId(null);
-  };
+  }
 
-  const updateActionContent = (actionId: string, updates: any) => {
+  function updateActionContent(actionId: string, updates: any) {
     setScreens(
       screens.map((s) => ({
         ...s,
@@ -379,16 +401,16 @@ export default function SessionBuilderPage({
         ),
       })),
     );
-  };
+  }
 
-  const findActiveAction = () => {
+  function findActiveAction() {
     if (!activeActionId) return null;
     for (const screen of screens) {
       const action = screen.actions.find((a) => a.id === activeActionId);
       if (action) return action;
     }
     return null;
-  };
+  }
 
   const activeAction = findActiveAction();
 
@@ -518,15 +540,38 @@ export default function SessionBuilderPage({
               variant="outline"
               size="sm"
               className="mr-2"
-              onClick={() => setShowPreview(!showPreview)}
+              onClick={function () {
+                const someOpen = screens.some((s) => !s.isCollapsed);
+                toggleAllScreens(someOpen);
+              }}
+              disabled={screens.length === 0}
             >
-              {showPreview ? (
-                <Eye className="h-4 w-4 mr-0 min-[450px]:mr-2" />
-              ) : (
+              {screens.some((s) => !s.isCollapsed) ? (
                 <EyeOff className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+              ) : (
+                <Eye className="h-4 w-4 mr-0 min-[450px]:mr-2" />
               )}
               <span className="hidden min-[450px]:inline">
-                {showPreview ? "Preview On" : "Preview Off"}
+                {screens.some((s) => !s.isCollapsed)
+                  ? "Collapse All"
+                  : "Expand All"}
+              </span>
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mr-2"
+              onClick={function () {
+                setShowPreview(!showPreview);
+              }}
+            >
+              {showPreview ? (
+                <Smartphone className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+              ) : (
+                <PenTool className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+              )}
+              <span className="hidden min-[450px]:inline">
+                {showPreview ? "Editor Mode" : "Mobile View"}
               </span>
             </Button>
             <Button onClick={addScreen} size="sm">
@@ -557,6 +602,10 @@ export default function SessionBuilderPage({
               isFirst={sIdx === 0}
               isLast={sIdx === screens.length - 1}
               screenNumber={screen.localId || sIdx + 1}
+              isCollapsed={screen.isCollapsed}
+              onToggleCollapse={function () {
+                toggleScreenCollapse(screen.id);
+              }}
             />
           ))}
         </div>
