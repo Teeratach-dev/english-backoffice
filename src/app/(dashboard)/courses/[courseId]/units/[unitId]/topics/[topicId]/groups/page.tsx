@@ -22,6 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { PageHeader } from "@/components/layouts/page-header";
+import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 
 export default function SessionGroupsPage({
   params,
@@ -41,6 +42,8 @@ export default function SessionGroupsPage({
   const [savingTopic, setSavingTopic] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
+  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
+  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -60,11 +63,13 @@ export default function SessionGroupsPage({
 
       setGroups(groupsData);
       setTopic(topicData);
-      setTopicForm({
+      const initial = {
         name: topicData.name || "",
         description: topicData.description || "",
         isActive: topicData.isActive ?? true,
-      });
+      };
+      setTopicForm(initial);
+      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -89,6 +94,7 @@ export default function SessionGroupsPage({
       toast.error("Error saving topic");
     } finally {
       setSavingTopic(false);
+      setInitialForm(JSON.parse(JSON.stringify(topicForm)));
     }
   }
 
@@ -108,6 +114,15 @@ export default function SessionGroupsPage({
       router.push(`/courses/${courseId}/units/${unitId}/topics`);
     } catch (error) {
       toast.error("Error deleting topic");
+    }
+  }
+  function handleCancel() {
+    const hasChanges =
+      JSON.stringify(topicForm) !== JSON.stringify(initialForm);
+    if (hasChanges) {
+      setIsDiscardDialogOpen(true);
+    } else {
+      router.push(`/courses/${courseId}/units/${unitId}/topics`);
     }
   }
 
@@ -241,12 +256,7 @@ export default function SessionGroupsPage({
           <span className="hidden min-[450px]:inline">Delete</span>
         </Button>
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={() =>
-              router.push(`/courses/${courseId}/units/${unitId}/topics`)
-            }
-          >
+          <Button variant="outline" onClick={handleCancel}>
             <X className="h-4 w-4 mr-0 min-[450px]:mr-2" />
             <span className="hidden min-[450px]:inline">Cancel</span>
           </Button>
@@ -262,6 +272,14 @@ export default function SessionGroupsPage({
           </Button>
         </div>
       </StickyFooter>
+
+      <ConfirmDiscardDialog
+        open={isDiscardDialogOpen}
+        onOpenChange={setIsDiscardDialogOpen}
+        onConfirm={() =>
+          router.push(`/courses/${courseId}/units/${unitId}/topics`)
+        }
+      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
+import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 
 export default function UnitsPage({
   params,
@@ -43,6 +44,8 @@ export default function UnitsPage({
   const [savingCourse, setSavingCourse] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
+  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
+  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -62,13 +65,15 @@ export default function UnitsPage({
 
       setUnits(unitsData);
       setCourse(courseData);
-      setCourseForm({
+      const initial = {
         name: courseData.name || "",
         description: courseData.description || "",
         price: courseData.price || 0,
         isActive: courseData.isActive ?? true,
         purchaseable: courseData.purchaseable ?? true,
-      });
+      };
+      setCourseForm(initial);
+      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -93,6 +98,7 @@ export default function UnitsPage({
       toast.error("Error saving course");
     } finally {
       setSavingCourse(false);
+      setInitialForm(JSON.parse(JSON.stringify(courseForm)));
     }
   }
 
@@ -112,6 +118,15 @@ export default function UnitsPage({
       router.push("/courses");
     } catch (error) {
       toast.error("Error deleting course");
+    }
+  }
+  function handleCancel() {
+    const hasChanges =
+      JSON.stringify(courseForm) !== JSON.stringify(initialForm);
+    if (hasChanges) {
+      setIsDiscardDialogOpen(true);
+    } else {
+      router.push("/courses");
     }
   }
 
@@ -262,7 +277,7 @@ export default function UnitsPage({
           <span className="hidden min-[450px]:inline">Delete</span>
         </Button>
         <div className="flex gap-4">
-          <Button variant="outline" onClick={() => router.push("/courses")}>
+          <Button variant="outline" onClick={handleCancel}>
             <X className="h-4 w-4 mr-0 min-[450px]:mr-2" />
             <span className="hidden min-[450px]:inline">Cancel</span>
           </Button>
@@ -278,6 +293,12 @@ export default function UnitsPage({
           </Button>
         </div>
       </StickyFooter>
+
+      <ConfirmDiscardDialog
+        open={isDiscardDialogOpen}
+        onOpenChange={setIsDiscardDialogOpen}
+        onConfirm={() => router.push("/courses")}
+      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

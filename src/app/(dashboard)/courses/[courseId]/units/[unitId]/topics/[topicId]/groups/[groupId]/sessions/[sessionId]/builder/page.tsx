@@ -36,6 +36,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
+import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 
 export default function SessionBuilderPage({
   params,
@@ -69,6 +70,9 @@ export default function SessionBuilderPage({
     cefrLevel: "A1",
     isActive: true,
   });
+  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
+  const [initialForm, setInitialForm] = useState<any>(null);
+  const [initialScreens, setInitialScreens] = useState<any[]>([]);
 
   async function fetchSession() {
     setLoading(true);
@@ -77,12 +81,14 @@ export default function SessionBuilderPage({
       if (!res.ok) throw new Error("Failed to fetch session");
       const data = await res.json();
       setSession(data);
-      setSessionForm({
+      const initialF = {
         name: data.name || "",
         type: data.type || "reading",
         cefrLevel: data.cefrLevel || "A1",
         isActive: data.isActive ?? true,
-      });
+      };
+      setSessionForm(initialF);
+      setInitialForm(initialF);
 
       const mappedScreens = (data.screens || []).map(
         (s: any, sIdx: number) => ({
@@ -98,6 +104,7 @@ export default function SessionBuilderPage({
         }),
       );
       setScreens(mappedScreens);
+      setInitialScreens(JSON.parse(JSON.stringify(mappedScreens)));
       setNextScreenId(mappedScreens.length + 1);
     } catch (error) {
       toast.error("Error loading session");
@@ -138,6 +145,8 @@ export default function SessionBuilderPage({
       toast.error("Error saving session");
     } finally {
       setSaving(false);
+      setInitialForm(JSON.parse(JSON.stringify(sessionForm)));
+      setInitialScreens(JSON.parse(JSON.stringify(screens)));
     }
   }
 
@@ -167,11 +176,14 @@ export default function SessionBuilderPage({
   }
 
   function handleCancel() {
-    if (
-      confirm(
-        "Are you sure you want to cancel? Any unsaved changes will be lost.",
-      )
-    ) {
+    const hasFormChanges =
+      JSON.stringify(sessionForm) !== JSON.stringify(initialForm);
+    const hasScreenChanges =
+      JSON.stringify(screens) !== JSON.stringify(initialScreens);
+
+    if (hasFormChanges || hasScreenChanges) {
+      setIsDiscardDialogOpen(true);
+    } else {
       router.push(
         `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
       );
@@ -639,6 +651,16 @@ export default function SessionBuilderPage({
           </Button>
         </div>
       </StickyFooter>
+
+      <ConfirmDiscardDialog
+        open={isDiscardDialogOpen}
+        onOpenChange={setIsDiscardDialogOpen}
+        onConfirm={() =>
+          router.push(
+            `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
+          )
+        }
+      />
 
       <SaveTemplateDialog
         open={isTemplateDialogOpen}

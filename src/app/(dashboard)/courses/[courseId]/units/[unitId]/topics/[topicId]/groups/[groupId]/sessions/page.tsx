@@ -22,6 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
+import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 
 export default function SessionsPage({
   params,
@@ -46,6 +47,8 @@ export default function SessionsPage({
   const [savingGroup, setSavingGroup] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
+  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -65,11 +68,13 @@ export default function SessionsPage({
 
       setSessions(sessionsData);
       setGroup(groupData);
-      setGroupForm({
+      const initial = {
         name: groupData.name || "",
         description: groupData.description || "",
         isActive: groupData.isActive ?? true,
-      });
+      };
+      setGroupForm(initial);
+      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -96,6 +101,7 @@ export default function SessionsPage({
       toast.error("Error saving group");
     } finally {
       setSavingGroup(false);
+      setInitialForm(JSON.parse(JSON.stringify(groupForm)));
     }
   }
 
@@ -119,6 +125,17 @@ export default function SessionsPage({
       );
     } catch (error) {
       toast.error("Error deleting group");
+    }
+  }
+  function handleCancel() {
+    const hasChanges =
+      JSON.stringify(groupForm) !== JSON.stringify(initialForm);
+    if (hasChanges) {
+      setIsDiscardDialogOpen(true);
+    } else {
+      router.push(
+        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
+      );
     }
   }
 
@@ -252,14 +269,7 @@ export default function SessionsPage({
           <span className="hidden min-[450px]:inline">Delete</span>
         </Button>
         <div className="flex gap-4">
-          <Button
-            variant="outline"
-            onClick={() =>
-              router.push(
-                `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-              )
-            }
-          >
+          <Button variant="outline" onClick={handleCancel}>
             <X className="h-4 w-4 mr-0 min-[450px]:mr-2" />
             <span className="hidden min-[450px]:inline">Cancel</span>
           </Button>
@@ -275,6 +285,16 @@ export default function SessionsPage({
           </Button>
         </div>
       </StickyFooter>
+
+      <ConfirmDiscardDialog
+        open={isDiscardDialogOpen}
+        onOpenChange={setIsDiscardDialogOpen}
+        onConfirm={() =>
+          router.push(
+            `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
+          )
+        }
+      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
