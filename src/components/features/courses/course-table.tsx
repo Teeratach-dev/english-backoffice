@@ -142,7 +142,6 @@ export function CourseTable({
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search courses..."
         filters={COURSE_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

@@ -130,13 +130,16 @@ export default function TopicsListPage() {
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search topics..."
         filters={FILTER_CONFIG}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}
       >
-        <Button onClick={() => setIsAddOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" /> Add
+        <Button
+          onClick={() => setIsAddOpen(true)}
+          className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
+        >
+          <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+          <span className="hidden min-[450px]:inline">Add</span>
         </Button>
       </SearchAndFilter>
 

@@ -402,7 +402,7 @@ export default function SessionBuilderPage({
   }
 
   return (
-    <div className="pb-20 space-y-6">
+    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Session" />
       <Breadcrumb
         items={[
@@ -536,7 +536,7 @@ export default function SessionBuilderPage({
           </div>
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-3 min-[450px]:space-y-6">
           {screens.map((screen, sIdx) => (
             <SortableScreenCard
               key={screen.id}

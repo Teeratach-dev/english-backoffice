@@ -149,7 +149,7 @@ export default function TopicsPage({
   }
 
   return (
-    <div className="pb-20 space-y-6">
+    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Unit" />
       <Breadcrumb
         items={[
@@ -209,8 +209,13 @@ export default function TopicsPage({
           onEdit={handleEdit}
           onDelete={handleDelete}
           addButton={
-            <Button onClick={handleAdd}>
-              <Plus className="mr-2 h-4 w-4" /> Add
+            <Button
+              onClick={handleAdd}
+              className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
+              size="default"
+            >
+              <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+              <span className="hidden min-[450px]:inline">Add</span>
             </Button>
           }
         />

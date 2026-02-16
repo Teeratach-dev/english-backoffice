@@ -130,7 +130,6 @@ export function UserTable({
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        placeholder="Search users..."
         filters={USER_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}

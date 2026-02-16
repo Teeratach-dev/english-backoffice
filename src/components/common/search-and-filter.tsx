@@ -32,7 +32,6 @@ interface SearchAndFilterProps {
   filters?: FilterGroup[];
   activeFilters?: Record<string, string[]>; // Map filter key to selected values array
   onFilterChange?: (key: string, values: string[]) => void;
-  placeholder?: string;
   children?: React.ReactNode; // For additional actions (e.g. Add Button)
 }
 
@@ -42,7 +41,6 @@ export function SearchAndFilter({
   filters = [],
   activeFilters = {},
   onFilterChange,
-  placeholder = "Search...",
   children,
 }: SearchAndFilterProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,12 +107,12 @@ export function SearchAndFilter({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-4">
-      <div className="relative flex-1 min-w-45 max-w-lg">
+    <div className="flex items-center gap-2 w-full min-[450px]:w-auto min-[450px]:flex-wrap">
+      <div className="relative flex-1 min-w-0 w-full min-[450px]:w-auto min-[450px]:min-w-45 min-[450px]:max-w-lg">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder={placeholder}
-          className="pl-8"
+          placeholder="Search ..."
+          className="pl-8 w-full"
           value={searchQuery || ""}
           onChange={(e) => onSearchChange?.(e.target.value)}
         />
@@ -125,14 +123,14 @@ export function SearchAndFilter({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
-              className="gap-2 border-dashed focus:border-solid focus:ring-2 focus:ring-ring focus:ring-offset-0 data-[state=open]:border-solid data-[state=open]:ring-2 data-[state=open]:ring-ring data-[state=open]:ring-offset-0"
+              className="gap-2 border-dashed focus:border-solid focus:ring-2 focus:ring-ring focus:ring-offset-0 data-[state=open]:border-solid data-[state=open]:ring-2 data-[state=open]:ring-ring data-[state=open]:ring-offset-0 shrink-0 h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4 relative"
             >
               <ListFilter className="h-4 w-4" />
-              Filters
+              <span className="hidden min-[450px]:inline">Filters</span>
               {getActiveFilterCount() > 0 && (
                 <Badge
                   variant="secondary"
-                  className="ml-1 h-5 px-1.5 rounded-sm lg:hidden"
+                  className="absolute -top-2 -right-2 min-[450px]:static min-[450px]:ml-1 h-5 w-5 min-[450px]:w-auto p-0 min-[450px]:px-1.5 flex items-center justify-center rounded-full min-[450px]:rounded-md lg:hidden"
                 >
                   {getActiveFilterCount()}
                 </Badge>
@@ -252,7 +250,7 @@ export function SearchAndFilter({
           </PopoverContent>
         </Popover>
       )}
-      {children && <div>{children}</div>}
+      {children && <div className="shrink-0">{children}</div>}
     </div>
   );
 }
