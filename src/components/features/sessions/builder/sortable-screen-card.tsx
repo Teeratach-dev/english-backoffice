@@ -105,8 +105,8 @@ export function SortableScreenCard({
   return (
     <div className="relative">
       <Card className="relative group overflow-visible">
-        <CardHeader className="py-2 px-4  bg-muted/5 flex flex-row items-center justify-between">
-          <CardTitle className="text-sm font-medium flex items-center">
+        <CardHeader className="p-2 bg-muted/5 flex flex-row items-center justify-between">
+          <CardTitle className="text-sm font-medium flex items-end">
             <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-xxs font-bold">
               {screenNumber}
             </span>
@@ -154,12 +154,10 @@ export function SortableScreenCard({
           </div>
         </CardHeader>
         {!isCollapsed && (
-          <CardContent className="px-4 space-y-2">
+          <CardContent className="px-2 space-y-2">
             <>
               {showPreview ? (
-                <div className="flex justify-center py-4">
-                  <PhonePreview actions={screen.actions} />
-                </div>
+                <PhonePreview actions={screen.actions} />
               ) : (
                 <div className="flex flex-col gap-2">
                   {screen.actions.map((action, idx) => (
@@ -226,7 +224,7 @@ export function SortableScreenCard({
               {!showPreview && (
                 <Button
                   variant="outline"
-                  className="w-full border-dashed py-6 gap-2 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                  className="w-full rounded-xl border py-6 gap-2 shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all group"
                   onClick={() => setIsActionSelectorOpen(true)}
                 >
                   <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />

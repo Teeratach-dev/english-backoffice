@@ -78,8 +78,8 @@ export function SortableActionItem({
   return (
     <div
       className={cn(
-        "group/action relative flex flex-col gap-3 p-4 pt-6 border rounded-xl transition-all cursor-pointer shadow-md hover:shadow-xl bg-background hover:border-primary",
-        isEditing ? "ring-2 ring-primary shadow-2xl" : "",
+        "group/action relative flex flex-col gap-3 p-2 border rounded-xl transition-all cursor-pointer shadow-sm hover:shadow-xl bg-background hover:border-primary",
+        isEditing ? "ring-2 ring-primary" : "",
       )}
       onClick={onEdit}
     >
@@ -119,7 +119,7 @@ export function SortableActionItem({
             <h3 className="font-bold text-sm tracking-tight text-foreground">
               {ACTION_TYPE_LABELS[action.type as ActionType] || action.type}
             </h3>
-            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/30">
+            <span className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
               #{index + 1}
             </span>
           </div>
