@@ -34,7 +34,7 @@ export function SessionBuilderHeader({
 }: SessionBuilderHeaderProps) {
   return (
     <div className="w-full mb-4">
-      <div className="flex flex-row items-center gap-4 p-2 max-[450px]:p-2">
+      <div className="flex flex-row items-center gap-4 p-2 max-[550px]:p-2">
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-bold truncate">{sessionName}</h1>
           <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest truncate">

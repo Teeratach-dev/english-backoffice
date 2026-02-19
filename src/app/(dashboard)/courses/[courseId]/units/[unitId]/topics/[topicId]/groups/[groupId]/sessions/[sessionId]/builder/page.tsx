@@ -439,7 +439,7 @@ export default function SessionBuilderPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="pb-20 space-y-3 min-[550px]:space-y-6">
       <PageHeader title="Session" />
       <Breadcrumb
         items={[
@@ -478,7 +478,7 @@ export default function SessionBuilderPage({
             onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
             hasScreens={screens.length > 0}
           />
-          <CardContent className="space-y-4 max-[450px]:px-2">
+          <CardContent className="space-y-4 max-[550px]:px-2">
             <div className="grid gap-2">
               <Label htmlFor="session-name">Session Name</Label>
               <Input
@@ -562,11 +562,11 @@ export default function SessionBuilderPage({
               disabled={screens.length === 0}
             >
               {screens.some((s) => !s.isCollapsed) ? (
-                <ChevronsUp className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <ChevronsUp className="h-4 w-4 mr-0 min-[550px]:mr-2" />
               ) : (
-                <ChevronsDown className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <ChevronsDown className="h-4 w-4 mr-0 min-[550px]:mr-2" />
               )}
-              <span className="hidden min-[450px]:inline">
+              <span className="hidden min-[550px]:inline">
                 {screens.some((s) => !s.isCollapsed)
                   ? "Collapse All"
                   : "Expand All"}
@@ -581,22 +581,22 @@ export default function SessionBuilderPage({
               }}
             >
               {showPreview ? (
-                <Smartphone className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <PenTool className="h-4 w-4 mr-0 min-[550px]:mr-2" />
               ) : (
-                <PenTool className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+                <Smartphone className="h-4 w-4 mr-0 min-[550px]:mr-2" />
               )}
-              <span className="hidden min-[450px]:inline">
+              <span className="hidden min-[550px]:inline">
                 {showPreview ? "Editor Mode" : "Mobile View"}
               </span>
             </Button>
             <Button onClick={addScreen} size="sm">
-              <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
-              <span className="hidden min-[450px]:inline">Add Screen</span>
+              <Plus className="h-4 w-4 mr-0 min-[550px]:mr-2" />
+              <span className="hidden min-[550px]:inline">Add Screen</span>
             </Button>
           </div>
         </div>
 
-        <div className="space-y-3 min-[450px]:space-y-6">
+        <div className="space-y-3 min-[550px]:space-y-6">
           {screens.map((screen, sIdx) => (
             <SortableScreenCard
               key={screen.id}

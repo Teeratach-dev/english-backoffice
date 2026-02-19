@@ -1,21 +1,21 @@
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
 
-interface DeleteButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface DeleteButtonProps extends ButtonProps {
   label?: string;
-  className?: string;
 }
 
 export function DeleteButton({
   label = "Delete",
   className,
+  variant = "ghost",
   ...props
 }: DeleteButtonProps) {
   return (
     <Button
-      variant="ghost"
+      variant={variant}
       className={cn(
         "gap-2 text-muted-foreground/60 hover:bg-destructive hover:text-destructive-foreground",
         className,
