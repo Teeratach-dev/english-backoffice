@@ -475,7 +475,7 @@ export default function SessionBuilderPage({
             onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
             hasScreens={screens.length > 0}
           />
-          <CardContent className="space-y-4 max-[450px]:px-3">
+          <CardContent className="space-y-4 max-[450px]:px-2">
             <div className="grid gap-2">
               <Label htmlFor="session-name">Session Name</Label>
               <Input
@@ -629,7 +629,7 @@ export default function SessionBuilderPage({
           variant="ghost"
           onClick={handleDelete}
           disabled={saving}
-          className="gap-2 text-muted-foreground/60 hover:bg-destructive/10 hover:text-destructive"
+          className="gap-2 text-muted-foreground/60 hover:bg-destructive hover:text-destructive-foreground"
         >
           <Trash2 className="h-4 w-4" />
           <span className="hidden min-[450px]:inline">Delete</span>

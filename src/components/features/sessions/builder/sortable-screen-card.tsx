@@ -107,7 +107,7 @@ export function SortableScreenCard({
       <Card className="relative group overflow-visible">
         <CardHeader className="p-2 bg-muted/5 flex flex-row items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-end">
-            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mr-3 text-xxs font-bold">
+            <span className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center mr-3 text-xxs font-bold">
               {screenNumber}
             </span>
             Screen {screenNumber}
@@ -116,7 +116,7 @@ export function SortableScreenCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-background/90"
+              className="h-8 w-8 hover:bg-primary/90 hover:text-primary-foreground"
               onClick={onMoveUp}
               disabled={isFirst}
             >
@@ -125,7 +125,7 @@ export function SortableScreenCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-background/90"
+              className="h-8 w-8 hover:bg-primary/90 hover:text-primary-foreground"
               onClick={onMoveDown}
               disabled={isLast}
             >
@@ -134,7 +134,7 @@ export function SortableScreenCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 hover:bg-background/90 ml-2"
+              className="h-8 w-8 hover:bg-primary/90 ml-2"
               onClick={onToggleCollapse}
             >
               {isCollapsed ? (
@@ -146,7 +146,7 @@ export function SortableScreenCard({
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8  hover:bg-background/90 shadow-sm"
+              className="h-8 w-8 hover:bg-primary/90 shadow-sm"
               onClick={onDelete}
             >
               <Trash2 className="h-4 w-4" />

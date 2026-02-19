@@ -87,7 +87,7 @@ export function SortableActionItem({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 bg-background shadow-md hover:bg-primary/10 hover:text-primary transition-colors"
+          className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             onMoveUp?.();
@@ -99,7 +99,7 @@ export function SortableActionItem({
         <Button
           variant="outline"
           size="icon"
-          className="h-8 w-8 bg-background shadow-md hover:bg-primary/10 hover:text-primary transition-colors"
+          className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             onMoveDown?.();
