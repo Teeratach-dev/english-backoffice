@@ -40,6 +40,8 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
+import { CancelButton } from "@/components/common/cancel-button";
+import { SaveButton } from "@/components/common/save-button";
 
 interface TemplateBuilderProps {
   initialData?: any;
@@ -397,17 +399,12 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
       </div>
 
       <StickyFooter>
-        <Button
-          variant="ghost"
-          onClick={function () {
-            router.back();
-          }}
-        >
-          Cancel
-        </Button>
-        <Button onClick={handleSave} disabled={loading}>
-          {loading ? "Saving..." : "Save Template"}
-        </Button>
+        <CancelButton variant="ghost" onClick={() => router.back()} />
+        <SaveButton
+          label="Save Template"
+          onClick={handleSave}
+          loading={loading}
+        />
       </StickyFooter>
     </div>
   );

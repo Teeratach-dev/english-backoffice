@@ -23,6 +23,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
+import { DeleteButton } from "@/components/common/delete-button";
+import { CancelButton } from "@/components/common/cancel-button";
+import { SaveButton } from "@/components/common/save-button";
 
 export default function UnitsPage({
   params,
@@ -268,29 +271,10 @@ export default function UnitsPage({
 
       {/* Sticky Footer */}
       <StickyFooter>
-        <Button
-          variant="ghost"
-          onClick={handleDeleteCourse}
-          className="gap-2 text-muted-foreground/60 hover:bg-destructive/10 hover:text-destructive"
-        >
-          <Trash2 className="h-4 w-4" />
-          <span className="hidden min-[450px]:inline">Delete</span>
-        </Button>
+        <DeleteButton onClick={handleDeleteCourse} />
         <div className="flex gap-4">
-          <Button variant="outline" onClick={handleCancel}>
-            <X className="h-4 w-4 mr-0 min-[450px]:mr-2" />
-            <span className="hidden min-[450px]:inline">Cancel</span>
-          </Button>
-          <Button
-            onClick={handleSaveCourse}
-            disabled={savingCourse}
-            className="min-w-10 min-[450px]:min-w-25"
-          >
-            <Save className="h-4 w-4 mr-0 min-[450px]:mr-2" />
-            <span className="hidden min-[450px]:inline">
-              {savingCourse ? "Saving..." : "Save Changes"}
-            </span>
-          </Button>
+          <CancelButton onClick={handleCancel} />
+          <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
         </div>
       </StickyFooter>
 
