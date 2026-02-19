@@ -253,16 +253,19 @@ export function UserTable({
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm">
-              <div className="col-span-2 flex items-center justify-start gap-2 min-w-0">
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+              <div className="flex-2 flex items-center justify-start gap-2 min-w-50">
                 <span className="text-xs text-muted-foreground shrink-0">
                   Email
                 </span>
-                <span className="text-xs truncate" title={user.email}>
+                <span
+                  className="text-xs truncate font-medium"
+                  title={user.email}
+                >
                   {user.email}
                 </span>
               </div>
-              <div className="col-span-1 flex items-center justify-start gap-2">
+              <div className="flex-1 flex items-center justify-start gap-2 min-w-30">
                 <span className="text-xs text-muted-foreground shrink-0">
                   Role
                 </span>

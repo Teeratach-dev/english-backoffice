@@ -8,13 +8,13 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/use-media-query";
+} from "../../ui/table";
+import { Skeleton } from "../../ui/skeleton";
+import { cn } from "../../../lib/utils";
+import { useMediaQuery } from "../../../hooks/use-media-query";
 
 import { DataTablePagination } from "./data-table-pagination";
-import { Pagination } from "@/types/pagination.types";
+import { Pagination } from "../../../types/pagination.types";
 
 export interface Column<T> {
   header: React.ReactNode;
