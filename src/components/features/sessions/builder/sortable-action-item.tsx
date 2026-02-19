@@ -83,35 +83,35 @@ export function SortableActionItem({
       )}
       onClick={onEdit}
     >
-      <div className="absolute left-1/2 -top-4 -translate-x-1/2 flex gap-1 opacity-0 group-hover/action:opacity-100 transition-all z-10">
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoveUp?.();
-          }}
-          disabled={isFirst}
-        >
-          <ChevronUp className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMoveDown?.();
-          }}
-          disabled={isLast}
-        >
-          <ChevronDown className="h-4 w-4" />
-        </Button>
-      </div>
+      <div className="flex  items-center justify-start gap-2">
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveUp?.();
+            }}
+            disabled={isFirst}
+          >
+            <ChevronUp className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-8 w-8 bg-background shadow-md hover:bg-primary hover:text-primary-foreground transition-colors"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMoveDown?.();
+            }}
+            disabled={isLast}
+          >
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+        </div>
 
-      <div className="flex  items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-2 items-center gap-3">
           <div className="flex items-center gap-2">
             <div className="p-2 rounded-lg bg-primary/10 text-primary">
               {ACTION_ICONS[action.type as ActionType]}
