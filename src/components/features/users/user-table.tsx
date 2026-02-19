@@ -1,26 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useEffect, useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { Shield, User as UserIcon, Edit, Trash2 } from "lucide-react";
-import { formatDate } from "@/lib/utils";
+import { formatDate, cn } from "@/lib/utils";
 import {
   SearchAndFilter,
   FilterGroup,
 } from "@/components/common/search-and-filter";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { DataTable, Column } from "@/components/common/data-table";
 
-interface UserData {
+export interface UserData {
   _id: string;
   name: string;
   email: string;
@@ -57,13 +48,10 @@ export function UserTable({
     {},
   );
   const [search, setSearch] = useState("");
-  const isCardView = useMediaQuery(
-    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
-  );
 
   const isSuperadmin = currentUserRole === "superadmin";
 
-  async function fetchUsers() {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const res = await fetch("/api/users");
@@ -75,13 +63,14 @@ export function UserTable({
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
-  async function handleDelete(id: string) {
+  const handleDelete = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
     if (!confirm("Are you sure you want to delete this user?")) return;
     try {
       const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
@@ -96,7 +85,7 @@ export function UserTable({
         error instanceof Error ? error.message : "Error deleting user",
       );
     }
-  }
+  };
 
   const handleFilterChange = (key: string, values: string[]) => {
     setActiveFilters((prev) => ({
@@ -116,13 +105,64 @@ export function UserTable({
     return matchesRole && matchesSearch;
   });
 
-  if (loading) {
-    return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-32 w-full" />
-      </div>
-    );
+  const columns: Column<UserData>[] = [
+    {
+      header: "Name",
+      accessorKey: "name",
+      className: "font-medium",
+    },
+    {
+      header: "Email",
+      accessorKey: "email",
+    },
+    {
+      header: "Role",
+      cell: (user) => (
+        <span
+          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+            user.role === "superadmin"
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-secondary-foreground"
+          }`}
+        >
+          {user.role === "superadmin" ? (
+            <Shield className="mr-1 h-3 w-3" />
+          ) : (
+            <UserIcon className="mr-1 h-3 w-3" />
+          )}
+          {user.role}
+        </span>
+      ),
+    },
+    {
+      header: "Joined At",
+      cell: (user) => formatDate(user.createdAt),
+    },
+  ];
+
+  if (isSuperadmin) {
+    columns.push({
+      header: <div className="text-right">Actions</div>,
+      headerClassName: "text-right",
+      className: "text-right",
+      cell: (user) => (
+        <div
+          className="flex justify-end gap-2"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Button variant="ghost" size="icon" onClick={() => onEdit?.(user)}>
+            <Edit className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => handleDelete(user._id, e)}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
+    });
   }
 
   return (
@@ -137,164 +177,89 @@ export function UserTable({
         {addButton}
       </SearchAndFilter>
 
-      {isCardView ? (
-        <div className="space-y-4">
-          {filteredUsers.length === 0 ? (
-            <div className="text-center p-8 border rounded-md text-muted-foreground">
-              No users found.
-            </div>
-          ) : (
-            filteredUsers.map((user) => (
-              <div
-                key={user._id}
-                className="rounded-lg border bg-card text-card-foreground shadow-sm"
-              >
-                <div className="p-4 space-y-4">
-                  {/* Header: User Info & Actions */}
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center">
-                        <span className="text-sm font-medium uppercase">
-                          {user.name.slice(0, 2)}
-                        </span>
-                      </div>
-                      <div>
-                        <h3 className="font-semibold leading-none tracking-tight">
-                          {user.name}
-                        </h3>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {formatDate(user.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                    {isSuperadmin && (
-                      <div className="flex items-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onEdit?.(user)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => handleDelete(user._id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Content: Details */}
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-muted-foreground pr-2">
-                        Email
-                      </span>
-                      <span className="font-medium truncate text-right">
-                        {user.email}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-muted-foreground pr-2">
-                        Role
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          user.role === "superadmin"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-secondary-foreground"
-                        }`}
-                      >
-                        {user.role === "superadmin" ? (
-                          <Shield className="mr-1 h-3 w-3" />
-                        ) : (
-                          <UserIcon className="mr-1 h-3 w-3" />
-                        )}
-                        {user.role}
-                      </span>
-                    </div>
-                  </div>
+      <DataTable
+        columns={columns}
+        data={filteredUsers}
+        loading={loading}
+        minWidth="800px"
+        renderCard={(user) => (
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex items-center space-x-3 min-w-0 flex-1">
+                <div className="h-10 w-10 rounded-full bg-muted shrink-0 flex items-center justify-center">
+                  <span className="text-sm font-medium uppercase">
+                    {user.name.slice(0, 2)}
+                  </span>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3
+                    className="font-semibold leading-none tracking-tight truncate pr-2"
+                    title={user.name}
+                  >
+                    {user.name}
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {formatDate(user.createdAt)}
+                  </p>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined At</TableHead>
-                {isSuperadmin && (
-                  <TableHead className="text-right">Actions</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={isSuperadmin ? 5 : 4}
-                    className="h-24 text-center"
+              {isSuperadmin && (
+                <div
+                  className="flex items-center gap-4"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4"
+                    onClick={() => onEdit?.(user)}
                   >
-                    No users found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredUsers.map((user) => (
-                  <TableRow key={user._id}>
-                    <TableCell className="font-medium">{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          user.role === "superadmin"
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-secondary text-secondary-foreground"
-                        }`}
-                      >
-                        {user.role === "superadmin" ? (
-                          <Shield className="mr-1 h-3 w-3" />
-                        ) : (
-                          <UserIcon className="mr-1 h-3 w-3" />
-                        )}
-                        {user.role}
-                      </span>
-                    </TableCell>
-                    <TableCell>{formatDate(user.createdAt)}</TableCell>
-                    {isSuperadmin && (
-                      <TableCell className="text-right space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onEdit?.(user)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(user._id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
+                    <Edit className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-4 w-4"
+                    onClick={(e) => handleDelete(user._id, e)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+            </div>
+            <div className="grid grid-cols-3 gap-x-4 gap-y-2 text-sm">
+              <div className="col-span-2 flex items-center justify-start gap-2 min-w-0">
+                <span className="text-xs text-muted-foreground shrink-0">
+                  Email
+                </span>
+                <span className="text-xs truncate" title={user.email}>
+                  {user.email}
+                </span>
+              </div>
+              <div className="col-span-1 flex items-center justify-start gap-2">
+                <span className="text-xs text-muted-foreground shrink-0">
+                  Role
+                </span>
+                <span
+                  className={cn(
+                    "inline-flex items-center rounded-xl px-2 py-0.5 text-xs font-semibold whitespace-nowrap",
+                    user.role === "superadmin"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground",
+                  )}
+                >
+                  {user.role === "superadmin" ? (
+                    <Shield className="mr-1 h-3 w-3 shrink-0" />
+                  ) : (
+                    <UserIcon className="mr-1 h-3 w-3 shrink-0" />
+                  )}
+                  {user.role}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
+      />
     </div>
   );
 }

@@ -1,19 +1,7 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Plus, Edit, Trash2 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { formatDate } from "@/lib/utils";
-import { toast } from "sonner";
+import { useState } from "react";
+import { Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -22,52 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { SessionGroupForm } from "@/components/features/session-groups/session-group-form";
-import { PageHeader } from "@/components/layouts/page-header";
 import {
-  SearchAndFilter,
-  FilterGroup,
-} from "@/components/common/search-and-filter";
-import { useDebounce } from "@/hooks/use-debounce";
-import { useMediaQuery } from "@/hooks/use-media-query";
-
-interface SessionGroupItem {
-  _id: string;
-  name: string;
-  topicName?: string;
-  topicId?: string;
-  unitId?: string;
-  courseId?: string;
-  sessionCount: number;
-  isActive: boolean;
-  createdAt: string;
-  sequence: number;
-}
-
-const SESSION_GROUP_FILTERS: FilterGroup[] = [
-  {
-    key: "status",
-    title: "Status",
-    options: [
-      { label: "Active", value: "active" },
-      { label: "Inactive", value: "inactive" },
-    ],
-    allowMultiple: true,
-  },
-];
+  SessionGroupTable,
+  SessionGroupItem,
+} from "@/components/features/session-groups/session-group-table";
+import { PageHeader } from "@/components/layouts/page-header";
+import { toast } from "sonner";
 
 export default function SessionGroupsListPage() {
-  const router = useRouter();
-  const [groups, setGroups] = useState<SessionGroupItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const debouncedSearch = useDebounce(search, 500);
-  const isCardView = useMediaQuery(
-    "(max-width: 624px), (min-width: 800px) and (max-width: 880px)",
-  );
-  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
-    {},
-  );
-
+  const [refreshKey, setRefreshKey] = useState(0);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingGroup, setEditingGroup] = useState<SessionGroupItem | null>(
     null,
@@ -75,36 +26,6 @@ export default function SessionGroupsListPage() {
   const [deletingGroup, setDeletingGroup] = useState<SessionGroupItem | null>(
     null,
   );
-
-  const fetchGroups = useCallback(async () => {
-    setLoading(true);
-    try {
-      const params = new URLSearchParams();
-      if (debouncedSearch) params.append("search", debouncedSearch);
-
-      const status = activeFilters["status"];
-      if (status && status.length > 0) {
-        if (status.includes("active") && !status.includes("inactive")) {
-          params.append("isActive", "true");
-        } else if (status.includes("inactive") && !status.includes("active")) {
-          params.append("isActive", "false");
-        }
-      }
-
-      const res = await fetch(`/api/session-groups?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to fetch session groups");
-      const result = await res.json();
-      setGroups(result.data || []);
-    } catch (error) {
-      toast.error("Error loading session groups");
-    } finally {
-      setLoading(false);
-    }
-  }, [debouncedSearch, activeFilters]);
-
-  useEffect(() => {
-    fetchGroups();
-  }, [fetchGroups]);
 
   async function handleDelete() {
     if (!deletingGroup) return;
@@ -114,220 +35,37 @@ export default function SessionGroupsListPage() {
       });
       if (!res.ok) throw new Error("Failed to delete group");
       toast.success("Group deleted");
-      fetchGroups();
+      setRefreshKey((prev) => prev + 1);
       setDeletingGroup(null);
     } catch (error) {
       toast.error("Error deleting group");
     }
   }
 
-  const handleFilterChange = (key: string, values: string[]) => {
-    setActiveFilters((prev) => ({
-      ...prev,
-      [key]: values,
-    }));
-  };
+  function handleSuccess() {
+    setIsAddOpen(false);
+    setEditingGroup(null);
+    setRefreshKey((prev) => prev + 1);
+  }
 
   return (
     <div className="space-y-6">
       <PageHeader title="Session Groups" />
 
-      <SearchAndFilter
-        searchQuery={search}
-        onSearchChange={setSearch}
-        filters={SESSION_GROUP_FILTERS}
-        activeFilters={activeFilters}
-        onFilterChange={handleFilterChange}
-      >
-        <Button
-          onClick={() => setIsAddOpen(true)}
-          className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
-        >
-          <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
-          <span className="hidden min-[450px]:inline">Add</span>
-        </Button>
-      </SearchAndFilter>
-
-      {loading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-32 w-full" />
-        </div>
-      ) : isCardView ? (
-        <div className="space-y-4">
-          {groups.length === 0 ? (
-            <div className="text-center p-8 border rounded-md text-muted-foreground">
-              No session groups found.
-            </div>
-          ) : (
-            groups.map((group) => (
-              <div
-                key={group._id}
-                className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer hover:bg-muted/50 transition-colors"
-                onClick={() =>
-                  router.push(
-                    `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
-                  )
-                }
-              >
-                <div className="p-4 space-y-4">
-                  {/* Header */}
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-semibold leading-none tracking-tight">
-                        {group.name}
-                      </h3>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {formatDate(group.createdAt)}
-                      </p>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingGroup(group);
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setDeletingGroup(group);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Content Grid */}
-                  <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-muted-foreground pr-2">
-                        Topic
-                      </span>
-                      <span className="font-medium truncate text-right">
-                        {group.topicName || "—"}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        Sessions
-                      </span>
-                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-                        {group.sessionCount}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs text-muted-foreground">
-                        Status
-                      </span>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          group.isActive
-                            ? "bg-success text-success-foreground"
-                            : "bg-error text-error-foreground"
-                        }`}
-                      >
-                        {group.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      ) : (
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead className="max-w-[200px]">Topic</TableHead>
-                <TableHead>Sessions</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead className="w-[100px] text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {groups.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center">
-                    No session groups found.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                groups.map((group) => (
-                  <TableRow
-                    key={group._id}
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() =>
-                      router.push(
-                        `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
-                      )
-                    }
-                  >
-                    <TableCell className="font-medium">{group.name}</TableCell>
-                    <TableCell className="max-w-[200px] truncate">
-                      {group.topicName || "—"}
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-                        {group.sessionCount}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          group.isActive
-                            ? "bg-success text-success-foreground"
-                            : "bg-error text-error-foreground"
-                        }`}
-                      >
-                        {group.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </TableCell>
-                    <TableCell>{formatDate(group.createdAt)}</TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingGroup(group);
-                          }}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeletingGroup(group);
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      )}
+      <SessionGroupTable
+        key={refreshKey}
+        onEdit={setEditingGroup}
+        onDelete={setDeletingGroup}
+        addButton={
+          <Button
+            onClick={() => setIsAddOpen(true)}
+            className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
+          >
+            <Plus className="h-4 w-4 mr-0 min-[450px]:mr-2" />
+            <span className="hidden min-[450px]:inline">Add</span>
+          </Button>
+        }
+      />
 
       {/* Add Group Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -335,12 +73,7 @@ export default function SessionGroupsListPage() {
           <DialogHeader>
             <DialogTitle>Add New Session Group</DialogTitle>
           </DialogHeader>
-          <SessionGroupForm
-            onSuccess={() => {
-              setIsAddOpen(false);
-              fetchGroups();
-            }}
-          />
+          <SessionGroupForm onSuccess={handleSuccess} />
         </DialogContent>
       </Dialog>
 
@@ -356,10 +89,7 @@ export default function SessionGroupsListPage() {
           {editingGroup && (
             <SessionGroupForm
               initialData={editingGroup}
-              onSuccess={() => {
-                setEditingGroup(null);
-                fetchGroups();
-              }}
+              onSuccess={handleSuccess}
             />
           )}
         </DialogContent>

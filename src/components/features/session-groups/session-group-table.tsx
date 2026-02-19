@@ -13,18 +13,20 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { DataTable, Column } from "@/components/common/data-table";
 
-interface Course {
+export interface SessionGroupItem {
   _id: string;
   name: string;
-  description: string;
-  price: number;
+  topicName?: string;
+  topicId?: string;
+  unitId?: string;
+  courseId?: string;
+  sessionCount: number;
   isActive: boolean;
-  purchaseable: boolean;
-  unitCount: number;
   createdAt: string;
+  sequence: number;
 }
 
-const COURSE_FILTERS: FilterGroup[] = [
+const SESSION_GROUP_FILTERS: FilterGroup[] = [
   {
     key: "status",
     title: "Status",
@@ -34,25 +36,20 @@ const COURSE_FILTERS: FilterGroup[] = [
     ],
     allowMultiple: true,
   },
-  {
-    key: "purchaseable",
-    title: "Purchaseable",
-    options: [
-      { label: "Yes", value: "yes" },
-      { label: "No", value: "no" },
-    ],
-    allowMultiple: true,
-  },
 ];
 
-export function CourseTable({
-  onEdit,
-  addButton,
-}: {
-  onEdit: (course: Course) => void;
+interface SessionGroupTableProps {
+  onEdit: (group: SessionGroupItem) => void;
+  onDelete: (group: SessionGroupItem) => void;
   addButton?: React.ReactNode;
-}) {
-  const [courses, setCourses] = useState<Course[]>([]);
+}
+
+export function SessionGroupTable({
+  onEdit,
+  onDelete,
+  addButton,
+}: SessionGroupTableProps) {
+  const [groups, setGroups] = useState<SessionGroupItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -61,7 +58,7 @@ export function CourseTable({
   );
   const router = useRouter();
 
-  const fetchCourses = useCallback(async () => {
+  const fetchGroups = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -76,47 +73,20 @@ export function CourseTable({
         }
       }
 
-      const purchaseable = activeFilters["purchaseable"];
-      if (purchaseable && purchaseable.length > 0) {
-        if (purchaseable.includes("yes") && !purchaseable.includes("no")) {
-          params.append("purchaseable", "true");
-        } else if (
-          purchaseable.includes("no") &&
-          !purchaseable.includes("yes")
-        ) {
-          params.append("purchaseable", "false");
-        }
-      }
-
-      params.append("limit", "100");
-
-      const res = await fetch(`/api/courses?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to fetch courses");
+      const res = await fetch(`/api/session-groups?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch session groups");
       const result = await res.json();
-      setCourses(result.data || []);
+      setGroups(result.data || []);
     } catch (error) {
-      toast.error("Error loading courses");
+      toast.error("Error loading session groups");
     } finally {
       setLoading(false);
     }
   }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
-
-  async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this course?")) return;
-
-    try {
-      const res = await fetch(`/api/courses/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete course");
-      toast.success("Course deleted");
-      fetchCourses();
-    } catch (error) {
-      toast.error("Error deleting course");
-    }
-  }
+    fetchGroups();
+  }, [fetchGroups]);
 
   const handleFilterChange = (key: string, values: string[]) => {
     setActiveFilters((prev) => ({
@@ -125,73 +95,56 @@ export function CourseTable({
     }));
   };
 
-  const columns: Column<Course>[] = [
+  const columns: Column<SessionGroupItem>[] = [
     {
       header: "Name",
       accessorKey: "name",
       className: "font-medium",
     },
     {
-      header: "Units",
-      cell: (course) => (
+      header: "Topic",
+      cell: (group) => group.topicName || "—",
+      className: "max-w-[200px] truncate",
+    },
+    {
+      header: "Sessions",
+      cell: (group) => (
         <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-          {course.unitCount || 0}
+          {group.sessionCount}
         </span>
       ),
     },
     {
-      header: "Price",
-      cell: (course) => `${course.price.toLocaleString()} THB`,
-    },
-    {
       header: "Status",
-      cell: (course) => (
+      cell: (group) => (
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            course.isActive
+            group.isActive
               ? "bg-success text-success-foreground"
               : "bg-error text-error-foreground"
           }`}
         >
-          {course.isActive ? "Active" : "Inactive"}
-        </span>
-      ),
-    },
-    {
-      header: "Purchaseable",
-      cell: (course) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            course.purchaseable
-              ? "bg-info text-info-foreground"
-              : "bg-neutral text-neutral-foreground"
-          }`}
-        >
-          {course.purchaseable ? "Yes" : "No"}
+          {group.isActive ? "Active" : "Inactive"}
         </span>
       ),
     },
     {
       header: "Created At",
-      cell: (course) => formatDate(course.createdAt),
+      cell: (group) => formatDate(group.createdAt),
     },
     {
       header: <div className="text-right">Actions</div>,
       headerClassName: "text-right",
       className: "text-right",
-      cell: (course) => (
+      cell: (group) => (
         <div
           className="flex justify-end gap-2"
           onClick={(e) => e.stopPropagation()}
         >
-          <Button variant="ghost" size="icon" onClick={() => onEdit(course)}>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(group)}>
             <Edit className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleDelete(course._id)}
-          >
+          <Button variant="ghost" size="icon" onClick={() => onDelete(group)}>
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
@@ -204,7 +157,7 @@ export function CourseTable({
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        filters={COURSE_FILTERS}
+        filters={SESSION_GROUP_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}
       >
@@ -213,22 +166,23 @@ export function CourseTable({
 
       <DataTable
         columns={columns}
-        data={courses}
+        data={groups}
         loading={loading}
-        onRowClick={(course) => router.push(`/courses/${course._id}/units`)}
-        minWidth="1000px"
-        renderCard={(course) => (
+        onRowClick={(group) =>
+          router.push(
+            `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
+          )
+        }
+        minWidth="900px"
+        renderCard={(group) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h3
-                  className="font-semibold leading-none tracking-tight truncate pr-2"
-                  title={course.name}
-                >
-                  {course.name}
+                <h3 className="font-semibold truncate pr-2" title={group.name}>
+                  {group.name}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {formatDate(course.createdAt)}
+                  {formatDate(group.createdAt)}
                 </p>
               </div>
               <div
@@ -239,7 +193,7 @@ export function CourseTable({
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4"
-                  onClick={() => onEdit(course)}
+                  onClick={() => onEdit(group)}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -247,7 +201,7 @@ export function CourseTable({
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4"
-                  onClick={() => handleDelete(course._id)}
+                  onClick={() => onDelete(group)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -256,35 +210,29 @@ export function CourseTable({
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted-foreground">
-                  Total Units
+                  Total Sessions
                 </span>
-                <span className="items-center rounded-full text-xs">
-                  {course.unitCount || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">Price</span>
-                <span className="text-xs">{course.price.toLocaleString()}</span>
+                <span className="text-xs">{group.sessionCount}</span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted-foreground">Status</span>
                 <span
                   className={cn(
-                    "text-xs font-semibold  px-2 py-0.5 rounded-xl",
-                    course.isActive
+                    "text-xs font-semibold px-2 py-0.5 rounded-xl",
+                    group.isActive
                       ? "text-success-foreground bg-success"
                       : "text-error-foreground bg-error",
                   )}
                 >
-                  {course.isActive ? "Active" : "Inactive"}
+                  {group.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">
-                  Purchaseable
+                <span className="text-xs text-muted-foreground shrink-0">
+                  Topic
                 </span>
-                <span className="text-xs font-semibold">
-                  {course.purchaseable ? "Yes" : "No"}
+                <span className="text-xs font-medium truncate">
+                  {group.topicName || "—"}
                 </span>
               </div>
             </div>

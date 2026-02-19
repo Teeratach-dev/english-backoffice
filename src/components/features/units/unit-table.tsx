@@ -13,18 +13,18 @@ import {
 import { useDebounce } from "@/hooks/use-debounce";
 import { DataTable, Column } from "@/components/common/data-table";
 
-interface Course {
+export interface UnitItem {
   _id: string;
   name: string;
-  description: string;
-  price: number;
+  courseId?: string;
+  courseName?: string;
+  topicCount: number;
   isActive: boolean;
-  purchaseable: boolean;
-  unitCount: number;
+  sequence: number;
   createdAt: string;
 }
 
-const COURSE_FILTERS: FilterGroup[] = [
+const UNIT_FILTERS: FilterGroup[] = [
   {
     key: "status",
     title: "Status",
@@ -34,25 +34,15 @@ const COURSE_FILTERS: FilterGroup[] = [
     ],
     allowMultiple: true,
   },
-  {
-    key: "purchaseable",
-    title: "Purchaseable",
-    options: [
-      { label: "Yes", value: "yes" },
-      { label: "No", value: "no" },
-    ],
-    allowMultiple: true,
-  },
 ];
 
-export function CourseTable({
-  onEdit,
-  addButton,
-}: {
-  onEdit: (course: Course) => void;
+interface UnitTableProps {
+  onEdit: (unit: UnitItem) => void;
   addButton?: React.ReactNode;
-}) {
-  const [courses, setCourses] = useState<Course[]>([]);
+}
+
+export function UnitTable({ onEdit, addButton }: UnitTableProps) {
+  const [units, setUnits] = useState<UnitItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 500);
@@ -61,7 +51,7 @@ export function CourseTable({
   );
   const router = useRouter();
 
-  const fetchCourses = useCallback(async () => {
+  const fetchUnits = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
@@ -76,45 +66,30 @@ export function CourseTable({
         }
       }
 
-      const purchaseable = activeFilters["purchaseable"];
-      if (purchaseable && purchaseable.length > 0) {
-        if (purchaseable.includes("yes") && !purchaseable.includes("no")) {
-          params.append("purchaseable", "true");
-        } else if (
-          purchaseable.includes("no") &&
-          !purchaseable.includes("yes")
-        ) {
-          params.append("purchaseable", "false");
-        }
-      }
-
-      params.append("limit", "100");
-
-      const res = await fetch(`/api/courses?${params.toString()}`);
-      if (!res.ok) throw new Error("Failed to fetch courses");
+      const res = await fetch(`/api/units?${params.toString()}`);
+      if (!res.ok) throw new Error("Failed to fetch units");
       const result = await res.json();
-      setCourses(result.data || []);
+      setUnits(result.data || []);
     } catch (error) {
-      toast.error("Error loading courses");
+      toast.error("Error loading units");
     } finally {
       setLoading(false);
     }
   }, [debouncedSearch, activeFilters]);
 
   useEffect(() => {
-    fetchCourses();
-  }, [fetchCourses]);
+    fetchUnits();
+  }, [fetchUnits]);
 
   async function handleDelete(id: string) {
-    if (!confirm("Are you sure you want to delete this course?")) return;
-
+    if (!confirm("Are you sure you want to delete this unit?")) return;
     try {
-      const res = await fetch(`/api/courses/${id}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete course");
-      toast.success("Course deleted");
-      fetchCourses();
+      const res = await fetch(`/api/units/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete unit");
+      toast.success("Unit deleted");
+      fetchUnits();
     } catch (error) {
-      toast.error("Error deleting course");
+      toast.error("Error deleting unit");
     }
   }
 
@@ -125,72 +100,59 @@ export function CourseTable({
     }));
   };
 
-  const columns: Column<Course>[] = [
+  const columns: Column<UnitItem>[] = [
     {
       header: "Name",
       accessorKey: "name",
       className: "font-medium",
     },
     {
-      header: "Units",
-      cell: (course) => (
+      header: "Course",
+      cell: (unit) => unit.courseName || "—",
+      className: "max-w-[200px] truncate",
+    },
+    {
+      header: "Topics",
+      cell: (unit) => (
         <span className="inline-flex items-center rounded-full bg-info px-2.5 py-0.5 text-xs font-semibold text-info-foreground">
-          {course.unitCount || 0}
+          {unit.topicCount}
         </span>
       ),
     },
     {
-      header: "Price",
-      cell: (course) => `${course.price.toLocaleString()} THB`,
-    },
-    {
       header: "Status",
-      cell: (course) => (
+      cell: (unit) => (
         <span
           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            course.isActive
+            unit.isActive
               ? "bg-success text-success-foreground"
               : "bg-error text-error-foreground"
           }`}
         >
-          {course.isActive ? "Active" : "Inactive"}
-        </span>
-      ),
-    },
-    {
-      header: "Purchaseable",
-      cell: (course) => (
-        <span
-          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            course.purchaseable
-              ? "bg-info text-info-foreground"
-              : "bg-neutral text-neutral-foreground"
-          }`}
-        >
-          {course.purchaseable ? "Yes" : "No"}
+          {unit.isActive ? "Active" : "Inactive"}
         </span>
       ),
     },
     {
       header: "Created At",
-      cell: (course) => formatDate(course.createdAt),
+      cell: (unit) => formatDate(unit.createdAt),
     },
     {
       header: <div className="text-right">Actions</div>,
       headerClassName: "text-right",
       className: "text-right",
-      cell: (course) => (
+      cell: (unit) => (
         <div
           className="flex justify-end gap-2"
           onClick={(e) => e.stopPropagation()}
         >
-          <Button variant="ghost" size="icon" onClick={() => onEdit(course)}>
+          <Button variant="ghost" size="icon" onClick={() => onEdit(unit)}>
             <Edit className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => handleDelete(course._id)}
+            onClick={() => handleDelete(unit._id)}
           >
             <Trash2 className="h-4 w-4" />
           </Button>
@@ -204,7 +166,7 @@ export function CourseTable({
       <SearchAndFilter
         searchQuery={search}
         onSearchChange={setSearch}
-        filters={COURSE_FILTERS}
+        filters={UNIT_FILTERS}
         activeFilters={activeFilters}
         onFilterChange={handleFilterChange}
       >
@@ -213,22 +175,23 @@ export function CourseTable({
 
       <DataTable
         columns={columns}
-        data={courses}
+        data={units}
         loading={loading}
-        onRowClick={(course) => router.push(`/courses/${course._id}/units`)}
-        minWidth="1000px"
-        renderCard={(course) => (
+        onRowClick={(unit) => {
+          if (unit.courseId) {
+            router.push(`/courses/${unit.courseId}/units/${unit._id}/topics`);
+          }
+        }}
+        minWidth="900px"
+        renderCard={(unit) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h3
-                  className="font-semibold leading-none tracking-tight truncate pr-2"
-                  title={course.name}
-                >
-                  {course.name}
+                <h3 className="font-semibold truncate pr-2" title={unit.name}>
+                  {unit.name}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {formatDate(course.createdAt)}
+                  {formatDate(unit.createdAt)}
                 </p>
               </div>
               <div
@@ -239,7 +202,7 @@ export function CourseTable({
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4"
-                  onClick={() => onEdit(course)}
+                  onClick={() => onEdit(unit)}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -247,7 +210,7 @@ export function CourseTable({
                   variant="ghost"
                   size="icon"
                   className="h-4 w-4"
-                  onClick={() => handleDelete(course._id)}
+                  onClick={() => handleDelete(unit._id)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
@@ -256,35 +219,29 @@ export function CourseTable({
             <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted-foreground">
-                  Total Units
+                  Total Topics
                 </span>
-                <span className="items-center rounded-full text-xs">
-                  {course.unitCount || 0}
-                </span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">Price</span>
-                <span className="text-xs">{course.price.toLocaleString()}</span>
+                <span className="text-xs">{unit.topicCount}</span>
               </div>
               <div className="flex items-center justify-between gap-2">
                 <span className="text-xs text-muted-foreground">Status</span>
                 <span
                   className={cn(
-                    "text-xs font-semibold  px-2 py-0.5 rounded-xl",
-                    course.isActive
+                    "text-xs font-semibold px-2 py-0.5 rounded-xl",
+                    unit.isActive
                       ? "text-success-foreground bg-success"
                       : "text-error-foreground bg-error",
                   )}
                 >
-                  {course.isActive ? "Active" : "Inactive"}
+                  {unit.isActive ? "Active" : "Inactive"}
                 </span>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs text-muted-foreground">
-                  Purchaseable
+                <span className="text-xs text-muted-foreground shrink-0">
+                  Course
                 </span>
-                <span className="text-xs font-semibold">
-                  {course.purchaseable ? "Yes" : "No"}
+                <span className="text-xs font-medium truncate">
+                  {unit.courseName || "—"}
                 </span>
               </div>
             </div>
