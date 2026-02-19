@@ -24,8 +24,6 @@ export default function SessionTemplatesPage() {
   return (
     <div className="space-y-6">
       <PageHeader title="Session Templates" />
-      <Breadcrumb items={[{ label: "Session Templates", href: "#" }]} />
-
       <TemplateTable
         onEdit={handleEdit}
         addButton={

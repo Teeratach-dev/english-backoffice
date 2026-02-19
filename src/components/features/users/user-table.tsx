@@ -9,7 +9,8 @@ import {
   SearchAndFilter,
   FilterGroup,
 } from "@/components/common/search-and-filter";
-import { DataTable, Column } from "@/components/common/data-table";
+import { DataTable, Column, Pagination } from "@/components/common/data-table";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export interface UserData {
   _id: string;
@@ -49,25 +50,52 @@ export function UserTable({
   );
   const [search, setSearch] = useState("");
 
+  const [pagination, setPagination] = useState<Pagination>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
+  const debouncedSearch = useDebounce(search, 500);
+
   const isSuperadmin = currentUserRole === "superadmin";
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/users");
+      const params = new URLSearchParams();
+      if (debouncedSearch) params.append("search", debouncedSearch);
+
+      const roles = activeFilters["role"];
+      if (roles && roles.length > 0) {
+        roles.forEach((r) => params.append("role", r));
+      }
+
+      params.append("page", pagination.page.toString());
+      params.append("limit", pagination.limit.toString());
+
+      const res = await fetch(`/api/users?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch users");
-      const data = await res.json();
-      setUsers(data);
+      const result = await res.json();
+      setUsers(result.data || []);
+      if (result.pagination) {
+        setPagination(result.pagination);
+      }
     } catch (error) {
       toast.error("Error loading users");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [debouncedSearch, activeFilters, pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
+
+  // Reset to page 1 when search or filters change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, [debouncedSearch, activeFilters]);
 
   const handleDelete = async (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -94,16 +122,8 @@ export function UserTable({
     }));
   };
 
-  const filteredUsers = users.filter((user) => {
-    const roleValues = activeFilters["role"] || [];
-    const matchesRole =
-      roleValues.length === 0 || roleValues.includes(user.role);
-
-    const matchesSearch =
-      user.name.toLowerCase().includes(search.toLowerCase()) ||
-      user.email.toLowerCase().includes(search.toLowerCase());
-    return matchesRole && matchesSearch;
-  });
+  // Client-side filtering is no longer needed as we use server-side pagination
+  const filteredUsers = users;
 
   const columns: Column<UserData>[] = [
     {
@@ -182,6 +202,12 @@ export function UserTable({
         data={filteredUsers}
         loading={loading}
         minWidth="800px"
+        pagination={{
+          pagination,
+          onPageChange: (page) => setPagination((prev) => ({ ...prev, page })),
+          onLimitChange: (limit) =>
+            setPagination((prev) => ({ ...prev, limit, page: 1 })),
+        }}
         renderCard={(user) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">

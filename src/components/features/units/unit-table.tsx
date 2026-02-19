@@ -11,7 +11,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
-import { DataTable, Column } from "@/components/common/data-table";
+import { DataTable, Column, Pagination } from "@/components/common/data-table";
 
 export interface UnitItem {
   _id: string;
@@ -49,6 +49,12 @@ export function UnitTable({ onEdit, addButton }: UnitTableProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
+  const [pagination, setPagination] = useState<Pagination>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
   const router = useRouter();
 
   const fetchUnits = useCallback(async () => {
@@ -66,20 +72,31 @@ export function UnitTable({ onEdit, addButton }: UnitTableProps) {
         }
       }
 
+      params.append("page", pagination.page.toString());
+      params.append("limit", pagination.limit.toString());
+
       const res = await fetch(`/api/units?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch units");
       const result = await res.json();
       setUnits(result.data || []);
+      if (result.pagination) {
+        setPagination(result.pagination);
+      }
     } catch (error) {
       toast.error("Error loading units");
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, activeFilters]);
+  }, [debouncedSearch, activeFilters, pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchUnits();
   }, [fetchUnits]);
+
+  // Reset to page 1 when filters or search change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, [debouncedSearch, activeFilters]);
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure you want to delete this unit?")) return;
@@ -183,6 +200,12 @@ export function UnitTable({ onEdit, addButton }: UnitTableProps) {
           }
         }}
         minWidth="900px"
+        pagination={{
+          pagination,
+          onPageChange: (page) => setPagination((prev) => ({ ...prev, page })),
+          onLimitChange: (limit) =>
+            setPagination((prev) => ({ ...prev, limit, page: 1 })),
+        }}
         renderCard={(unit) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">

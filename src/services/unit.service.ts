@@ -13,7 +13,7 @@ export class UnitService {
   ) {
     await dbConnect();
     const page = params.page || 1;
-    const limit = params.limit || 100;
+    const limit = params.limit || 10;
     const search = params.search || "";
 
     const query: any = {};

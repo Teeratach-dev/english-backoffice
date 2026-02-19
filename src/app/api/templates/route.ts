@@ -21,6 +21,8 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect();
     const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
     const search = searchParams.get("search");
     const isActive = searchParams.has("isActive")
       ? searchParams.get("isActive") === "true"
@@ -38,8 +40,23 @@ export async function GET(req: NextRequest) {
       query.type = { $in: types };
     }
 
-    const templates = await SessionTemplate.find(query).sort({ createdAt: -1 });
-    return NextResponse.json(templates);
+    const templates = await SessionTemplate.find(query)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    const total = await SessionTemplate.countDocuments(query);
+
+    return NextResponse.json({
+      data: templates,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

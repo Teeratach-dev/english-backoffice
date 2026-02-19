@@ -11,7 +11,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
-import { DataTable, Column } from "@/components/common/data-table";
+import { DataTable, Column, Pagination } from "@/components/common/data-table";
 
 export interface SessionGroupItem {
   _id: string;
@@ -56,6 +56,12 @@ export function SessionGroupTable({
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
+  const [pagination, setPagination] = useState<Pagination>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
   const router = useRouter();
 
   const fetchGroups = useCallback(async () => {
@@ -73,20 +79,31 @@ export function SessionGroupTable({
         }
       }
 
+      params.append("page", pagination.page.toString());
+      params.append("limit", pagination.limit.toString());
+
       const res = await fetch(`/api/session-groups?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch session groups");
       const result = await res.json();
       setGroups(result.data || []);
+      if (result.pagination) {
+        setPagination(result.pagination);
+      }
     } catch (error) {
       toast.error("Error loading session groups");
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, activeFilters]);
+  }, [debouncedSearch, activeFilters, pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchGroups();
   }, [fetchGroups]);
+
+  // Reset to page 1 when filters or search change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, [debouncedSearch, activeFilters]);
 
   const handleFilterChange = (key: string, values: string[]) => {
     setActiveFilters((prev) => ({
@@ -174,6 +191,12 @@ export function SessionGroupTable({
           )
         }
         minWidth="900px"
+        pagination={{
+          pagination,
+          onPageChange: (page) => setPagination((prev) => ({ ...prev, page })),
+          onLimitChange: (limit) =>
+            setPagination((prev) => ({ ...prev, limit, page: 1 })),
+        }}
         renderCard={(group) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">

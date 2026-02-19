@@ -70,11 +70,44 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     await dbConnect();
-    const users = await User.find({}, { password: 0 }).sort({ createdAt: -1 });
-    return NextResponse.json(users);
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
+    const search = searchParams.get("search") || "";
+
+    const query: any = {};
+    if (search) {
+      query.$or = [
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+      ];
+    }
+
+    const roles = searchParams.getAll("role");
+    if (roles.length > 0) {
+      query.role = { $in: roles };
+    }
+
+    const users = await User.find(query, { password: 0 })
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
+
+    const total = await User.countDocuments(query);
+
+    return NextResponse.json({
+      data: users,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     return NextResponse.json(
       { message: "Internal Server Error" },

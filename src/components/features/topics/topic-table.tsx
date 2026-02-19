@@ -11,7 +11,7 @@ import {
   FilterGroup,
 } from "@/components/common/search-and-filter";
 import { useDebounce } from "@/hooks/use-debounce";
-import { DataTable, Column } from "@/components/common/data-table";
+import { DataTable, Column, Pagination } from "@/components/common/data-table";
 
 export interface TopicItem {
   _id: string;
@@ -51,6 +51,12 @@ export function TopicTable({ onEdit, onDelete, addButton }: TopicTableProps) {
   const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>(
     {},
   );
+  const [pagination, setPagination] = useState<Pagination>({
+    total: 0,
+    page: 1,
+    limit: 10,
+    pages: 0,
+  });
   const router = useRouter();
 
   const fetchTopics = useCallback(async () => {
@@ -68,20 +74,31 @@ export function TopicTable({ onEdit, onDelete, addButton }: TopicTableProps) {
         }
       }
 
+      params.append("page", pagination.page.toString());
+      params.append("limit", pagination.limit.toString());
+
       const res = await fetch(`/api/topics?${params.toString()}`);
       if (!res.ok) throw new Error("Failed to fetch topics");
       const result = await res.json();
       setTopics(result.data || []);
+      if (result.pagination) {
+        setPagination(result.pagination);
+      }
     } catch (error) {
       toast.error("Error loading topics");
     } finally {
       setLoading(false);
     }
-  }, [debouncedSearch, activeFilters]);
+  }, [debouncedSearch, activeFilters, pagination.page, pagination.limit]);
 
   useEffect(() => {
     fetchTopics();
   }, [fetchTopics]);
+
+  // Reset to page 1 when filters or search change
+  useEffect(() => {
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  }, [debouncedSearch, activeFilters]);
 
   const handleFilterChange = (key: string, values: string[]) => {
     setActiveFilters((prev) => ({
@@ -169,6 +186,12 @@ export function TopicTable({ onEdit, onDelete, addButton }: TopicTableProps) {
           )
         }
         minWidth="900px"
+        pagination={{
+          pagination,
+          onPageChange: (page) => setPagination((prev) => ({ ...prev, page })),
+          onLimitChange: (limit) =>
+            setPagination((prev) => ({ ...prev, limit, page: 1 })),
+        }}
         renderCard={(topic) => (
           <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-4 space-y-4">
             <div className="flex items-start justify-between gap-2">
