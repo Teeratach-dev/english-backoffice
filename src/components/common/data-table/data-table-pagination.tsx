@@ -6,15 +6,15 @@ import {
   ChevronsLeft,
   ChevronsRight,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Pagination } from "@/types/pagination.types";
+} from "../../ui/select";
+import { Pagination } from "../../../types/pagination.types";
 
 interface DataTablePaginationProps {
   pagination: Pagination;
@@ -42,12 +42,12 @@ export function DataTablePagination({
             <p className="text-sm font-medium whitespace-nowrap">Rows</p>
             <Select
               value={`${limit}`}
-              onValueChange={(value) => {
+              onValueChange={(value: any) => {
                 onLimitChange(Number(value));
               }}
             >
               <SelectTrigger className="h-9 w-17.5 sm:h-8">
-                <SelectValue placeholder={limit} />
+                <SelectValue placeholder={limit.toString()} />
               </SelectTrigger>
               <SelectContent side="top">
                 {pageSizeOptions.map((pageSize) => (
