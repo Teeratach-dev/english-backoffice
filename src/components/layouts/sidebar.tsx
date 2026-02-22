@@ -100,7 +100,7 @@ export function SidebarRoutes({
 
   return (
     <div className="flex flex-col w-full overflow-y-auto overflow-x-hidden">
-      <div className="px-3 py-2">
+      <div className="px-2 py-2">
         <h2
           className={cn(
             "mb-2 px-4 text-lg font-semibold tracking-tight whitespace-nowrap transition-all duration-300",
