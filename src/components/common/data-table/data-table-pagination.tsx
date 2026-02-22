@@ -27,7 +27,7 @@ export function DataTablePagination({
   const { page, limit, pages } = pagination;
 
   return (
-    <div className="flex items-center justify-center gap-6 px-2 py-4">
+    <div className="flex flex-wrap items-center justify-center min-[800px]:justify-start gap-6 px-2">
       <div className="flex items-center gap-2">
         <p className="text-sm font-medium whitespace-nowrap">Per Page</p>
         <Select
