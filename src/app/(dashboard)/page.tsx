@@ -1,6 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PageHeader } from "@/components/layouts/page-header";
 import { getDashboardStats } from "@/services/dashboard.service";
+import {
+  Users,
+  BookOpen,
+  Library,
+  Layers,
+  FileText,
+  Layout,
+} from "lucide-react";
+import { StatCard } from "@/components/features/dashboard/stat-card";
 
 export default async function DashboardPage() {
   const {
@@ -13,78 +21,46 @@ export default async function DashboardPage() {
   } = await getDashboardStats();
 
   return (
-    <div className="space-y-8">
-      <PageHeader title="Dashboard Overview" />
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <PageHeader title="Dashboard" />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Users</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{totalUsers}</div>
-            <p className="text-xs text-muted-foreground">
-              Administrators active
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Courses
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeCourses}</div>
-            <p className="text-xs text-muted-foreground">Courses in catalog</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Topics</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeTopics}</div>
-            <p className="text-xs text-muted-foreground">Active topics</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Session Groups
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeSessionGroups}</div>
-            <p className="text-xs text-muted-foreground">
-              Active session groups
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Session Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeSessions}</div>
-            <p className="text-xs text-muted-foreground">
-              Active session details
-            </p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Session Templates
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{activeSessionTemplates}</div>
-            <p className="text-xs text-muted-foreground">Active templates</p>
-          </CardContent>
-        </Card>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <StatCard
+          title="Total Users"
+          value={totalUsers ?? 0}
+          description="Total registered users"
+          icon={<Users />}
+        />
+        <StatCard
+          title="Active Courses"
+          value={activeCourses ?? 0}
+          description="Courses currently active"
+          icon={<BookOpen />}
+        />
+        <StatCard
+          title="Topics"
+          value={activeTopics ?? 0}
+          description="Total available topics"
+          icon={<Library />}
+        />
+        <StatCard
+          title="Session Groups"
+          value={activeSessionGroups ?? 0}
+          description="Groups for sessions"
+          icon={<Layers />}
+        />
+        <StatCard
+          title="Session Details"
+          value={activeSessions ?? 0}
+          description="Active session instances"
+          icon={<FileText />}
+        />
+        <StatCard
+          title="Session Templates"
+          value={activeSessionTemplates ?? 0}
+          description="Base session templates"
+          icon={<Layout />}
+        />
       </div>
     </div>
   );

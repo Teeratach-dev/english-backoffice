@@ -15,7 +15,7 @@ export function MobileSidebar() {
         <Menu />
       </SheetTrigger>
       <SheetContent side="left" className="p-0 bg-background">
-        <SidebarRoutes onNavigate={() => setOpen(false)} />
+        <SidebarRoutes onNavigate={() => setOpen(false)} forceOpen={true} />
       </SheetContent>
     </Sheet>
   );

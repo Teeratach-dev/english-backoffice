@@ -14,14 +14,15 @@ import {
   ListChecks,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { useSidebar } from "@/components/providers/sidebar-provider";
 
 // Helper to check if a segment exists AND is followed by another segment (path continues deeper)
-const isRecursiveSegment = (pathname: string, segment: string) => {
+function isRecursiveSegment(pathname: string, segment: string) {
   const parts = pathname.split("/").filter(Boolean);
   const index = parts.indexOf(segment);
   // Returns true only if segment is found AND it is NOT the last part
   return index !== -1 && index < parts.length - 1;
-};
+}
 
 const sidebarItems = [
   {
@@ -86,13 +87,26 @@ const sidebarItems = [
   },
 ];
 
-export function SidebarRoutes({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarRoutes({
+  onNavigate,
+  forceOpen,
+}: {
+  onNavigate?: () => void;
+  forceOpen?: boolean;
+}) {
   const pathname = usePathname();
+  const { isOpen: sidebarOpen } = useSidebar();
+  const isOpen = forceOpen || sidebarOpen;
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full overflow-y-auto overflow-x-hidden">
       <div className="px-3 py-2">
-        <h2 className="mb-2 px-4 text-lg font-semibold tracking-tight">
+        <h2
+          className={cn(
+            "mb-2 px-4 text-lg font-semibold tracking-tight whitespace-nowrap transition-all duration-300",
+            !isOpen && "opacity-0 h-0 my-0 overflow-hidden",
+          )}
+        >
           English Backoffice
         </h2>
         <div className="space-y-1">
@@ -101,15 +115,24 @@ export function SidebarRoutes({ onNavigate }: { onNavigate?: () => void }) {
               key={item.href}
               href={item.href}
               onClick={onNavigate}
+              title={!isOpen ? item.name : undefined}
               className={cn(
                 buttonVariants({
                   variant: item.isActive(pathname) ? "secondary" : "ghost",
                 }),
-                "w-full justify-start",
+                "w-full justify-start whitespace-nowrap overflow-hidden transition-all duration-300",
+                !isOpen && "justify-center px-2",
               )}
             >
-              <item.icon className="mr-2 h-4 w-4" />
-              {item.name}
+              <item.icon className={cn("h-4 w-4 shrink-0", isOpen && "mr-2")} />
+              <span
+                className={cn(
+                  "transition-all duration-300 overflow-hidden",
+                  !isOpen ? "opacity-0 w-0" : "opacity-100",
+                )}
+              >
+                {item.name}
+              </span>
             </Link>
           ))}
         </div>
@@ -119,14 +142,17 @@ export function SidebarRoutes({ onNavigate }: { onNavigate?: () => void }) {
 }
 
 export function Sidebar({ className }: { className?: string }) {
+  const { isOpen } = useSidebar();
+
   return (
     <div
       className={cn(
-        "pb-12 min-h-screen w-64 border-r bg-background flex flex-col",
+        "hidden min-[801px]:flex pb-12 min-h-screen border-r bg-background flex-col transition-all duration-300 ease-in-out overflow-x-hidden",
+        isOpen ? "w-64" : "w-[72px]",
         className,
       )}
     >
-      <div className="space-y-4 py-4 flex-1">
+      <div className="space-y-4 py-4 flex-1 flex flex-col items-center">
         <SidebarRoutes />
       </div>
     </div>
