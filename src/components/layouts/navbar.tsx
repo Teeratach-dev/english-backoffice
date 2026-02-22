@@ -14,7 +14,7 @@ export function Navbar() {
 
   return (
     <div className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
-      <div className="flex h-16 items-center px-6">
+      <div className="flex h-16 items-center pl-3 max-[800px]:pl-6 max-[450px]:pl-3  pr-6 max-[450px]:pr-3 ">
         <MobileSidebar />
         <Button
           variant="ghost"
