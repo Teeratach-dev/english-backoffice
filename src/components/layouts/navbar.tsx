@@ -6,7 +6,7 @@ import { useSidebar } from "@/components/providers/sidebar-provider";
 import { Button } from "@/components/ui/button";
 import { PanelLeft } from "lucide-react";
 
-import { MobileSidebar } from "@/components/layouts/mobile-sidebar";
+import { MobileSidebar } from "@/components/layouts/sidebar";
 
 export function Navbar() {
   const { title } = useHeader();

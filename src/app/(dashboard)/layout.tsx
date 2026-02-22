@@ -1,5 +1,5 @@
 import { Navbar } from "@/components/layouts/navbar";
-import { Sidebar } from "@/components/layouts/sidebar";
+import { DesktopSidebar as Sidebar } from "@/components/layouts/sidebar";
 import { HeaderProvider } from "@/components/providers/header-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { SidebarProvider } from "@/components/providers/sidebar-provider";
