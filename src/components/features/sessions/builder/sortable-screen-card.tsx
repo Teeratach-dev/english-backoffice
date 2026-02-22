@@ -46,6 +46,8 @@ const ACTION_ICONS: Record<ActionType, React.ReactNode> = {
   [ActionType.WriteSentenceInChat]: <MessageCircle className="h-4 w-4" />,
 };
 
+import { cn } from "@/lib/utils";
+
 interface SortableScreenCardProps {
   screen: Screen;
   sIdx: number;
@@ -104,10 +106,10 @@ export function SortableScreenCard({
 
   return (
     <div className="relative">
-      <Card className="relative group overflow-visible">
-        <CardHeader className="p-2 bg-muted/5 flex flex-row items-center justify-between">
+      <Card className="relative group overflow-visible shadow-sm border-muted-foreground/10">
+        <CardHeader className="p-2 bg-muted/5 flex flex-row items-center justify-between border-b border-muted-foreground/5">
           <CardTitle className="text-sm font-medium flex items-end">
-            <span className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center mr-3 text-xxs font-bold">
+            <span className="w-6 h-6 rounded-full bg-primary/90 flex items-center justify-center mr-3 text-xxs font-bold text-white">
               {screenNumber}
             </span>
             Screen {screenNumber}
@@ -154,84 +156,104 @@ export function SortableScreenCard({
           </div>
         </CardHeader>
         {!isCollapsed && (
-          <CardContent className="px-2 space-y-2">
-            <>
-              {showPreview ? (
-                <PhonePreview actions={screen.actions} />
-              ) : (
-                <div className="flex flex-col gap-2">
-                  {screen.actions.map((action, idx) => (
-                    <React.Fragment key={action.id}>
-                      <SortableActionItem
-                        action={action}
-                        index={idx}
-                        isEditing={activeActionId === action.id}
-                        onEdit={() =>
-                          onEditAction(
-                            activeActionId === action.id ? "" : action.id,
-                          )
-                        }
-                        onDelete={() => onDeleteAction(action.id)}
-                        onMoveUp={() => handleMoveAction(action.id, "up")}
-                        onMoveDown={() => handleMoveAction(action.id, "down")}
-                        isFirst={idx === 0}
-                        isLast={idx === screen.actions.length - 1}
-                        showPreview={showPreview}
-                      />
-                      {activeActionInScreen &&
-                        activeActionInScreen.id === action.id && (
-                          <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
-                            <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
-                              <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
-                                <div className="relative">
-                                  <span className="w-2 h-2 rounded-full bg-primary inline-block" />
-                                  <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
-                                </div>
-                                {
-                                  ACTION_TYPE_LABELS[
-                                    activeActionInScreen.type as ActionType
-                                  ]
-                                }{" "}
-                                Editor
-                              </CardTitle>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
-                                onClick={() => onEditAction("")}
-                              >
-                                Close Editor
-                              </Button>
-                            </CardHeader>
-                            <CardContent className="p-4 lg:p-6">
-                              <ActionContentEditor
-                                action={activeActionInScreen}
-                                onChange={(updates) =>
-                                  onUpdateAction(
-                                    activeActionInScreen.id,
-                                    updates,
-                                  )
-                                }
-                              />
-                            </CardContent>
-                          </Card>
-                        )}
-                    </React.Fragment>
-                  ))}
+          <CardContent className="p-3 lg:p-6">
+            <div className="flex flex-col lg:flex-row gap-8 items-start">
+              {/* Mobile View Sidebar (Hidden on mobile, sticky on desktop) */}
+              <div className="hidden lg:block shrink-0 sticky top-6">
+                <div className="relative p-2 bg-muted/20 rounded-[3.2rem] border border-muted-foreground/10 shadow-inner">
+                  <PhonePreview actions={screen.actions} />
+                  <div className="absolute top-4 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-black/5 rounded text-xxs uppercase tracking-tighter font-bold opacity-30 select-none">
+                    Preview Mode
+                  </div>
                 </div>
-              )}
+              </div>
 
-              {!showPreview && (
-                <Button
-                  variant="outline"
-                  className="w-full rounded-xl border py-6 gap-2 shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all group"
-                  onClick={() => setIsActionSelectorOpen(true)}
+              {/* Actions & Editor Area */}
+              <div className="flex-1 w-full min-w-0">
+                {/* On mobile: Toggleable Preview */}
+                <div className={cn("lg:hidden mb-4", !showPreview && "hidden")}>
+                  <PhonePreview actions={screen.actions} />
+                </div>
+
+                {/* Editor Mode (Always on Desktop, Toggleable on Mobile) */}
+                <div
+                  className={cn(
+                    "space-y-4",
+                    showPreview ? "hidden lg:block" : "block",
+                  )}
                 >
-                  <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
-                  <span className="text-xs font-semibold">Add Action</span>
-                </Button>
-              )}
-            </>
+                  <div className="flex flex-col gap-2">
+                    {screen.actions.map((action, idx) => (
+                      <React.Fragment key={action.id}>
+                        <SortableActionItem
+                          action={action}
+                          index={idx}
+                          isEditing={activeActionId === action.id}
+                          onEdit={() =>
+                            onEditAction(
+                              activeActionId === action.id ? "" : action.id,
+                            )
+                          }
+                          onDelete={() => onDeleteAction(action.id)}
+                          onMoveUp={() => handleMoveAction(action.id, "up")}
+                          onMoveDown={() => handleMoveAction(action.id, "down")}
+                          isFirst={idx === 0}
+                          isLast={idx === screen.actions.length - 1}
+                          showPreview={showPreview}
+                        />
+                        {activeActionInScreen &&
+                          activeActionInScreen.id === action.id && (
+                            <Card className="border-primary/20 shadow-md animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden ring-1 ring-primary/5">
+                              <CardHeader className="py-2.5 px-4 bg-primary/5 border-b flex flex-row items-center justify-between space-y-0">
+                                <CardTitle className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2">
+                                  <div className="relative">
+                                    <span className="w-2 h-2 rounded-full bg-primary inline-block" />
+                                    <span className="absolute inset-0 w-2 h-2 rounded-full bg-primary animate-ping opacity-75" />
+                                  </div>
+                                  {
+                                    ACTION_TYPE_LABELS[
+                                      activeActionInScreen.type as ActionType
+                                    ]
+                                  }{" "}
+                                  Editor
+                                </CardTitle>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-7 text-xxs hover:bg-primary/10 hover:text-primary transition-colors"
+                                  onClick={() => onEditAction("")}
+                                >
+                                  Close Editor
+                                </Button>
+                              </CardHeader>
+                              <CardContent className="p-4 lg:p-6">
+                                <ActionContentEditor
+                                  action={activeActionInScreen}
+                                  onChange={(updates) =>
+                                    onUpdateAction(
+                                      activeActionInScreen.id,
+                                      updates,
+                                    )
+                                  }
+                                />
+                              </CardContent>
+                            </Card>
+                          )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-xl border py-6 gap-2 shadow-sm hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                    onClick={() => setIsActionSelectorOpen(true)}
+                  >
+                    <Plus className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                    <span className="text-xs font-semibold">Add Action</span>
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         )}
       </Card>
