@@ -148,7 +148,7 @@ export function Sidebar({ className }: { className?: string }) {
     <div
       className={cn(
         "hidden min-[801px]:flex pb-12 min-h-screen border-r bg-background flex-col transition-all duration-300 ease-in-out overflow-x-hidden",
-        isOpen ? "w-64" : "w-[72px]",
+        isOpen ? "w-50" : "w-12",
         className,
       )}
     >
