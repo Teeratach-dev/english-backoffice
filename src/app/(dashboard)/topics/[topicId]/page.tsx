@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, X, Save } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
@@ -27,12 +27,12 @@ import { DeleteButton } from "@/components/common/delete-button";
 import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionGroupsPage({
+export default function TopicDetailPage({
   params,
 }: {
-  params: Promise<{ courseId: string; unitId: string; topicId: string }>;
+  params: Promise<{ topicId: string }>;
 }) {
-  const { courseId, unitId, topicId } = use(params);
+  const { topicId } = use(params);
   const router = useRouter();
   const [groups, setGroups] = useState<any[]>([]);
   const [topic, setTopic] = useState<any>(null);
@@ -72,6 +72,8 @@ export default function SessionGroupsPage({
     }
   }
 
+  const parentPath = topic?.unitId ? `/units/${topic.unitId}` : "/units";
+
   async function handleSaveTopic() {
     setSavingTopic(true);
     try {
@@ -84,7 +86,7 @@ export default function SessionGroupsPage({
       if (!res.ok) throw new Error("Failed to save topic");
 
       toast.success("Topic updated successfully");
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error saving topic");
     } finally {
@@ -106,7 +108,7 @@ export default function SessionGroupsPage({
       if (!res.ok) throw new Error("Failed to delete topic");
 
       toast.success("Topic deleted successfully");
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error deleting topic");
     }
@@ -117,7 +119,7 @@ export default function SessionGroupsPage({
     if (hasChanges) {
       setIsDiscardDialogOpen(true);
     } else {
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+      router.push(parentPath);
     }
   }
 
@@ -164,15 +166,9 @@ export default function SessionGroupsPage({
       <PageHeader title="Topic" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
-          {
-            label: "Units",
-            href: `/courses/${courseId}/units/${unitId}/topics`,
-          },
-          {
-            label: "Topic",
-            href: "#",
-          },
+          { label: "Courses", href: topic?.courseId ? `/courses/${topic.courseId}` : "/courses" },
+          { label: "Units", href: parentPath },
+          { label: "Topic", href: "#" },
         ]}
       />
 
@@ -220,8 +216,6 @@ export default function SessionGroupsPage({
       <div className="pt-4 border-t">
         <SessionGroupSortableList
           title="Session Groups"
-          courseId={courseId}
-          unitId={unitId}
           topicId={topicId}
           groups={groups}
           onReorder={(newItems) => setGroups(newItems)}
@@ -252,9 +246,7 @@ export default function SessionGroupsPage({
       <ConfirmDiscardDialog
         open={isDiscardDialogOpen}
         onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() =>
-          router.push(`/courses/${courseId}/units/${unitId}/topics`)
-        }
+        onConfirm={() => router.push(parentPath)}
       />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

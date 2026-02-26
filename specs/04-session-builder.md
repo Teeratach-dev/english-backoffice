@@ -7,8 +7,10 @@ Session Builder เป็น feature หลักของระบบ เป็
 
 ## Page
 
-- **URL**: `/courses/[courseId]/units/[unitId]/topics/[topicId]/groups/[groupId]/sessions/[sessionId]/builder`
-- **Route**: `src/app/(dashboard)/courses/[courseId]/units/[unitId]/topics/[topicId]/groups/[groupId]/sessions/[sessionId]/builder/page.tsx`
+- **URL**: `/sessions/[sessionId]/builder`
+- **Route**: `src/app/(dashboard)/sessions/[sessionId]/builder/page.tsx`
+- Page รับแค่ `sessionId` จาก URL แล้ว fetch parent IDs + breadcrumbs จาก API (`GET /api/sessions/${sessionId}?include=breadcrumbs`)
+- Breadcrumb และ back navigation สร้างจาก API response (courseId → unitId → topicId → sessionGroupId)
 
 ## Structure
 

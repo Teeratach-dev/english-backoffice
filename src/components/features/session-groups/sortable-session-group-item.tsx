@@ -9,9 +9,6 @@ import { LocalSessionGroup } from "@/types/local.types";
 
 export function SortableSessionGroupItem({
   group,
-  courseId,
-  unitId,
-  topicId,
   onEdit,
   onDelete,
   onMoveUp,
@@ -20,9 +17,6 @@ export function SortableSessionGroupItem({
   isLast,
 }: {
   group: LocalSessionGroup;
-  courseId: string;
-  unitId: string;
-  topicId: string;
   onEdit: (group: LocalSessionGroup) => void;
   onDelete: (id: string) => void;
   onMoveUp?: () => void;
@@ -73,9 +67,7 @@ export function SortableSessionGroupItem({
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link
-            href={`/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${group._id}/sessions`}
-          >
+          <Link href={`/session-groups/${group._id}`}>
             <PenTool className="h-4 w-4" />
           </Link>
         </Button>

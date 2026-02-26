@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { SessionSortableList } from "@/components/features/sessions/session-sortable-list";
-import { SessionForm } from "@/components/features/sessions/session-form";
+import { UnitSortableList } from "@/components/features/units/unit-sortable-list";
+import { UnitForm } from "@/components/features/units/unit-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,50 +27,47 @@ import { DeleteButton } from "@/components/common/delete-button";
 import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionsPage({
+export default function CourseDetailPage({
   params,
 }: {
-  params: Promise<{
-    courseId: string;
-    unitId: string;
-    topicId: string;
-    groupId: string;
-  }>;
+  params: Promise<{ courseId: string }>;
 }) {
-  const { courseId, unitId, topicId, groupId } = use(params);
+  const { courseId } = use(params);
   const router = useRouter();
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [group, setGroup] = useState<any>(null);
-  const [groupForm, setGroupForm] = useState({
+  const [units, setUnits] = useState<any[]>([]);
+  const [course, setCourse] = useState<any>(null);
+  const [courseForm, setCourseForm] = useState({
     name: "",
     description: "",
+    price: 0,
     isActive: true,
+    purchaseable: true,
   });
   const [loading, setLoading] = useState(true);
-  const [savingGroup, setSavingGroup] = useState(false);
+  const [savingCourse, setSavingCourse] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSession, setSelectedSession] = useState<any>(null);
+  const [selectedUnit, setSelectedUnit] = useState<any>(null);
   const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
   const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const res = await fetch(
-        `/api/session-groups/${groupId}?include=children`,
-      );
+      const res = await fetch(`/api/courses/${courseId}?include=children`);
       if (!res.ok) throw new Error("Failed to fetch data");
 
       const data = await res.json();
 
-      setSessions(data.children);
-      setGroup(data);
+      setUnits(data.children);
+      setCourse(data);
       const initial = {
         name: data.name || "",
         description: data.description || "",
+        price: data.price || 0,
         isActive: data.isActive ?? true,
+        purchaseable: data.purchaseable ?? true,
       };
-      setGroupForm(initial);
+      setCourseForm(initial);
       setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
@@ -79,90 +76,82 @@ export default function SessionsPage({
     }
   }
 
-  async function handleSaveGroup() {
-    setSavingGroup(true);
+  async function handleSaveCourse() {
+    setSavingCourse(true);
     try {
-      const res = await fetch(`/api/session-groups/${groupId}`, {
+      const res = await fetch(`/api/courses/${courseId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(groupForm),
+        body: JSON.stringify(courseForm),
       });
 
-      if (!res.ok) throw new Error("Failed to save group");
+      if (!res.ok) throw new Error("Failed to save course");
 
-      toast.success("Session group updated successfully");
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
+      toast.success("Course updated successfully");
+      router.push("/courses");
     } catch (error) {
-      toast.error("Error saving group");
+      toast.error("Error saving course");
     } finally {
-      setSavingGroup(false);
-      setInitialForm(JSON.parse(JSON.stringify(groupForm)));
+      setSavingCourse(false);
+      setInitialForm(JSON.parse(JSON.stringify(courseForm)));
     }
   }
 
-  async function handleDeleteGroup() {
+  async function handleDeleteCourse() {
     if (
       !confirm(
-        "Are you sure you want to delete this group? This will also delete all sessions within it.",
+        "Are you sure you want to delete this course? This will also delete all units and topics within it.",
       )
     )
       return;
 
     try {
-      const res = await fetch(`/api/session-groups/${groupId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete group");
+      const res = await fetch(`/api/courses/${courseId}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Failed to delete course");
 
-      toast.success("Group deleted successfully");
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
+      toast.success("Course deleted successfully");
+      router.push("/courses");
     } catch (error) {
-      toast.error("Error deleting group");
+      toast.error("Error deleting course");
     }
   }
   function handleCancel() {
     const hasChanges =
-      JSON.stringify(groupForm) !== JSON.stringify(initialForm);
+      JSON.stringify(courseForm) !== JSON.stringify(initialForm);
     if (hasChanges) {
       setIsDiscardDialogOpen(true);
     } else {
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
+      router.push("/courses");
     }
   }
 
   useEffect(() => {
     fetchData();
-  }, [groupId]);
+  }, [courseId]);
 
   function handleAdd() {
-    setSelectedSession(null);
+    setSelectedUnit(null);
     setIsDialogOpen(true);
   }
 
-  function handleEdit(session: any) {
-    setSelectedSession(session);
+  function handleEdit(unit: any) {
+    setSelectedUnit(unit);
     setIsDialogOpen(true);
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/units/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Session deleted");
+      toast.success("Unit deleted");
       fetchData();
     } catch (error) {
       toast.error("Error deleting");
     }
   }
 
-  if (loading && !group) {
+  if (loading && !course) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-1/4" />
@@ -174,17 +163,11 @@ export default function SessionsPage({
 
   return (
     <div className="pb-20 space-y-3 min-[450px]:space-y-6">
-      <PageHeader title="Session Group" />
+      <PageHeader title="Course" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
-          { label: "Units", href: `/courses/${courseId}/units` },
           {
-            label: "Topics",
-            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          },
-          {
-            label: "Group",
+            label: "Course",
             href: "#",
           },
         ]}
@@ -192,54 +175,77 @@ export default function SessionsPage({
 
       <Card>
         <CardHeader className="max-[450px]:px-3">
-          <CardTitle>Session Group Details</CardTitle>
+          <CardTitle>Course Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
-            <Label htmlFor="group-name">Group Name</Label>
+            <Label htmlFor="course-name">Course Name</Label>
             <Input
-              id="group-name"
-              value={groupForm.name}
+              id="course-name"
+              value={courseForm.name}
               onChange={(e) =>
-                setGroupForm({ ...groupForm, name: e.target.value })
+                setCourseForm({ ...courseForm, name: e.target.value })
               }
-              placeholder="Enter group name"
+              placeholder="Enter course name"
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="group-desc">Description</Label>
+            <Label htmlFor="course-desc">Description</Label>
             <Textarea
-              id="group-desc"
-              value={groupForm.description}
+              id="course-desc"
+              value={courseForm.description}
               onChange={(e) =>
-                setGroupForm({ ...groupForm, description: e.target.value })
+                setCourseForm({ ...courseForm, description: e.target.value })
               }
-              placeholder="Enter group description"
+              placeholder="Enter course description"
               rows={3}
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="group-active"
-              checked={groupForm.isActive}
-              onCheckedChange={(checked) =>
-                setGroupForm({ ...groupForm, isActive: checked })
+          <div className="grid gap-2">
+            <Label htmlFor="course-price">Price</Label>
+            <Input
+              id="course-price"
+              type="number"
+              value={courseForm.price}
+              onChange={(e) =>
+                setCourseForm({
+                  ...courseForm,
+                  price: Number(e.target.value),
+                })
               }
             />
-            <Label htmlFor="group-active">Active Status</Label>
+          </div>
+          <div className="flex flex-wrap gap-6 mt-2">
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="course-active"
+                checked={courseForm.isActive}
+                onCheckedChange={(checked) =>
+                  setCourseForm({ ...courseForm, isActive: checked })
+                }
+              />
+              <Label htmlFor="course-active">Active Status</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="course-purchase"
+                checked={courseForm.purchaseable}
+                onCheckedChange={(checked) =>
+                  setCourseForm({ ...courseForm, purchaseable: checked })
+                }
+              />
+              <Label htmlFor="course-purchase">Purchaseable</Label>
+            </div>
           </div>
         </CardContent>
       </Card>
 
       <div className="pt-4 border-t">
-        <SessionSortableList
-          title="Sessions"
+        <UnitSortableList
+          title="Units"
           courseId={courseId}
-          unitId={unitId}
-          topicId={topicId}
-          groupId={groupId}
-          sessions={sessions}
-          onReorder={(newItems) => setSessions(newItems)}
+          units={units}
+          onReorder={(newItems) => setUnits(newItems)}
           onEdit={handleEdit}
           onDelete={handleDelete}
           addButton={
@@ -257,33 +263,29 @@ export default function SessionsPage({
 
       {/* Sticky Footer */}
       <StickyFooter>
-        <DeleteButton onClick={handleDeleteGroup} />
+        <DeleteButton onClick={handleDeleteCourse} />
         <div className="flex gap-4">
           <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveGroup} loading={savingGroup} />
+          <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
         </div>
       </StickyFooter>
 
       <ConfirmDiscardDialog
         open={isDiscardDialogOpen}
         onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() =>
-          router.push(
-            `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          )
-        }
+        onConfirm={() => router.push("/courses")}
       />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedSession ? "Edit Session" : "Add New Session"}
+              {selectedUnit ? "Edit Unit" : "Add New Unit"}
             </DialogTitle>
           </DialogHeader>
-          <SessionForm
-            groupId={groupId}
-            initialData={selectedSession}
+          <UnitForm
+            courseId={courseId}
+            initialData={selectedUnit}
             onSuccess={() => {
               setIsDialogOpen(false);
               fetchData();

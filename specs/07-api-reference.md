@@ -173,6 +173,29 @@ Login เข้าสู่ระบบ
 ### GET `/api/sessions/[id]`
 ดึง session พร้อม screens และ actions ทั้งหมด
 
+**Query Params:**
+| Param   | Type   | Description                                           |
+| ------- | ------ | ----------------------------------------------------- |
+| include | string | `breadcrumbs` - populate parent chain แล้ว return ancestor IDs + breadcrumbs array |
+
+**Response (with `?include=breadcrumbs`):**
+```json
+{
+  "...session fields",
+  "sessionGroupId": "string (resolved ID)",
+  "topicId": "string",
+  "unitId": "string",
+  "courseId": "string",
+  "breadcrumbs": [
+    { "_id": "string", "name": "string", "type": "course" },
+    { "_id": "string", "name": "string", "type": "unit" },
+    { "_id": "string", "name": "string", "type": "topic" },
+    { "_id": "string", "name": "string", "type": "sessionGroup" },
+    { "_id": "string", "name": "string", "type": "session" }
+  ]
+}
+```
+
 ### PUT `/api/sessions/[id]`
 อัปเดต session รวมถึง screens/actions (ใช้ใน Session Builder)
 ```json

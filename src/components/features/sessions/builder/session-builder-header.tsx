@@ -4,10 +4,6 @@ import { Button } from "@/components/ui/button";
 import { FolderOpen, Save as SaveIcon } from "lucide-react";
 
 interface SessionBuilderHeaderProps {
-  courseId: string;
-  unitId: string;
-  topicId: string;
-  groupId: string;
   sessionName: string;
   sessionType: string;
   cefrLevel: string;
@@ -19,10 +15,6 @@ interface SessionBuilderHeaderProps {
 }
 
 export function SessionBuilderHeader({
-  courseId,
-  unitId,
-  topicId,
-  groupId,
   sessionName,
   sessionType,
   cefrLevel,

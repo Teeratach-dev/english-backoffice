@@ -180,11 +180,7 @@ export function TopicTable({ onEdit, onDelete, addButton }: TopicTableProps) {
         columns={columns}
         data={topics}
         loading={loading}
-        onRowClick={(topic) =>
-          router.push(
-            `/courses/${topic.courseId}/units/${topic.unitId}/topics/${topic._id}/groups`,
-          )
-        }
+        onRowClick={(topic) => router.push(`/topics/${topic._id}`)}
         minWidth="900px"
         pagination={{
           pagination,

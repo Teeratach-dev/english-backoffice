@@ -21,10 +21,10 @@ Course (คอร์สเรียน)
 
 ### Pages
 
-| Page          | URL                          | Description                    |
-| ------------- | ---------------------------- | ------------------------------ |
-| Courses List  | `/courses`                   | แสดง/จัดการ courses ทั้งหมด     |
-| Course Detail | `/courses/[courseId]/units`   | แก้ไข course + จัดการ units ภายใน |
+| Page          | URL                      | Description                    |
+| ------------- | ------------------------ | ------------------------------ |
+| Courses List  | `/courses`               | แสดง/จัดการ courses ทั้งหมด     |
+| Course Detail | `/courses/[courseId]`    | แก้ไข course + จัดการ units ภายใน |
 
 ### Fields
 
@@ -49,11 +49,12 @@ Course (คอร์สเรียน)
 
 ### Pages
 
-| Page        | URL                                        | Description                      |
-| ----------- | ------------------------------------------ | -------------------------------- |
-| Units List  | `/units`                                   | แสดง units ทั้งหมด (standalone)   |
-| Units in Course | `/courses/[courseId]/units`             | แสดง units ภายใน course           |
-| Unit Detail | `/courses/[courseId]/units/[unitId]/topics` | แก้ไข unit + จัดการ topics ภายใน  |
+| Page        | URL                | Description                      |
+| ----------- | ------------------ | -------------------------------- |
+| Units List  | `/units`           | แสดง units ทั้งหมด (standalone)   |
+| Unit Detail | `/units/[unitId]`  | แก้ไข unit + จัดการ topics ภายใน  |
+
+> **Note:** Unit Detail page ใช้แค่ `unitId` จาก URL แล้ว fetch parent IDs (courseId) จาก API response เพื่อ build breadcrumbs และ back navigation
 
 ### Fields
 
@@ -77,11 +78,12 @@ Course (คอร์สเรียน)
 
 ### Pages
 
-| Page         | URL                                                       | Description                          |
-| ------------ | --------------------------------------------------------- | ------------------------------------ |
-| Topics List  | `/topics`                                                 | แสดง topics ทั้งหมด (standalone)      |
-| Topics in Unit | `/courses/[courseId]/units/[unitId]/topics`              | แสดง topics ภายใน unit                |
-| Topic Detail | `/courses/[courseId]/units/[unitId]/topics/[topicId]/groups` | แก้ไข topic + จัดการ session groups |
+| Page         | URL                    | Description                          |
+| ------------ | ---------------------- | ------------------------------------ |
+| Topics List  | `/topics`              | แสดง topics ทั้งหมด (standalone)      |
+| Topic Detail | `/topics/[topicId]`    | แก้ไข topic + จัดการ session groups   |
+
+> **Note:** Topic Detail page ใช้แค่ `topicId` จาก URL แล้ว fetch parent IDs (unitId, courseId) จาก API response เพื่อ build breadcrumbs และ back navigation
 
 ### Fields
 
@@ -104,11 +106,12 @@ Course (คอร์สเรียน)
 
 ### Pages
 
-| Page               | URL                                                                    | Description                              |
-| ------------------ | ---------------------------------------------------------------------- | ---------------------------------------- |
-| Session Groups List| `/session-groups`                                                      | แสดง session groups ทั้งหมด (standalone)  |
-| Groups in Topic    | `/courses/.../topics/[topicId]/groups`                                 | แสดง groups ภายใน topic                   |
-| Group Detail       | `/courses/.../topics/[topicId]/groups/[groupId]/sessions`              | แก้ไข group + จัดการ sessions ภายใน       |
+| Page               | URL                              | Description                              |
+| ------------------ | -------------------------------- | ---------------------------------------- |
+| Session Groups List| `/session-groups`                | แสดง session groups ทั้งหมด (standalone)  |
+| Group Detail       | `/session-groups/[groupId]`      | แก้ไข group + จัดการ sessions ภายใน       |
+
+> **Note:** Group Detail page ใช้แค่ `groupId` จาก URL แล้ว fetch parent IDs (topicId, unitId, courseId) จาก API response เพื่อ build breadcrumbs และ back navigation
 
 ### Fields
 
@@ -131,11 +134,12 @@ Course (คอร์สเรียน)
 
 ### Pages
 
-| Page            | URL                                                                   | Description                        |
-| --------------- | --------------------------------------------------------------------- | ---------------------------------- |
-| Sessions List   | `/sessions`                                                           | แสดง sessions ทั้งหมด (standalone)  |
-| Sessions in Group | `/courses/.../groups/[groupId]/sessions`                            | แสดง sessions ภายใน group           |
-| Session Builder | `/courses/.../groups/[groupId]/sessions/[sessionId]/builder`          | Session Builder (ดู spec แยก)      |
+| Page            | URL                                    | Description                        |
+| --------------- | -------------------------------------- | ---------------------------------- |
+| Sessions List   | `/sessions`                            | แสดง sessions ทั้งหมด (standalone)  |
+| Session Builder | `/sessions/[sessionId]/builder`        | Session Builder (ดู spec แยก)      |
+
+> **Note:** Session Builder page ใช้แค่ `sessionId` จาก URL แล้ว fetch parent IDs + breadcrumbs จาก API (`?include=breadcrumbs`) เพื่อ build navigation
 
 ### Fields
 
@@ -186,22 +190,39 @@ Course (คอร์สเรียน)
 - บันทึกลำดับใหม่ผ่าน `/api/[resource]/reorder`
 - รองรับทุกระดับตั้งแต่ Units ถึง Sessions
 
-### Navigation
-- **Breadcrumb**: แสดง path ของ hierarchy ปัจจุบัน
-- **Sidebar**: Navigation menu ที่แสดง active state
+### Navigation (Flat Routing)
+- **Flat Route Pattern**: แต่ละ detail page รับแค่ ID ของตัวเอง (เช่น `/units/[unitId]` แทน `/courses/[courseId]/units/[unitId]/topics`)
+- **Breadcrumb**: สร้างจาก parent IDs ที่ได้จาก API response (`?include=children` หรือ `?include=breadcrumbs`) → map ไปยัง flat route paths
+- **Back Navigation**: ใช้ parent ID จาก API response (เช่น `unit.courseId` → navigate ไป `/courses/${courseId}`)
+- **Sidebar**: Navigation menu ที่ detect active state ด้วย `pathname.startsWith()` แบบง่าย
 - **Sticky Footer**: ปุ่ม Save/Cancel/Delete ติดด้านล่างหน้าจอ
 
 ### Data Tracking
 - ทุก record เก็บ `createdBy`, `updatedBy` (ref: User)
 - ทุก record มี `timestamps` (createdAt, updatedAt)
 
+## Route Summary
+
+| Route                            | Description                    |
+| -------------------------------- | ------------------------------ |
+| `/courses`                       | Courses list (table)           |
+| `/courses/[courseId]`            | Course detail + units list     |
+| `/units`                         | Units list (table)             |
+| `/units/[unitId]`               | Unit detail + topics list      |
+| `/topics`                        | Topics list (table)            |
+| `/topics/[topicId]`             | Topic detail + groups list     |
+| `/session-groups`                | Session groups list (table)    |
+| `/session-groups/[groupId]`     | Group detail + sessions list   |
+| `/sessions`                      | Sessions list (table)          |
+| `/sessions/[sessionId]/builder` | Session builder                |
+
 ## Key Files
 
-- `src/app/(dashboard)/courses/` - Course pages
-- `src/app/(dashboard)/units/` - Unit pages (standalone)
-- `src/app/(dashboard)/topics/` - Topic pages (standalone)
-- `src/app/(dashboard)/session-groups/` - Session group pages (standalone)
-- `src/app/(dashboard)/sessions/` - Session pages (standalone)
+- `src/app/(dashboard)/courses/` - Course list + detail pages
+- `src/app/(dashboard)/units/` - Unit list + detail pages
+- `src/app/(dashboard)/topics/` - Topic list + detail pages
+- `src/app/(dashboard)/session-groups/` - Session group list + detail pages
+- `src/app/(dashboard)/sessions/` - Session list + builder pages
 - `src/components/features/courses/` - Course components
 - `src/components/features/units/` - Unit components
 - `src/components/features/topics/` - Topic components

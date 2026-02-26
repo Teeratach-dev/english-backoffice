@@ -9,9 +9,6 @@ import { LocalSession } from "@/types/local.types";
 
 interface SessionSortableListProps {
   title?: string;
-  courseId: string;
-  unitId: string;
-  topicId: string;
   groupId: string;
   sessions: LocalSession[];
   onReorder: (newSessions: LocalSession[]) => void;
@@ -39,9 +36,6 @@ const SESSION_FILTERS: FilterGroup[] = [
 
 export function SessionSortableList({
   title,
-  courseId,
-  unitId,
-  topicId,
   groupId,
   sessions,
   onReorder,
@@ -127,10 +121,6 @@ export function SessionSortableList({
           <SortableSessionItem
             key={session._id}
             session={session}
-            courseId={courseId}
-            unitId={unitId}
-            topicId={topicId}
-            groupId={groupId}
             onEdit={onEdit}
             onDelete={onDelete}
             onMoveUp={() => handleMove(session._id, "up")}

@@ -124,7 +124,6 @@ export function UnitSortableList({
           <SortableUnitItem
             key={unit._id}
             unit={unit}
-            courseId={courseId}
             onEdit={onEdit}
             onDelete={onDelete}
             onMoveUp={() => handleMove(unit._id, "up")}

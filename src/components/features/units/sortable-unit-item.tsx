@@ -9,7 +9,6 @@ import { LocalUnit } from "@/types/local.types";
 
 export function SortableUnitItem({
   unit,
-  courseId,
   onEdit,
   onDelete,
   onMoveUp,
@@ -18,7 +17,6 @@ export function SortableUnitItem({
   isLast,
 }: {
   unit: LocalUnit;
-  courseId: string;
   onEdit: (unit: LocalUnit) => void;
   onDelete: (id: string) => void;
   onMoveUp?: () => void;
@@ -69,7 +67,7 @@ export function SortableUnitItem({
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link href={`/courses/${courseId}/units/${unit._id}/topics`}>
+          <Link href={`/units/${unit._id}`}>
             <PenTool className="h-4 w-4" />
           </Link>
         </Button>

@@ -185,11 +185,7 @@ export function SessionGroupTable({
         columns={columns}
         data={groups}
         loading={loading}
-        onRowClick={(group) =>
-          router.push(
-            `/courses/${group.courseId}/units/${group.unitId}/topics/${group.topicId}/groups/${group._id}/sessions`,
-          )
-        }
+        onRowClick={(group) => router.push(`/session-groups/${group._id}`)}
         minWidth="900px"
         pagination={{
           pagination,

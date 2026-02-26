@@ -45,13 +45,36 @@ Course
 | 7 | API Reference                    | [07-api-reference.md](./07-api-reference.md)               |
 | 8 | Data Models                      | [08-data-models.md](./08-data-models.md)                   |
 
+## Route Structure (Flat Routing)
+
+แต่ละ detail page รับเฉพาะ ID ของตัวเองจาก URL แล้วใช้ API response สำหรับ breadcrumbs และ back navigation
+
+```
+(dashboard)/
+├── page.tsx                              # Dashboard
+├── courses/page.tsx                      # Courses list
+├── courses/[courseId]/page.tsx            # Course detail + units list
+├── units/page.tsx                        # Units list (standalone)
+├── units/[unitId]/page.tsx               # Unit detail + topics list
+├── topics/page.tsx                       # Topics list (standalone)
+├── topics/[topicId]/page.tsx             # Topic detail + session groups list
+├── session-groups/page.tsx               # Session groups list (standalone)
+├── session-groups/[groupId]/page.tsx     # Group detail + sessions list
+├── sessions/page.tsx                     # Sessions list (standalone)
+├── sessions/[sessionId]/builder/page.tsx # Session builder
+├── session-templates/page.tsx            # Templates list
+├── session-templates/[templateId]/page.tsx # Template detail
+├── users/page.tsx                        # Users list
+└── change-password/page.tsx              # Change password
+```
+
 ## Project Structure
 
 ```
 src/
 ├── app/
 │   ├── (auth)/login/              # Login page
-│   ├── (dashboard)/               # Protected routes (all features)
+│   ├── (dashboard)/               # Protected routes (flat routing)
 │   ├── api/                       # REST API endpoints
 │   └── layout.tsx                 # Root layout with providers
 ├── components/

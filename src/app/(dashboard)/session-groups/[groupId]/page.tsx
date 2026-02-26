@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { TopicSortableList } from "@/components/features/topics/topic-sortable-list";
-import { TopicForm } from "@/components/features/topics/topic-form";
+import { SessionSortableList } from "@/components/features/sessions/session-sortable-list";
+import { SessionForm } from "@/components/features/sessions/session-form";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,11 +10,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, ChevronLeft, Trash2, X, Save } from "lucide-react";
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
+import { PageHeader } from "@/components/layouts/page-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,45 +27,45 @@ import { DeleteButton } from "@/components/common/delete-button";
 import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-import { PageHeader } from "@/components/layouts/page-header";
-
-export default function TopicsPage({
+export default function SessionGroupDetailPage({
   params,
 }: {
-  params: Promise<{ courseId: string; unitId: string }>;
+  params: Promise<{ groupId: string }>;
 }) {
-  const { courseId, unitId } = use(params);
+  const { groupId } = use(params);
   const router = useRouter();
-  const [topics, setTopics] = useState<any[]>([]);
-  const [unit, setUnit] = useState<any>(null);
-  const [unitForm, setUnitForm] = useState({
+  const [sessions, setSessions] = useState<any[]>([]);
+  const [group, setGroup] = useState<any>(null);
+  const [groupForm, setGroupForm] = useState({
     name: "",
     description: "",
     isActive: true,
   });
   const [loading, setLoading] = useState(true);
-  const [savingUnit, setSavingUnit] = useState(false);
+  const [savingGroup, setSavingGroup] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<any>(null);
+  const [selectedSession, setSelectedSession] = useState<any>(null);
   const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
   const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/units/${unitId}?include=children`);
+      const res = await fetch(
+        `/api/session-groups/${groupId}?include=children`,
+      );
       if (!res.ok) throw new Error("Failed to fetch data");
 
       const data = await res.json();
 
-      setTopics(data.children);
-      setUnit(data);
+      setSessions(data.children);
+      setGroup(data);
       const initial = {
         name: data.name || "",
         description: data.description || "",
         isActive: data.isActive ?? true,
       };
-      setUnitForm(initial);
+      setGroupForm(initial);
       setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
@@ -74,81 +74,86 @@ export default function TopicsPage({
     }
   }
 
-  async function handleSaveUnit() {
-    setSavingUnit(true);
+  const parentPath = group?.topicId ? `/topics/${group.topicId}` : "/topics";
+
+  async function handleSaveGroup() {
+    setSavingGroup(true);
     try {
-      const res = await fetch(`/api/units/${unitId}`, {
+      const res = await fetch(`/api/session-groups/${groupId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(unitForm),
+        body: JSON.stringify(groupForm),
       });
 
-      if (!res.ok) throw new Error("Failed to save unit");
+      if (!res.ok) throw new Error("Failed to save group");
 
-      toast.success("Unit updated successfully");
-      router.push(`/courses/${courseId}/units`);
+      toast.success("Session group updated successfully");
+      router.push(parentPath);
     } catch (error) {
-      toast.error("Error saving unit");
+      toast.error("Error saving group");
     } finally {
-      setSavingUnit(false);
-      setInitialForm(JSON.parse(JSON.stringify(unitForm)));
+      setSavingGroup(false);
+      setInitialForm(JSON.parse(JSON.stringify(groupForm)));
     }
   }
 
-  async function handleDeleteUnit() {
+  async function handleDeleteGroup() {
     if (
       !confirm(
-        "Are you sure you want to delete this unit? This will also delete all topics within it.",
+        "Are you sure you want to delete this group? This will also delete all sessions within it.",
       )
     )
       return;
 
     try {
-      const res = await fetch(`/api/units/${unitId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete unit");
+      const res = await fetch(`/api/session-groups/${groupId}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete group");
 
-      toast.success("Unit deleted successfully");
-      router.push(`/courses/${courseId}/units`);
+      toast.success("Group deleted successfully");
+      router.push(parentPath);
     } catch (error) {
-      toast.error("Error deleting unit");
+      toast.error("Error deleting group");
     }
   }
   function handleCancel() {
-    const hasChanges = JSON.stringify(unitForm) !== JSON.stringify(initialForm);
+    const hasChanges =
+      JSON.stringify(groupForm) !== JSON.stringify(initialForm);
     if (hasChanges) {
       setIsDiscardDialogOpen(true);
     } else {
-      router.push(`/courses/${courseId}/units`);
+      router.push(parentPath);
     }
   }
 
   useEffect(() => {
     fetchData();
-  }, [unitId]);
+  }, [groupId]);
 
   function handleAdd() {
-    setSelectedTopic(null);
+    setSelectedSession(null);
     setIsDialogOpen(true);
   }
 
-  function handleEdit(topic: any) {
-    setSelectedTopic(topic);
+  function handleEdit(session: any) {
+    setSelectedSession(session);
     setIsDialogOpen(true);
   }
 
   async function handleDelete(id: string) {
     if (!confirm("Are you sure?")) return;
     try {
-      const res = await fetch(`/api/topics/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed");
-      toast.success("Topic deleted");
+      toast.success("Session deleted");
       fetchData();
     } catch (error) {
       toast.error("Error deleting");
     }
   }
 
-  if (loading && !unit) {
+  if (loading && !group) {
     return (
       <div className="space-y-4">
         <Skeleton className="h-8 w-1/4" />
@@ -160,62 +165,63 @@ export default function TopicsPage({
 
   return (
     <div className="pb-20 space-y-3 min-[450px]:space-y-6">
-      <PageHeader title="Unit" />
+      <PageHeader title="Session Group" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: `/courses/${courseId}/units` },
-          { label: "Unit", href: "#" },
+          { label: "Courses", href: group?.courseId ? `/courses/${group.courseId}` : "/courses" },
+          { label: "Units", href: group?.unitId ? `/units/${group.unitId}` : "/units" },
+          { label: "Topics", href: parentPath },
+          { label: "Group", href: "#" },
         ]}
       />
 
       <Card>
         <CardHeader className="max-[450px]:px-3">
-          <CardTitle>Unit Details</CardTitle>
+          <CardTitle>Session Group Details</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 max-[450px]:px-3">
           <div className="grid gap-2">
-            <Label htmlFor="unit-name">Unit Name</Label>
+            <Label htmlFor="group-name">Group Name</Label>
             <Input
-              id="unit-name"
-              value={unitForm.name}
+              id="group-name"
+              value={groupForm.name}
               onChange={(e) =>
-                setUnitForm({ ...unitForm, name: e.target.value })
+                setGroupForm({ ...groupForm, name: e.target.value })
               }
-              placeholder="Enter unit name"
+              placeholder="Enter group name"
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="unit-desc">Description</Label>
+            <Label htmlFor="group-desc">Description</Label>
             <Textarea
-              id="unit-desc"
-              value={unitForm.description}
+              id="group-desc"
+              value={groupForm.description}
               onChange={(e) =>
-                setUnitForm({ ...unitForm, description: e.target.value })
+                setGroupForm({ ...groupForm, description: e.target.value })
               }
-              placeholder="Enter unit description"
+              placeholder="Enter group description"
               rows={3}
             />
           </div>
           <div className="flex items-center space-x-2">
             <Switch
-              id="unit-active"
-              checked={unitForm.isActive}
+              id="group-active"
+              checked={groupForm.isActive}
               onCheckedChange={(checked) =>
-                setUnitForm({ ...unitForm, isActive: checked })
+                setGroupForm({ ...groupForm, isActive: checked })
               }
             />
-            <Label htmlFor="unit-active">Active Status</Label>
+            <Label htmlFor="group-active">Active Status</Label>
           </div>
         </CardContent>
       </Card>
 
       <div className="pt-4 border-t">
-        <TopicSortableList
-          title="Topics"
-          courseId={courseId}
-          unitId={unitId}
-          topics={topics}
-          onReorder={(newItems) => setTopics(newItems)}
+        <SessionSortableList
+          title="Sessions"
+          groupId={groupId}
+          sessions={sessions}
+          onReorder={(newItems) => setSessions(newItems)}
           onEdit={handleEdit}
           onDelete={handleDelete}
           addButton={
@@ -233,29 +239,29 @@ export default function TopicsPage({
 
       {/* Sticky Footer */}
       <StickyFooter>
-        <DeleteButton onClick={handleDeleteUnit} />
+        <DeleteButton onClick={handleDeleteGroup} />
         <div className="flex gap-4">
           <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
+          <SaveButton onClick={handleSaveGroup} loading={savingGroup} />
         </div>
       </StickyFooter>
 
       <ConfirmDiscardDialog
         open={isDiscardDialogOpen}
         onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push(`/courses/${courseId}/units`)}
+        onConfirm={() => router.push(parentPath)}
       />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {selectedTopic ? "Edit Topic" : "Add New Topic"}
+              {selectedSession ? "Edit Session" : "Add New Session"}
             </DialogTitle>
           </DialogHeader>
-          <TopicForm
-            unitId={unitId}
-            initialData={selectedTopic}
+          <SessionForm
+            groupId={groupId}
+            initialData={selectedSession}
             onSuccess={() => {
               setIsDialogOpen(false);
               fetchData();

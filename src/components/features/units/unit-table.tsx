@@ -194,11 +194,7 @@ export function UnitTable({ onEdit, addButton }: UnitTableProps) {
         columns={columns}
         data={units}
         loading={loading}
-        onRowClick={(unit) => {
-          if (unit.courseId) {
-            router.push(`/courses/${unit.courseId}/units/${unit._id}/topics`);
-          }
-        }}
+        onRowClick={(unit) => router.push(`/units/${unit._id}`)}
         minWidth="900px"
         pagination={{
           pagination,
