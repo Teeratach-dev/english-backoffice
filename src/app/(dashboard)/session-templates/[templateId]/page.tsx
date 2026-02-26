@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import { TemplateBuilder } from "@/components/features/templates/builder/template-builder";
+import { TemplateBuilder } from "@/components/features/session-templates/builder/template-builder";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";

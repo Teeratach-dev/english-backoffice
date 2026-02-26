@@ -22,9 +22,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
 export default function CourseDetailPage({
@@ -47,8 +45,7 @@ export default function CourseDetailPage({
   const [savingCourse, setSavingCourse] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
+
 
   async function fetchData() {
     setLoading(true);
@@ -68,7 +65,7 @@ export default function CourseDetailPage({
         purchaseable: data.purchaseable ?? true,
       };
       setCourseForm(initial);
-      setInitialForm(initial);
+
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -93,7 +90,7 @@ export default function CourseDetailPage({
       toast.error("Error saving course");
     } finally {
       setSavingCourse(false);
-      setInitialForm(JSON.parse(JSON.stringify(courseForm)));
+
     }
   }
 
@@ -115,16 +112,6 @@ export default function CourseDetailPage({
       toast.error("Error deleting course");
     }
   }
-  function handleCancel() {
-    const hasChanges =
-      JSON.stringify(courseForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push("/courses");
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [courseId]);
@@ -162,7 +149,7 @@ export default function CourseDetailPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Course" />
       <Breadcrumb
         items={[
@@ -264,17 +251,8 @@ export default function CourseDetailPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteCourse} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
-        </div>
+        <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push("/courses")}
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

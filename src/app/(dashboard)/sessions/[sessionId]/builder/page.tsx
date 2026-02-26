@@ -36,9 +36,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
 export default function SessionBuilderPage({
@@ -69,9 +67,6 @@ export default function SessionBuilderPage({
     cefrLevel: "A1",
     isActive: true,
   });
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
-  const [initialScreens, setInitialScreens] = useState<any[]>([]);
 
   async function fetchSession() {
     setLoading(true);
@@ -87,7 +82,6 @@ export default function SessionBuilderPage({
         isActive: data.isActive ?? true,
       };
       setSessionForm(initialF);
-      setInitialForm(initialF);
 
       const mappedScreens = (data.screens || []).map(
         (s: any, sIdx: number) => ({
@@ -103,7 +97,6 @@ export default function SessionBuilderPage({
         }),
       );
       setScreens(mappedScreens);
-      setInitialScreens(JSON.parse(JSON.stringify(mappedScreens)));
       setNextScreenId(mappedScreens.length + 1);
     } catch (error) {
       toast.error("Error loading session");
@@ -148,8 +141,6 @@ export default function SessionBuilderPage({
       toast.error("Error saving session");
     } finally {
       setSaving(false);
-      setInitialForm(JSON.parse(JSON.stringify(sessionForm)));
-      setInitialScreens(JSON.parse(JSON.stringify(screens)));
     }
   }
 
@@ -173,19 +164,6 @@ export default function SessionBuilderPage({
       toast.error("Error deleting session");
     } finally {
       setSaving(false);
-    }
-  }
-
-  function handleCancel() {
-    const hasFormChanges =
-      JSON.stringify(sessionForm) !== JSON.stringify(initialForm);
-    const hasScreenChanges =
-      JSON.stringify(screens) !== JSON.stringify(initialScreens);
-
-    if (hasFormChanges || hasScreenChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(parentPath);
     }
   }
 
@@ -426,21 +404,30 @@ export default function SessionBuilderPage({
   // Build breadcrumbs from API response
   const breadcrumbItems = [];
   if (session?.courseId) {
-    breadcrumbItems.push({ label: "Courses", href: `/courses/${session.courseId}` });
+    breadcrumbItems.push({
+      label: "Courses",
+      href: `/courses/${session.courseId}`,
+    });
   }
   if (session?.unitId) {
     breadcrumbItems.push({ label: "Units", href: `/units/${session.unitId}` });
   }
   if (session?.topicId) {
-    breadcrumbItems.push({ label: "Topics", href: `/topics/${session.topicId}` });
+    breadcrumbItems.push({
+      label: "Topics",
+      href: `/topics/${session.topicId}`,
+    });
   }
   if (session?.sessionGroupId) {
-    breadcrumbItems.push({ label: "Groups", href: `/session-groups/${session.sessionGroupId}` });
+    breadcrumbItems.push({
+      label: "Groups",
+      href: `/session-groups/${session.sessionGroupId}`,
+    });
   }
   breadcrumbItems.push({ label: "Session", href: "#" });
 
   return (
-    <div className="pb-20 space-y-3 min-[550px]:space-y-6">
+    <div className="space-y-3 min-[550px]:space-y-6">
       <PageHeader title="Session" />
       <Breadcrumb items={breadcrumbItems} />
       <div>
@@ -603,20 +590,10 @@ export default function SessionBuilderPage({
         </div>
       </div>
 
-      {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDelete} disabled={saving} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} disabled={saving} />
-          <SaveButton onClick={handleSave} loading={saving} />
-        </div>
+        <SaveButton onClick={handleSave} loading={saving} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push(parentPath)}
-      />
 
       <SaveTemplateDialog
         open={isTemplateDialogOpen}

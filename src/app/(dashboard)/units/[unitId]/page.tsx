@@ -21,9 +21,7 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 import { PageHeader } from "@/components/layouts/page-header";
 
@@ -45,8 +43,7 @@ export default function UnitDetailPage({
   const [savingUnit, setSavingUnit] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
+
 
   async function fetchData() {
     setLoading(true);
@@ -64,7 +61,6 @@ export default function UnitDetailPage({
         isActive: data.isActive ?? true,
       };
       setUnitForm(initial);
-      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -91,7 +87,6 @@ export default function UnitDetailPage({
       toast.error("Error saving unit");
     } finally {
       setSavingUnit(false);
-      setInitialForm(JSON.parse(JSON.stringify(unitForm)));
     }
   }
 
@@ -113,15 +108,6 @@ export default function UnitDetailPage({
       toast.error("Error deleting unit");
     }
   }
-  function handleCancel() {
-    const hasChanges = JSON.stringify(unitForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(parentPath);
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [unitId]);
@@ -159,7 +145,7 @@ export default function UnitDetailPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Unit" />
       <Breadcrumb
         items={[
@@ -233,17 +219,8 @@ export default function UnitDetailPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteUnit} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
-        </div>
+        <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push(parentPath)}
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

@@ -22,9 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { PageHeader } from "@/components/layouts/page-header";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
 export default function TopicDetailPage({
@@ -45,8 +43,6 @@ export default function TopicDetailPage({
   const [savingTopic, setSavingTopic] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
@@ -64,7 +60,6 @@ export default function TopicDetailPage({
         isActive: data.isActive ?? true,
       };
       setTopicForm(initial);
-      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -91,7 +86,6 @@ export default function TopicDetailPage({
       toast.error("Error saving topic");
     } finally {
       setSavingTopic(false);
-      setInitialForm(JSON.parse(JSON.stringify(topicForm)));
     }
   }
 
@@ -113,16 +107,6 @@ export default function TopicDetailPage({
       toast.error("Error deleting topic");
     }
   }
-  function handleCancel() {
-    const hasChanges =
-      JSON.stringify(topicForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(parentPath);
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [topicId]);
@@ -162,7 +146,7 @@ export default function TopicDetailPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Topic" />
       <Breadcrumb
         items={[
@@ -237,17 +221,8 @@ export default function TopicDetailPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteTopic} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveTopic} loading={savingTopic} />
-        </div>
+        <SaveButton onClick={handleSaveTopic} loading={savingTopic} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push(parentPath)}
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

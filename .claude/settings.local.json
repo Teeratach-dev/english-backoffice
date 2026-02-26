@@ -6,7 +6,12 @@
       "Write",
       "Bash(*)",
       "Glob",
-      "Grep"
+      "Grep",
+      "Read(//c/Users/Teeratach/.claude/**)",
+      "WebFetch(domain:localhost)",
+      "Bash(npx prettier --version)",
+      "Bash(npx prettier --write src/components/features/templates/builder/template-builder.tsx)",
+      "Bash(npx prettier --check src/components/features/templates/builder/template-builder.tsx)"
     ]
   }
 }
