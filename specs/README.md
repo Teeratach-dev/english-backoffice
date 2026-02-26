@@ -1,0 +1,70 @@
+# English Backoffice - Feature Specifications
+
+## Project Overview
+
+English Backoffice เป็นระบบ Content Management System (CMS) สำหรับจัดการเนื้อหาการเรียนภาษาอังกฤษ
+ออกแบบมาให้ผู้ดูแลระบบสามารถสร้าง จัดการ และจัดระเบียบ Courses ที่มีโครงสร้างเนื้อหาแบบ hierarchical
+พร้อม Session Builder สำหรับสร้างบทเรียนแบบ interactive
+
+## Tech Stack
+
+| Layer            | Technology                          |
+| ---------------- | ----------------------------------- |
+| Framework        | Next.js 16.1.6 (App Router)        |
+| Frontend         | React 19.2.3, TypeScript            |
+| Styling          | Tailwind CSS 4, Radix UI (shadcn)  |
+| State Management | Redux Toolkit                       |
+| Database         | MongoDB (Mongoose 9.2.1)           |
+| Auth             | JWT (jose), bcryptjs                |
+| Forms            | React Hook Form + Zod              |
+| Drag & Drop      | @dnd-kit                            |
+| Notifications    | Sonner                              |
+
+## Content Hierarchy
+
+```
+Course
+  └── Unit
+        └── Topic
+              └── Session Group
+                    └── Session (SessionDetail)
+                          └── Screen
+                                └── Action (13 types)
+```
+
+## Feature List
+
+| # | Feature                          | Spec File                                                  |
+|---|----------------------------------|------------------------------------------------------------|
+| 1 | Authentication & Authorization   | [01-authentication.md](./01-authentication.md)             |
+| 2 | Dashboard                        | [02-dashboard.md](./02-dashboard.md)                       |
+| 3 | Content Hierarchy Management     | [03-content-hierarchy.md](./03-content-hierarchy.md)       |
+| 4 | Session Builder                  | [04-session-builder.md](./04-session-builder.md)           |
+| 5 | Session Templates                | [05-session-templates.md](./05-session-templates.md)       |
+| 6 | User Management                  | [06-user-management.md](./06-user-management.md)           |
+| 7 | API Reference                    | [07-api-reference.md](./07-api-reference.md)               |
+| 8 | Data Models                      | [08-data-models.md](./08-data-models.md)                   |
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── (auth)/login/              # Login page
+│   ├── (dashboard)/               # Protected routes (all features)
+│   ├── api/                       # REST API endpoints
+│   └── layout.tsx                 # Root layout with providers
+├── components/
+│   ├── common/                    # Reusable components (DataTable, SearchAndFilter, etc.)
+│   ├── features/                  # Feature-specific components
+│   ├── layouts/                   # Sidebar, Navbar, PageHeader
+│   ├── providers/                 # Context/Redux providers
+│   └── ui/                        # Radix UI primitives
+├── lib/                           # Auth, DB, JWT, Utils
+├── models/                        # Mongoose schemas
+├── schemas/                       # Zod validation schemas
+├── services/                      # Business logic layer
+├── store/                         # Redux store (auth slice)
+├── types/                         # TypeScript type definitions
+└── hooks/                         # Custom React hooks
+```
