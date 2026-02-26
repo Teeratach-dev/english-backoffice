@@ -153,6 +153,53 @@ export class SessionGroupService {
     return SessionGroup.bulkWrite(operations);
   }
 
+  async getGroupWithChildren(id: string) {
+    await dbConnect();
+
+    const [group, sessions] = await Promise.all([
+      SessionGroup.findById(id)
+        .populate({
+          path: "topicId",
+          select: "name unitId",
+          populate: {
+            path: "unitId",
+            select: "name courseId",
+            populate: { path: "courseId", select: "name" },
+          },
+        })
+        .lean(),
+      SessionDetail.find({ sessionGroupId: id })
+        .select("-screens")
+        .sort({ sequence: 1 })
+        .lean(),
+    ]);
+
+    if (!group) return null;
+
+    const topicRef = (group as any).topicId as any;
+    const unitRef = topicRef?.unitId as any;
+    const courseRef = unitRef?.courseId as any;
+
+    return {
+      ...group,
+      topicId: topicRef?._id?.toString() || (group as any).topicId,
+      topicName: topicRef?.name,
+      unitId: unitRef?._id?.toString(),
+      courseId: courseRef?._id?.toString(),
+      children: sessions,
+      breadcrumbs: [
+        { _id: courseRef?._id?.toString(), name: courseRef?.name, type: "course" },
+        { _id: unitRef?._id?.toString(), name: unitRef?.name, type: "unit" },
+        { _id: topicRef?._id?.toString(), name: topicRef?.name, type: "topic" },
+        {
+          _id: (group as any)._id,
+          name: (group as any).name,
+          type: "sessionGroup",
+        },
+      ],
+    };
+  }
+
   async deleteGroup(id: string) {
     await dbConnect();
     return SessionGroup.findByIdAndDelete(id);

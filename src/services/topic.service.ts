@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Topic, { TopicInput } from "@/models/Topic";
 import SessionGroup from "@/models/SessionGroup";
+import SessionDetail from "@/models/SessionDetail";
 
 export class TopicService {
   async getAllTopics(
@@ -131,6 +132,53 @@ export class TopicService {
     }));
 
     return Topic.bulkWrite(operations);
+  }
+
+  async getTopicWithChildren(id: string) {
+    await dbConnect();
+
+    const [topic, groups] = await Promise.all([
+      Topic.findById(id)
+        .populate({
+          path: "unitId",
+          select: "name courseId",
+          populate: { path: "courseId", select: "name" },
+        })
+        .lean(),
+      SessionGroup.find({ topicId: id }).sort({ sequence: 1 }).lean(),
+    ]);
+
+    if (!topic) return null;
+
+    const groupIds = groups.map((g: any) => g._id);
+    const counts = await SessionDetail.aggregate([
+      { $match: { sessionGroupId: { $in: groupIds } } },
+      { $group: { _id: "$sessionGroupId", count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(
+      counts.map((c: any) => [c._id.toString(), c.count]),
+    );
+
+    const children = groups.map((g: any) => ({
+      ...g,
+      sessionCount: countMap.get(g._id.toString()) || 0,
+    }));
+
+    const unitRef = (topic as any).unitId as any;
+    const courseRef = unitRef?.courseId as any;
+
+    return {
+      ...topic,
+      unitId: unitRef?._id?.toString() || (topic as any).unitId,
+      unitName: unitRef?.name,
+      courseId: courseRef?._id?.toString(),
+      children,
+      breadcrumbs: [
+        { _id: courseRef?._id?.toString(), name: courseRef?.name, type: "course" },
+        { _id: unitRef?._id?.toString(), name: unitRef?.name, type: "unit" },
+        { _id: (topic as any)._id, name: (topic as any).name, type: "topic" },
+      ],
+    };
   }
 
   async deleteTopic(id: string) {

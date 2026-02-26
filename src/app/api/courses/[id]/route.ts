@@ -22,7 +22,16 @@ export async function GET(
   const { params } = context;
   try {
     const { id } = await params;
-    const course = await courseService.getCourseById(id);
+    const { searchParams } = new URL(req.url);
+    const include = searchParams.get("include");
+
+    let course;
+    if (include === "children") {
+      course = await courseService.getCourseWithChildren(id);
+    } else {
+      course = await courseService.getCourseById(id);
+    }
+
     if (!course) {
       return NextResponse.json(
         { message: "Course not found" },

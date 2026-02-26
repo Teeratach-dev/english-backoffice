@@ -51,25 +51,17 @@ export default function SessionGroupsPage({
   async function fetchData() {
     setLoading(true);
     try {
-      const [groupsRes, topicRes] = await Promise.all([
-        fetch(`/api/session-groups?topicId=${topicId}`),
-        fetch(`/api/topics/${topicId}`),
-      ]);
+      const res = await fetch(`/api/topics/${topicId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!groupsRes.ok || !topicRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [groupsData, topicData] = await Promise.all([
-        groupsRes.json(),
-        topicRes.json(),
-      ]);
-
-      setGroups(groupsData);
-      setTopic(topicData);
+      setGroups(data.children);
+      setTopic(data);
       const initial = {
-        name: topicData.name || "",
-        description: topicData.description || "",
-        isActive: topicData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setTopicForm(initial);
       setInitialForm(initial);

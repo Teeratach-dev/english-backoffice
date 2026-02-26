@@ -53,24 +53,17 @@ export default function TopicsPage({
   async function fetchData() {
     setLoading(true);
     try {
-      const [topicsRes, unitRes] = await Promise.all([
-        fetch(`/api/topics?unitId=${unitId}`),
-        fetch(`/api/units/${unitId}`),
-      ]);
+      const res = await fetch(`/api/units/${unitId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!topicsRes.ok || !unitRes.ok) throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [topicsData, unitData] = await Promise.all([
-        topicsRes.json(),
-        unitRes.json(),
-      ]);
-
-      setTopics(topicsData);
-      setUnit(unitData);
+      setTopics(data.children);
+      setUnit(data);
       const initial = {
-        name: unitData.name || "",
-        description: unitData.description || "",
-        isActive: unitData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setUnitForm(initial);
       setInitialForm(initial);

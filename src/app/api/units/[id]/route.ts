@@ -22,7 +22,16 @@ export async function GET(
   const { params } = context;
   try {
     const { id } = await params;
-    const unit = await unitService.getUnitById(id);
+    const { searchParams } = new URL(req.url);
+    const include = searchParams.get("include");
+
+    let unit;
+    if (include === "children") {
+      unit = await unitService.getUnitWithChildren(id);
+    } else {
+      unit = await unitService.getUnitById(id);
+    }
+
     if (!unit) {
       return NextResponse.json({ message: "Unit not found" }, { status: 404 });
     }

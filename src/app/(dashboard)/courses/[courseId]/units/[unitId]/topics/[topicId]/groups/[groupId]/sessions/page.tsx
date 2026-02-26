@@ -56,25 +56,19 @@ export default function SessionsPage({
   async function fetchData() {
     setLoading(true);
     try {
-      const [sessionsRes, groupRes] = await Promise.all([
-        fetch(`/api/sessions?sessionGroupId=${groupId}`),
-        fetch(`/api/session-groups/${groupId}`),
-      ]);
+      const res = await fetch(
+        `/api/session-groups/${groupId}?include=children`,
+      );
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!sessionsRes.ok || !groupRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [sessionsData, groupData] = await Promise.all([
-        sessionsRes.json(),
-        groupRes.json(),
-      ]);
-
-      setSessions(sessionsData);
-      setGroup(groupData);
+      setSessions(data.children);
+      setGroup(data);
       const initial = {
-        name: groupData.name || "",
-        description: groupData.description || "",
-        isActive: groupData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setGroupForm(initial);
       setInitialForm(initial);

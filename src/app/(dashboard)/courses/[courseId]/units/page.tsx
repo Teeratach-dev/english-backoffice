@@ -53,27 +53,19 @@ export default function UnitsPage({
   async function fetchData() {
     setLoading(true);
     try {
-      const [unitsRes, courseRes] = await Promise.all([
-        fetch(`/api/units?courseId=${courseId}`),
-        fetch(`/api/courses/${courseId}`),
-      ]);
+      const res = await fetch(`/api/courses/${courseId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!unitsRes.ok || !courseRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [unitsData, courseData] = await Promise.all([
-        unitsRes.json(),
-        courseRes.json(),
-      ]);
-
-      setUnits(unitsData);
-      setCourse(courseData);
+      setUnits(data.children);
+      setCourse(data);
       const initial = {
-        name: courseData.name || "",
-        description: courseData.description || "",
-        price: courseData.price || 0,
-        isActive: courseData.isActive ?? true,
-        purchaseable: courseData.purchaseable ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        price: data.price || 0,
+        isActive: data.isActive ?? true,
+        purchaseable: data.purchaseable ?? true,
       };
       setCourseForm(initial);
       setInitialForm(initial);

@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Course, { CourseInput } from "@/models/Course";
 import Unit from "@/models/Unit";
+import Topic from "@/models/Topic";
 
 export class CourseService {
   async getAllCourses(
@@ -86,6 +87,39 @@ export class CourseService {
       },
       { new: true, runValidators: true },
     );
+  }
+
+  async getCourseWithChildren(id: string) {
+    await dbConnect();
+
+    const [course, units] = await Promise.all([
+      Course.findById(id).lean(),
+      Unit.find({ courseId: id }).sort({ sequence: 1 }).lean(),
+    ]);
+
+    if (!course) return null;
+
+    const unitIds = units.map((u: any) => u._id);
+    const counts = await Topic.aggregate([
+      { $match: { unitId: { $in: unitIds } } },
+      { $group: { _id: "$unitId", count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(
+      counts.map((c: any) => [c._id.toString(), c.count]),
+    );
+
+    const children = units.map((u: any) => ({
+      ...u,
+      topicCount: countMap.get(u._id.toString()) || 0,
+    }));
+
+    return {
+      ...course,
+      children,
+      breadcrumbs: [
+        { _id: (course as any)._id, name: (course as any).name, type: "course" },
+      ],
+    };
   }
 
   async deleteCourse(id: string) {

@@ -22,7 +22,16 @@ export async function GET(
   const { params } = context;
   try {
     const { id } = await params;
-    const topic = await topicService.getTopicById(id);
+    const { searchParams } = new URL(req.url);
+    const include = searchParams.get("include");
+
+    let topic;
+    if (include === "children") {
+      topic = await topicService.getTopicWithChildren(id);
+    } else {
+      topic = await topicService.getTopicById(id);
+    }
+
     if (!topic) {
       return NextResponse.json({ message: "Topic not found" }, { status: 404 });
     }
