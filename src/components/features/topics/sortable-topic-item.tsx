@@ -9,8 +9,6 @@ import { LocalTopic } from "@/types/local.types";
 
 export function SortableTopicItem({
   topic,
-  courseId,
-  unitId,
   onEdit,
   onDelete,
   onMoveUp,
@@ -19,8 +17,6 @@ export function SortableTopicItem({
   isLast,
 }: {
   topic: LocalTopic;
-  courseId: string;
-  unitId: string;
   onEdit: (topic: LocalTopic) => void;
   onDelete: (id: string) => void;
   onMoveUp?: () => void;
@@ -71,9 +67,7 @@ export function SortableTopicItem({
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link
-            href={`/courses/${courseId}/units/${unitId}/topics/${topic._id}/groups`}
-          >
+          <Link href={`/topics/${topic._id}`}>
             <PenTool className="h-4 w-4" />
           </Link>
         </Button>

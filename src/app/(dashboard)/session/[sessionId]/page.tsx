@@ -36,23 +36,17 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionBuilderPage({
+export default function SessionDetailPage({
   params,
 }: {
   params: Promise<{
-    courseId: string;
-    unitId: string;
-    topicId: string;
-    groupId: string;
     sessionId: string;
   }>;
 }) {
-  const { courseId, unitId, topicId, groupId, sessionId } = use(params);
+  const { sessionId } = use(params);
   const router = useRouter();
   const [session, setSession] = useState<any>(null);
   const [screens, setScreens] = useState<
@@ -73,14 +67,11 @@ export default function SessionBuilderPage({
     cefrLevel: "A1",
     isActive: true,
   });
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
-  const [initialScreens, setInitialScreens] = useState<any[]>([]);
 
   async function fetchSession() {
     setLoading(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}`);
+      const res = await fetch(`/api/sessions/${sessionId}?include=breadcrumbs`);
       if (!res.ok) throw new Error("Failed to fetch session");
       const data = await res.json();
       setSession(data);
@@ -91,7 +82,6 @@ export default function SessionBuilderPage({
         isActive: data.isActive ?? true,
       };
       setSessionForm(initialF);
-      setInitialForm(initialF);
 
       const mappedScreens = (data.screens || []).map(
         (s: any, sIdx: number) => ({
@@ -107,7 +97,6 @@ export default function SessionBuilderPage({
         }),
       );
       setScreens(mappedScreens);
-      setInitialScreens(JSON.parse(JSON.stringify(mappedScreens)));
       setNextScreenId(mappedScreens.length + 1);
     } catch (error) {
       toast.error("Error loading session");
@@ -119,6 +108,10 @@ export default function SessionBuilderPage({
   useEffect(() => {
     fetchSession();
   }, [sessionId]);
+
+  const parentPath = session?.sessionGroupId
+    ? `/session-groups/${session.sessionGroupId}`
+    : "/sessions";
 
   async function handleSave() {
     setSaving(true);
@@ -148,8 +141,6 @@ export default function SessionBuilderPage({
       toast.error("Error saving session");
     } finally {
       setSaving(false);
-      setInitialForm(JSON.parse(JSON.stringify(sessionForm)));
-      setInitialScreens(JSON.parse(JSON.stringify(screens)));
     }
   }
 
@@ -168,9 +159,7 @@ export default function SessionBuilderPage({
       });
       if (!res.ok) throw new Error("Failed to delete session");
       toast.success("Session deleted successfully");
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
-      );
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error deleting session");
     } finally {
@@ -178,29 +167,11 @@ export default function SessionBuilderPage({
     }
   }
 
-  function handleCancel() {
-    const hasFormChanges =
-      JSON.stringify(sessionForm) !== JSON.stringify(initialForm);
-    const hasScreenChanges =
-      JSON.stringify(screens) !== JSON.stringify(initialScreens);
-
-    if (hasFormChanges || hasScreenChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
-      );
-    }
-  }
-
   async function fetchTemplates(filters?: { isActive: boolean; type: string }) {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      // Default to filters or session type if not provided (though dialog provides defaults)
       const isActive = filters?.isActive ?? true;
-      // If filter type is 'all' or undefined, don't send type param (or handle in API).
-      // Existing API supports array of types.
       const type = filters?.type;
 
       if (isActive) params.append("isActive", "true");
@@ -208,10 +179,6 @@ export default function SessionBuilderPage({
       if (type && type !== "all") {
         params.append("type", type);
       } else if (!type) {
-        // Fallback if called without filters (initial load) - maybe all or current session type?
-        // Plan said default to 'all' in dialog, so we might want to fetch 'all' here too or rely on dialog's first call.
-        // Let's just default to "all" behavior (no type param) if not specified, or current session type if we want that behavior.
-        // Let's use current session type as default if no filters passed, but dialog passes {type: 'all'} explicitly.
         if (session?.type) params.append("type", session.type);
       }
 
@@ -219,7 +186,6 @@ export default function SessionBuilderPage({
       if (!res.ok) throw new Error("Failed to fetch templates");
       const data = await res.json();
       setAvailableTemplates(data);
-      // setIsLoadDialogOpen(true); // Don't auto open, just fetch
     } catch (error) {
       toast.error("Error loading templates");
     } finally {
@@ -259,8 +225,8 @@ export default function SessionBuilderPage({
     try {
       const templateData = {
         name: templateName,
-        type: session.type, // Should we allow changing type? Probably not for session-based save.
-        isActive: true, // Default to active when saving from session?
+        type: session.type,
+        isActive: true,
         screens: screens.map((s, sIdx) => ({
           sequence: sIdx,
           actionTypes: s.actions.map((a) => a.type),
@@ -268,7 +234,6 @@ export default function SessionBuilderPage({
       };
 
       if (overwriteId) {
-        // Overwrite existing
         const res = await fetch(`/api/templates/${overwriteId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -277,7 +242,6 @@ export default function SessionBuilderPage({
         if (!res.ok) throw new Error("Failed to update template");
         toast.success("Template updated successfully");
       } else {
-        // Create new
         const checkRes = await fetch(
           `/api/templates/check?type=${session.type}&screens=${JSON.stringify(templateData.screens.map((s) => s.actionTypes))}`,
         );
@@ -303,7 +267,6 @@ export default function SessionBuilderPage({
 
       setIsTemplateDialogOpen(false);
       setTemplateName("");
-      // Refresh templates if we have them loaded?
       fetchTemplates();
     } catch (error) {
       toast.error("Error saving template");
@@ -438,37 +401,38 @@ export default function SessionBuilderPage({
     );
   }
 
+  // Build breadcrumbs from API response
+  const breadcrumbItems = [];
+  if (session?.courseId) {
+    breadcrumbItems.push({
+      label: "Courses",
+      href: `/courses/${session.courseId}`,
+    });
+  }
+  if (session?.unitId) {
+    breadcrumbItems.push({ label: "Units", href: `/units/${session.unitId}` });
+  }
+  if (session?.topicId) {
+    breadcrumbItems.push({
+      label: "Topics",
+      href: `/topics/${session.topicId}`,
+    });
+  }
+  if (session?.sessionGroupId) {
+    breadcrumbItems.push({
+      label: "Groups",
+      href: `/session-groups/${session.sessionGroupId}`,
+    });
+  }
+  breadcrumbItems.push({ label: "Session", href: "#" });
+
   return (
-    <div className="pb-20 space-y-3 min-[550px]:space-y-6">
+    <div className="space-y-3 min-[550px]:space-y-6">
       <PageHeader title="Session" />
-      <Breadcrumb
-        items={[
-          { label: "Courses", href: `/courses/${courseId}/units` },
-          {
-            label: "Units",
-            href: `/courses/${courseId}/units/${unitId}/topics`,
-          },
-          {
-            label: "Topics",
-            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          },
-          {
-            label: "Groups",
-            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
-          },
-          {
-            label: "Session",
-            href: "#",
-          },
-        ]}
-      />
+      <Breadcrumb items={breadcrumbItems} />
       <div>
         <Card>
           <SessionBuilderHeader
-            courseId={courseId}
-            unitId={unitId}
-            topicId={topicId}
-            groupId={groupId}
             sessionName={sessionForm.name || session?.name}
             sessionType={sessionForm.type || session?.type}
             cefrLevel={sessionForm.cefrLevel || session?.cefrLevel}
@@ -626,24 +590,10 @@ export default function SessionBuilderPage({
         </div>
       </div>
 
-      {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDelete} disabled={saving} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} disabled={saving} />
-          <SaveButton onClick={handleSave} loading={saving} />
-        </div>
+        <SaveButton onClick={handleSave} loading={saving} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() =>
-          router.push(
-            `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups/${groupId}/sessions`,
-          )
-        }
-      />
 
       <SaveTemplateDialog
         open={isTemplateDialogOpen}

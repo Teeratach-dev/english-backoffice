@@ -40,7 +40,6 @@ import {
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
 interface TemplateBuilderProps {
@@ -51,24 +50,19 @@ function transformInitialScreens(
   initialData: any,
 ): (Screen & { isCollapsed?: boolean })[] {
   const rawScreens = initialData?.screens || [];
-  return rawScreens.map(function (s: any, sIdx: number) {
-    return {
-      id: `scr-${sIdx}-${Date.now()}`,
-      sequence: sIdx,
-      isCollapsed: false,
-      actions: (s.actions || s.actionTypes || []).map(function (
-        a: any,
-        aIdx: number,
-      ) {
-        const actionType = typeof a === "string" ? a : a.type;
-        return {
-          id: `act-${sIdx}-${aIdx}-${Date.now()}`,
-          ...getDefaultContent(actionType as ActionType),
-          sequence: aIdx,
-        };
-      }),
-    };
-  });
+  return rawScreens.map((s: any, sIdx: number) => ({
+    id: `scr-${sIdx}-${Date.now()}`,
+    sequence: sIdx,
+    isCollapsed: false,
+    actions: (s.actions || s.actionTypes || []).map((a: any, aIdx: number) => {
+      const actionType = typeof a === "string" ? a : a.type;
+      return {
+        id: `act-${sIdx}-${aIdx}-${Date.now()}`,
+        ...getDefaultContent(actionType as ActionType),
+        sequence: aIdx,
+      };
+    }),
+  }));
 }
 
 export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
@@ -92,20 +86,16 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
   function handleScreenDragEnd(event: DragEndEvent) {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      setScreens(function (prev) {
-        const oldIndex = prev.findIndex(function (s) {
-          return s.id === active.id;
-        });
-        const newIndex = prev.findIndex(function (s) {
-          return s.id === over?.id;
-        });
+      setScreens((prev) => {
+        const oldIndex = prev.findIndex((s) => s.id === active.id);
+        const newIndex = prev.findIndex((s) => s.id === over?.id);
         return arrayMove(prev, oldIndex, newIndex);
       });
     }
   }
 
   function moveScreen(index: number, direction: "up" | "down") {
-    setScreens(function (prev) {
+    setScreens((prev) => {
       const newScreens = [...prev];
       if (direction === "up" && index > 0) {
         [newScreens[index], newScreens[index - 1]] = [
@@ -135,32 +125,24 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
   }
 
   function deleteScreen(id: string) {
-    setScreens(function (prev) {
-      return prev.filter(function (s) {
-        return s.id !== id;
-      });
-    });
+    setScreens((prev) => prev.filter((s) => s.id !== id));
   }
 
   function toggleScreenCollapse(id: string) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
-        return s.id === id ? { ...s, isCollapsed: !s.isCollapsed } : s;
-      });
-    });
+    setScreens((prev) =>
+      prev.map((s) =>
+        s.id === id ? { ...s, isCollapsed: !s.isCollapsed } : s,
+      ),
+    );
   }
 
   function toggleAllScreens(collapse: boolean) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
-        return { ...s, isCollapsed: collapse };
-      });
-    });
+    setScreens((prev) => prev.map((s) => ({ ...s, isCollapsed: collapse })));
   }
 
   function addActionToScreen(screenId: string, actionType: ActionType) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
+    setScreens((prev) =>
+      prev.map((s) => {
         if (s.id === screenId) {
           return {
             ...s,
@@ -175,54 +157,46 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
           };
         }
         return s;
-      });
-    });
+      }),
+    );
   }
 
   function deleteAction(screenId: string, actionId: string) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
+    setScreens((prev) =>
+      prev.map((s) => {
         if (s.id === screenId) {
           return {
             ...s,
-            actions: s.actions.filter(function (a) {
-              return a.id !== actionId;
-            }),
+            actions: s.actions.filter((a) => a.id !== actionId),
           };
         }
         return s;
-      });
-    });
+      }),
+    );
   }
 
   function reorderActions(screenId: string, activeId: string, overId: string) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
+    setScreens((prev) =>
+      prev.map((s) => {
         if (s.id === screenId) {
-          const oldIndex = s.actions.findIndex(function (a) {
-            return a.id === activeId;
-          });
-          const newIndex = s.actions.findIndex(function (a) {
-            return a.id === overId;
-          });
+          const oldIndex = s.actions.findIndex((a) => a.id === activeId);
+          const newIndex = s.actions.findIndex((a) => a.id === overId);
           return { ...s, actions: arrayMove(s.actions, oldIndex, newIndex) };
         }
         return s;
-      });
-    });
+      }),
+    );
   }
 
   function updateActionContent(actionId: string, updates: any) {
-    setScreens(function (prev) {
-      return prev.map(function (s) {
-        return {
-          ...s,
-          actions: s.actions.map(function (a) {
-            return a.id === actionId ? { ...a, ...updates } : a;
-          }),
-        };
-      });
-    });
+    setScreens((prev) =>
+      prev.map((s) => ({
+        ...s,
+        actions: s.actions.map((a) =>
+          a.id === actionId ? { ...a, ...updates } : a,
+        ),
+      })),
+    );
   }
 
   async function handleSave() {
@@ -234,17 +208,13 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
     setLoading(true);
     try {
       const templateData = {
-        name: name,
-        type: type,
-        isActive: isActive,
-        screens: screens.map(function (s, sIdx) {
-          return {
-            sequence: sIdx,
-            actionTypes: s.actions.map(function (a) {
-              return a.type;
-            }),
-          };
-        }),
+        name,
+        type,
+        isActive,
+        screens: screens.map((s, sIdx) => ({
+          sequence: sIdx,
+          actionTypes: s.actions.map((a) => a.type),
+        })),
       };
 
       const url = initialData?._id
@@ -253,7 +223,7 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
       const method = initialData?._id ? "PUT" : "POST";
 
       const res = await fetch(url, {
-        method: method,
+        method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(templateData),
       });
@@ -269,21 +239,17 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
     }
   }
 
-  const areSomeScreensOpen = screens.some(function (s) {
-    return !s.isCollapsed;
-  });
+  const areSomeScreensOpen = screens.some((s) => !s.isCollapsed);
 
   return (
-    <div className="pb-20 space-y-6">
+    <div className="space-y-6">
       <div className="grid gap-4 py-4 border rounded-lg p-4 bg-card">
         <div className="grid gap-2">
           <Label htmlFor="name">Template Name</Label>
           <Input
             id="name"
             value={name}
-            onChange={function (e) {
-              setName(e.target.value);
-            }}
+            onChange={(e) => setName(e.target.value)}
             placeholder="Enter template name..."
           />
         </div>
@@ -295,13 +261,11 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
                 <SelectValue placeholder="Select type" />
               </SelectTrigger>
               <SelectContent>
-                {SESSION_TYPES.map(function (t) {
-                  return (
-                    <SelectItem key={t} value={t}>
-                      {SESSION_TYPE_LABELS[t]}
-                    </SelectItem>
-                  );
-                })}
+                {SESSION_TYPES.map((t) => (
+                  <SelectItem key={t} value={t}>
+                    {SESSION_TYPE_LABELS[t]}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -324,9 +288,7 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => {
-              toggleAllScreens(areSomeScreensOpen);
-            }}
+            onClick={() => toggleAllScreens(areSomeScreensOpen)}
             disabled={screens.length === 0}
           >
             {areSomeScreensOpen ? (
@@ -351,55 +313,41 @@ export function TemplateBuilder({ initialData }: TemplateBuilderProps) {
           onDragEnd={handleScreenDragEnd}
         >
           <SortableContext
-            items={screens.map(function (s) {
-              return s.id;
-            })}
+            items={screens.map((s) => s.id)}
             strategy={verticalListSortingStrategy}
           >
-            {screens.map(function (screen, sIdx) {
-              return (
-                <SortableScreenCard
-                  key={screen.id}
-                  screen={screen}
-                  sIdx={sIdx}
-                  activeActionId={null}
-                  onDelete={function () {
-                    deleteScreen(screen.id);
-                  }}
-                  onAddAction={function (actionType) {
-                    addActionToScreen(screen.id, actionType);
-                  }}
-                  onDeleteAction={function (actionId) {
-                    deleteAction(screen.id, actionId);
-                  }}
-                  onEditAction={function () {}}
-                  onReorderActions={function (activeId, overId) {
-                    reorderActions(screen.id, activeId, overId);
-                  }}
-                  onUpdateAction={updateActionContent}
-                  showPreview={false}
-                  onMoveUp={function () {
-                    moveScreen(sIdx, "up");
-                  }}
-                  onMoveDown={function () {
-                    moveScreen(sIdx, "down");
-                  }}
-                  isFirst={sIdx === 0}
-                  isLast={sIdx === screens.length - 1}
-                  screenNumber={sIdx + 1}
-                  isCollapsed={screen.isCollapsed}
-                  onToggleCollapse={function () {
-                    toggleScreenCollapse(screen.id);
-                  }}
-                />
-              );
-            })}
+            {screens.map((screen, sIdx) => (
+              <SortableScreenCard
+                key={screen.id}
+                screen={screen}
+                sIdx={sIdx}
+                activeActionId={null}
+                onDelete={() => deleteScreen(screen.id)}
+                onAddAction={(actionType) =>
+                  addActionToScreen(screen.id, actionType)
+                }
+                onDeleteAction={(actionId) => deleteAction(screen.id, actionId)}
+                onEditAction={() => {}}
+                onReorderActions={(activeId, overId) =>
+                  reorderActions(screen.id, activeId, overId)
+                }
+                onUpdateAction={updateActionContent}
+                showPreview={false}
+                onMoveUp={() => moveScreen(sIdx, "up")}
+                onMoveDown={() => moveScreen(sIdx, "down")}
+                isFirst={sIdx === 0}
+                isLast={sIdx === screens.length - 1}
+                screenNumber={sIdx + 1}
+                isCollapsed={screen.isCollapsed}
+                onToggleCollapse={() => toggleScreenCollapse(screen.id)}
+              />
+            ))}
           </SortableContext>
         </DndContext>
       </div>
 
       <StickyFooter>
-        <CancelButton variant="ghost" onClick={() => router.back()} />
+        <div />
         <SaveButton
           label="Save Template"
           onClick={handleSave}

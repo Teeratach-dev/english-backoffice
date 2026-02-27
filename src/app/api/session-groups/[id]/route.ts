@@ -22,7 +22,16 @@ export async function GET(
   const { params } = context;
   try {
     const { id } = await params;
-    const group = await sessionGroupService.getGroupById(id);
+    const { searchParams } = new URL(req.url);
+    const include = searchParams.get("include");
+
+    let group;
+    if (include === "children") {
+      group = await sessionGroupService.getGroupWithChildren(id);
+    } else {
+      group = await sessionGroupService.getGroupById(id);
+    }
+
     if (!group) {
       return NextResponse.json({ message: "Group not found" }, { status: 404 });
     }

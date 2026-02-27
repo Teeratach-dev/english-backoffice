@@ -13,13 +13,12 @@ export function StickyFooter({
   return (
     <div
       className={cn(
-        "fixed bottom-0 left-0 right-0 z-40 border-t bg-background/80 backdrop-blur-md transition-all duration-300",
-        "min-[801px]:left-64",
+        "mt-auto h-full -mx-3 min-[450px]:-mx-6 border-t bg-background px-3 min-[450px]:px-6",
         className,
       )}
       {...props}
     >
-      <div className="container flex items-center justify-between max-w-screen-2xl h-16 px-4 mx-auto">
+      <div className="flex items-center justify-between pt-2 pb-2">
         {children}
       </div>
     </div>

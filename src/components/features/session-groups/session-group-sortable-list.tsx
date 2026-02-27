@@ -9,8 +9,6 @@ import { LocalSessionGroup } from "@/types/local.types";
 
 interface SessionGroupSortableListProps {
   title?: string;
-  courseId: string;
-  unitId: string;
   topicId: string;
   groups: LocalSessionGroup[];
   onReorder: (newGroups: LocalSessionGroup[]) => void;
@@ -38,8 +36,6 @@ const GROUP_FILTERS: FilterGroup[] = [
 
 export function SessionGroupSortableList({
   title,
-  courseId,
-  unitId,
   topicId,
   groups,
   onReorder,
@@ -125,9 +121,6 @@ export function SessionGroupSortableList({
           <SortableSessionGroupItem
             key={group._id}
             group={group}
-            courseId={courseId}
-            unitId={unitId}
-            topicId={topicId}
             onEdit={onEdit}
             onDelete={onDelete}
             onMoveUp={() => handleMove(group._id, "up")}

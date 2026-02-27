@@ -232,9 +232,7 @@ export function SessionsTable({
         data={sessions}
         loading={loading}
         onRowClick={(session) =>
-          router.push(
-            `/courses/${session.courseId}/units/${session.unitId}/topics/${session.topicId}/groups/${session.sessionGroupId}/sessions/${session._id}/builder`,
-          )
+          router.push(`/sessions/${session._id}/builder`)
         }
         minWidth="1000px"
         pagination={{

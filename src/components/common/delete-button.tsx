@@ -17,7 +17,7 @@ export function DeleteButton({
     <Button
       variant={variant}
       className={cn(
-        "gap-2 text-muted-foreground/60 hover:bg-destructive hover:text-destructive-foreground",
+        "gap-2 text-muted-foreground/60 hover:bg-destructive hover:text-destructive-foreground border",
         className,
       )}
       {...props}

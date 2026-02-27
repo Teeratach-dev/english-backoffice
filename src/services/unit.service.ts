@@ -1,6 +1,7 @@
 import dbConnect from "@/lib/db";
 import Unit, { UnitInput } from "@/models/Unit";
 import Topic from "@/models/Topic";
+import SessionGroup from "@/models/SessionGroup";
 
 export class UnitService {
   async getAllUnits(
@@ -131,6 +132,44 @@ export class UnitService {
     }));
 
     return Unit.bulkWrite(operations);
+  }
+
+  async getUnitWithChildren(id: string) {
+    await dbConnect();
+
+    const [unit, topics] = await Promise.all([
+      Unit.findById(id).populate("courseId", "name").lean(),
+      Topic.find({ unitId: id }).sort({ sequence: 1 }).lean(),
+    ]);
+
+    if (!unit) return null;
+
+    const topicIds = topics.map((t: any) => t._id);
+    const counts = await SessionGroup.aggregate([
+      { $match: { topicId: { $in: topicIds } } },
+      { $group: { _id: "$topicId", count: { $sum: 1 } } },
+    ]);
+    const countMap = new Map(
+      counts.map((c: any) => [c._id.toString(), c.count]),
+    );
+
+    const children = topics.map((t: any) => ({
+      ...t,
+      sessionGroupCount: countMap.get(t._id.toString()) || 0,
+    }));
+
+    const courseRef = (unit as any).courseId as any;
+
+    return {
+      ...unit,
+      courseId: courseRef?._id?.toString() || (unit as any).courseId,
+      courseName: courseRef?.name,
+      children,
+      breadcrumbs: [
+        { _id: courseRef?._id?.toString(), name: courseRef?.name, type: "course" },
+        { _id: (unit as any)._id, name: (unit as any).name, type: "unit" },
+      ],
+    };
   }
 
   async deleteUnit(id: string) {

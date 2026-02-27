@@ -17,14 +17,6 @@ export interface SidebarItemConfig {
   isActive: (pathname: string) => boolean;
 }
 
-// Helper to check if a segment exists AND is followed by another segment (path continues deeper)
-export function isRecursiveSegment(pathname: string, segment: string) {
-  const parts = pathname.split("/").filter(Boolean);
-  const index = parts.indexOf(segment);
-  // Returns true only if segment is found AND it is NOT the last part
-  return index !== -1 && index < parts.length - 1;
-}
-
 export const sidebarItems: SidebarItemConfig[] = [
   {
     name: "Dashboard",
@@ -36,43 +28,31 @@ export const sidebarItems: SidebarItemConfig[] = [
     name: "Courses",
     href: "/courses",
     icon: BookOpen,
-    isActive: (pathname: string) =>
-      pathname.startsWith("/courses") && !isRecursiveSegment(pathname, "units"),
+    isActive: (pathname: string) => pathname.startsWith("/courses"),
   },
   {
     name: "Units",
     href: "/units",
     icon: Layers,
-    isActive: (pathname: string) =>
-      (pathname.startsWith("/units") ||
-        isRecursiveSegment(pathname, "units")) &&
-      !isRecursiveSegment(pathname, "topics"),
+    isActive: (pathname: string) => pathname.startsWith("/units"),
   },
   {
     name: "Topics",
     href: "/topics",
     icon: FileText,
-    isActive: (pathname: string) =>
-      (pathname.startsWith("/topics") ||
-        isRecursiveSegment(pathname, "topics")) &&
-      !isRecursiveSegment(pathname, "groups"),
+    isActive: (pathname: string) => pathname.startsWith("/topics"),
   },
   {
     name: "Session Groups",
     href: "/session-groups",
     icon: Folder,
-    isActive: (pathname: string) =>
-      (pathname.startsWith("/session-groups") ||
-        isRecursiveSegment(pathname, "groups")) &&
-      !isRecursiveSegment(pathname, "sessions"),
+    isActive: (pathname: string) => pathname.startsWith("/session-groups"),
   },
   {
     name: "Session Details",
     href: "/sessions",
     icon: ListChecks,
-    isActive: (pathname: string) =>
-      pathname.startsWith("/sessions") ||
-      isRecursiveSegment(pathname, "sessions"),
+    isActive: (pathname: string) => pathname.startsWith("/sessions"),
   },
   {
     name: "Session Templates",

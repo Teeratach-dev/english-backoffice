@@ -10,8 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, ChevronLeft, Trash2, X, Save } from "lucide-react";
-import Link from "next/link";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
@@ -22,19 +21,16 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
-
 import { PageHeader } from "@/components/layouts/page-header";
 
-export default function TopicsPage({
+export default function UnitDetailPage({
   params,
 }: {
-  params: Promise<{ courseId: string; unitId: string }>;
+  params: Promise<{ unitId: string }>;
 }) {
-  const { courseId, unitId } = use(params);
+  const { unitId } = use(params);
   const router = useRouter();
   const [topics, setTopics] = useState<any[]>([]);
   const [unit, setUnit] = useState<any>(null);
@@ -47,39 +43,32 @@ export default function TopicsPage({
   const [savingUnit, setSavingUnit] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
+
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [topicsRes, unitRes] = await Promise.all([
-        fetch(`/api/topics?unitId=${unitId}`),
-        fetch(`/api/units/${unitId}`),
-      ]);
+      const res = await fetch(`/api/units/${unitId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!topicsRes.ok || !unitRes.ok) throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [topicsData, unitData] = await Promise.all([
-        topicsRes.json(),
-        unitRes.json(),
-      ]);
-
-      setTopics(topicsData);
-      setUnit(unitData);
+      setTopics(data.children);
+      setUnit(data);
       const initial = {
-        name: unitData.name || "",
-        description: unitData.description || "",
-        isActive: unitData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setUnitForm(initial);
-      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
   }
+
+  const parentPath = unit?.courseId ? `/courses/${unit.courseId}` : "/courses";
 
   async function handleSaveUnit() {
     setSavingUnit(true);
@@ -93,12 +82,11 @@ export default function TopicsPage({
       if (!res.ok) throw new Error("Failed to save unit");
 
       toast.success("Unit updated successfully");
-      router.push(`/courses/${courseId}/units`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error saving unit");
     } finally {
       setSavingUnit(false);
-      setInitialForm(JSON.parse(JSON.stringify(unitForm)));
     }
   }
 
@@ -115,20 +103,11 @@ export default function TopicsPage({
       if (!res.ok) throw new Error("Failed to delete unit");
 
       toast.success("Unit deleted successfully");
-      router.push(`/courses/${courseId}/units`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error deleting unit");
     }
   }
-  function handleCancel() {
-    const hasChanges = JSON.stringify(unitForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(`/courses/${courseId}/units`);
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [unitId]);
@@ -166,11 +145,11 @@ export default function TopicsPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Unit" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: `/courses/${courseId}/units` },
+          { label: "Courses", href: parentPath },
           { label: "Unit", href: "#" },
         ]}
       />
@@ -219,7 +198,6 @@ export default function TopicsPage({
       <div className="pt-4 border-t">
         <TopicSortableList
           title="Topics"
-          courseId={courseId}
           unitId={unitId}
           topics={topics}
           onReorder={(newItems) => setTopics(newItems)}
@@ -241,17 +219,8 @@ export default function TopicsPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteUnit} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
-        </div>
+        <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push(`/courses/${courseId}/units`)}
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

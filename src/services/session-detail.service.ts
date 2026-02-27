@@ -145,6 +145,47 @@ export class SessionDetailService {
     return SessionDetail.bulkWrite(operations);
   }
 
+  async getSessionWithBreadcrumbs(id: string) {
+    await dbConnect();
+    const session = await SessionDetail.findById(id)
+      .populate({
+        path: "sessionGroupId",
+        select: "name topicId",
+        populate: {
+          path: "topicId",
+          select: "name unitId",
+          populate: {
+            path: "unitId",
+            select: "name courseId",
+            populate: { path: "courseId", select: "name" },
+          },
+        },
+      })
+      .lean();
+
+    if (!session) return null;
+
+    const groupRef = (session as any).sessionGroupId as any;
+    const topicRef = groupRef?.topicId as any;
+    const unitRef = topicRef?.unitId as any;
+    const courseRef = unitRef?.courseId as any;
+
+    return {
+      ...session,
+      sessionGroupId: groupRef?._id?.toString() || (session as any).sessionGroupId,
+      topicId: topicRef?._id?.toString(),
+      unitId: unitRef?._id?.toString(),
+      courseId: courseRef?._id?.toString(),
+      breadcrumbs: [
+        { _id: courseRef?._id?.toString(), name: courseRef?.name, type: "course" },
+        { _id: unitRef?._id?.toString(), name: unitRef?.name, type: "unit" },
+        { _id: topicRef?._id?.toString(), name: topicRef?.name, type: "topic" },
+        { _id: groupRef?._id?.toString(), name: groupRef?.name, type: "sessionGroup" },
+        { _id: (session as any)._id?.toString(), name: (session as any).name, type: "session" },
+      ],
+    };
+  }
+
   async deleteSession(id: string) {
     await dbConnect();
     return SessionDetail.findByIdAndDelete(id);

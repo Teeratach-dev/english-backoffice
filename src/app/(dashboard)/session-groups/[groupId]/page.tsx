@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, X, Save } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
@@ -22,22 +22,15 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionsPage({
+export default function SessionGroupDetailPage({
   params,
 }: {
-  params: Promise<{
-    courseId: string;
-    unitId: string;
-    topicId: string;
-    groupId: string;
-  }>;
+  params: Promise<{ groupId: string }>;
 }) {
-  const { courseId, unitId, topicId, groupId } = use(params);
+  const { groupId } = use(params);
   const router = useRouter();
   const [sessions, setSessions] = useState<any[]>([]);
   const [group, setGroup] = useState<any>(null);
@@ -50,40 +43,33 @@ export default function SessionsPage({
   const [savingGroup, setSavingGroup] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [sessionsRes, groupRes] = await Promise.all([
-        fetch(`/api/sessions?sessionGroupId=${groupId}`),
-        fetch(`/api/session-groups/${groupId}`),
-      ]);
+      const res = await fetch(
+        `/api/session-groups/${groupId}?include=children`,
+      );
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!sessionsRes.ok || !groupRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [sessionsData, groupData] = await Promise.all([
-        sessionsRes.json(),
-        groupRes.json(),
-      ]);
-
-      setSessions(sessionsData);
-      setGroup(groupData);
+      setSessions(data.children);
+      setGroup(data);
       const initial = {
-        name: groupData.name || "",
-        description: groupData.description || "",
-        isActive: groupData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setGroupForm(initial);
-      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
   }
+
+  const parentPath = group?.topicId ? `/topics/${group.topicId}` : "/topics";
 
   async function handleSaveGroup() {
     setSavingGroup(true);
@@ -97,14 +83,11 @@ export default function SessionsPage({
       if (!res.ok) throw new Error("Failed to save group");
 
       toast.success("Session group updated successfully");
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error saving group");
     } finally {
       setSavingGroup(false);
-      setInitialForm(JSON.parse(JSON.stringify(groupForm)));
     }
   }
 
@@ -123,25 +106,11 @@ export default function SessionsPage({
       if (!res.ok) throw new Error("Failed to delete group");
 
       toast.success("Group deleted successfully");
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error deleting group");
     }
   }
-  function handleCancel() {
-    const hasChanges =
-      JSON.stringify(groupForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(
-        `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-      );
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [groupId]);
@@ -179,20 +148,14 @@ export default function SessionsPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Session Group" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
-          { label: "Units", href: `/courses/${courseId}/units` },
-          {
-            label: "Topics",
-            href: `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          },
-          {
-            label: "Group",
-            href: "#",
-          },
+          { label: "Courses", href: group?.courseId ? `/courses/${group.courseId}` : "/courses" },
+          { label: "Units", href: group?.unitId ? `/units/${group.unitId}` : "/units" },
+          { label: "Topics", href: parentPath },
+          { label: "Group", href: "#" },
         ]}
       />
 
@@ -240,9 +203,6 @@ export default function SessionsPage({
       <div className="pt-4 border-t">
         <SessionSortableList
           title="Sessions"
-          courseId={courseId}
-          unitId={unitId}
-          topicId={topicId}
           groupId={groupId}
           sessions={sessions}
           onReorder={(newItems) => setSessions(newItems)}
@@ -264,21 +224,8 @@ export default function SessionsPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteGroup} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveGroup} loading={savingGroup} />
-        </div>
+        <SaveButton onClick={handleSaveGroup} loading={savingGroup} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() =>
-          router.push(
-            `/courses/${courseId}/units/${unitId}/topics/${topicId}/groups`,
-          )
-        }
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

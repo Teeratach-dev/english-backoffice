@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Trash2, X, Save } from "lucide-react";
+import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
@@ -22,17 +22,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { PageHeader } from "@/components/layouts/page-header";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionGroupsPage({
+export default function TopicDetailPage({
   params,
 }: {
-  params: Promise<{ courseId: string; unitId: string; topicId: string }>;
+  params: Promise<{ topicId: string }>;
 }) {
-  const { courseId, unitId, topicId } = use(params);
+  const { topicId } = use(params);
   const router = useRouter();
   const [groups, setGroups] = useState<any[]>([]);
   const [topic, setTopic] = useState<any>(null);
@@ -45,40 +43,31 @@ export default function SessionGroupsPage({
   const [savingTopic, setSavingTopic] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [groupsRes, topicRes] = await Promise.all([
-        fetch(`/api/session-groups?topicId=${topicId}`),
-        fetch(`/api/topics/${topicId}`),
-      ]);
+      const res = await fetch(`/api/topics/${topicId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!groupsRes.ok || !topicRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [groupsData, topicData] = await Promise.all([
-        groupsRes.json(),
-        topicRes.json(),
-      ]);
-
-      setGroups(groupsData);
-      setTopic(topicData);
+      setGroups(data.children);
+      setTopic(data);
       const initial = {
-        name: topicData.name || "",
-        description: topicData.description || "",
-        isActive: topicData.isActive ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        isActive: data.isActive ?? true,
       };
       setTopicForm(initial);
-      setInitialForm(initial);
     } catch (error) {
       toast.error("Error loading data");
     } finally {
       setLoading(false);
     }
   }
+
+  const parentPath = topic?.unitId ? `/units/${topic.unitId}` : "/units";
 
   async function handleSaveTopic() {
     setSavingTopic(true);
@@ -92,12 +81,11 @@ export default function SessionGroupsPage({
       if (!res.ok) throw new Error("Failed to save topic");
 
       toast.success("Topic updated successfully");
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error saving topic");
     } finally {
       setSavingTopic(false);
-      setInitialForm(JSON.parse(JSON.stringify(topicForm)));
     }
   }
 
@@ -114,21 +102,11 @@ export default function SessionGroupsPage({
       if (!res.ok) throw new Error("Failed to delete topic");
 
       toast.success("Topic deleted successfully");
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
+      router.push(parentPath);
     } catch (error) {
       toast.error("Error deleting topic");
     }
   }
-  function handleCancel() {
-    const hasChanges =
-      JSON.stringify(topicForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push(`/courses/${courseId}/units/${unitId}/topics`);
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [topicId]);
@@ -168,19 +146,13 @@ export default function SessionGroupsPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Topic" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: "/courses" },
-          {
-            label: "Units",
-            href: `/courses/${courseId}/units/${unitId}/topics`,
-          },
-          {
-            label: "Topic",
-            href: "#",
-          },
+          { label: "Courses", href: topic?.courseId ? `/courses/${topic.courseId}` : "/courses" },
+          { label: "Units", href: parentPath },
+          { label: "Topic", href: "#" },
         ]}
       />
 
@@ -228,8 +200,6 @@ export default function SessionGroupsPage({
       <div className="pt-4 border-t">
         <SessionGroupSortableList
           title="Session Groups"
-          courseId={courseId}
-          unitId={unitId}
           topicId={topicId}
           groups={groups}
           onReorder={(newItems) => setGroups(newItems)}
@@ -251,19 +221,8 @@ export default function SessionGroupsPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteTopic} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveTopic} loading={savingTopic} />
-        </div>
+        <SaveButton onClick={handleSaveTopic} loading={savingTopic} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() =>
-          router.push(`/courses/${courseId}/units/${unitId}/topics`)
-        }
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

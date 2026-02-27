@@ -22,12 +22,10 @@ import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
-import { ConfirmDiscardDialog } from "@/components/common/confirm-discard-dialog";
 import { DeleteButton } from "@/components/common/delete-button";
-import { CancelButton } from "@/components/common/cancel-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function UnitsPage({
+export default function CourseDetailPage({
   params,
 }: {
   params: Promise<{ courseId: string }>;
@@ -47,36 +45,27 @@ export default function UnitsPage({
   const [savingCourse, setSavingCourse] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<any>(null);
-  const [isDiscardDialogOpen, setIsDiscardDialogOpen] = useState(false);
-  const [initialForm, setInitialForm] = useState<any>(null);
+
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [unitsRes, courseRes] = await Promise.all([
-        fetch(`/api/units?courseId=${courseId}`),
-        fetch(`/api/courses/${courseId}`),
-      ]);
+      const res = await fetch(`/api/courses/${courseId}?include=children`);
+      if (!res.ok) throw new Error("Failed to fetch data");
 
-      if (!unitsRes.ok || !courseRes.ok)
-        throw new Error("Failed to fetch data");
+      const data = await res.json();
 
-      const [unitsData, courseData] = await Promise.all([
-        unitsRes.json(),
-        courseRes.json(),
-      ]);
-
-      setUnits(unitsData);
-      setCourse(courseData);
+      setUnits(data.children);
+      setCourse(data);
       const initial = {
-        name: courseData.name || "",
-        description: courseData.description || "",
-        price: courseData.price || 0,
-        isActive: courseData.isActive ?? true,
-        purchaseable: courseData.purchaseable ?? true,
+        name: data.name || "",
+        description: data.description || "",
+        price: data.price || 0,
+        isActive: data.isActive ?? true,
+        purchaseable: data.purchaseable ?? true,
       };
       setCourseForm(initial);
-      setInitialForm(initial);
+
     } catch (error) {
       toast.error("Error loading data");
     } finally {
@@ -101,7 +90,7 @@ export default function UnitsPage({
       toast.error("Error saving course");
     } finally {
       setSavingCourse(false);
-      setInitialForm(JSON.parse(JSON.stringify(courseForm)));
+
     }
   }
 
@@ -123,16 +112,6 @@ export default function UnitsPage({
       toast.error("Error deleting course");
     }
   }
-  function handleCancel() {
-    const hasChanges =
-      JSON.stringify(courseForm) !== JSON.stringify(initialForm);
-    if (hasChanges) {
-      setIsDiscardDialogOpen(true);
-    } else {
-      router.push("/courses");
-    }
-  }
-
   useEffect(() => {
     fetchData();
   }, [courseId]);
@@ -170,7 +149,7 @@ export default function UnitsPage({
   }
 
   return (
-    <div className="pb-20 space-y-3 min-[450px]:space-y-6">
+    <div className="space-y-3 min-[450px]:space-y-6">
       <PageHeader title="Course" />
       <Breadcrumb
         items={[
@@ -272,17 +251,8 @@ export default function UnitsPage({
       {/* Sticky Footer */}
       <StickyFooter>
         <DeleteButton onClick={handleDeleteCourse} />
-        <div className="flex gap-4">
-          <CancelButton onClick={handleCancel} />
-          <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
-        </div>
+        <SaveButton onClick={handleSaveCourse} loading={savingCourse} />
       </StickyFooter>
-
-      <ConfirmDiscardDialog
-        open={isDiscardDialogOpen}
-        onOpenChange={setIsDiscardDialogOpen}
-        onConfirm={() => router.push("/courses")}
-      />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

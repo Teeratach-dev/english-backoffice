@@ -9,7 +9,6 @@ import { LocalTopic } from "@/types/local.types";
 
 interface TopicSortableListProps {
   title?: string;
-  courseId: string;
   unitId: string;
   topics: LocalTopic[];
   onReorder: (newTopics: LocalTopic[]) => void;
@@ -37,7 +36,6 @@ const TOPIC_FILTERS: FilterGroup[] = [
 
 export function TopicSortableList({
   title,
-  courseId,
   unitId,
   topics,
   onReorder,
@@ -123,8 +121,6 @@ export function TopicSortableList({
           <SortableTopicItem
             key={topic._id}
             topic={topic}
-            courseId={courseId}
-            unitId={unitId}
             onEdit={onEdit}
             onDelete={onDelete}
             onMoveUp={() => handleMove(topic._id, "up")}

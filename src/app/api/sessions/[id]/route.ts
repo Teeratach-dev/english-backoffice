@@ -22,7 +22,15 @@ export async function GET(
   const { params } = context;
   try {
     const { id } = await params;
-    const session = await sessionDetailService.getSessionById(id);
+    const include = req.nextUrl.searchParams.get("include");
+
+    let session;
+    if (include === "breadcrumbs") {
+      session = await sessionDetailService.getSessionWithBreadcrumbs(id);
+    } else {
+      session = await sessionDetailService.getSessionById(id);
+    }
+
     if (!session) {
       return NextResponse.json(
         { message: "Session not found" },

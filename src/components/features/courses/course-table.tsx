@@ -230,7 +230,7 @@ export function CourseTable({
         columns={columns}
         data={courses}
         loading={loading}
-        onRowClick={(course) => router.push(`/courses/${course._id}/units`)}
+        onRowClick={(course) => router.push(`/courses/${course._id}`)}
         minWidth="1000px"
         pagination={{
           pagination,
