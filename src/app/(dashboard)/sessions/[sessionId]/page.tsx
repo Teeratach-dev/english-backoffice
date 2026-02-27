@@ -39,7 +39,7 @@ import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { DeleteButton } from "@/components/common/delete-button";
 import { SaveButton } from "@/components/common/save-button";
 
-export default function SessionBuilderPage({
+export default function SessionDetailPage({
   params,
 }: {
   params: Promise<{
