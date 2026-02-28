@@ -587,6 +587,13 @@ export default function SessionDetailPage({
               }}
             />
           ))}
+          <button
+            onClick={addScreen}
+            className="w-full rounded-lg border border-dashed border-muted-foreground/30 py-3 text-sm font-medium text-muted-foreground transition-colors hover:border-primary hover:text-primary flex items-center justify-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Add Screen
+          </button>
         </div>
       </div>
 
