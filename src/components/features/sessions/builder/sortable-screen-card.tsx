@@ -156,8 +156,8 @@ export function SortableScreenCard({
           </div>
         </CardHeader>
         {!isCollapsed && (
-          <CardContent className="p-3 lg:p-6">
-            <div className="flex flex-col lg:flex-row gap-5 items-start">
+          <CardContent className="p-2">
+            <div className="flex flex-col lg:flex-row gap-2 items-start">
               {/* Mobile View Sidebar (Hidden on mobile, sticky on desktop) */}
               <div className="hidden lg:block shrink-0 sticky top-6">
                 <div>
@@ -178,7 +178,7 @@ export function SortableScreenCard({
                 {/* Editor Mode (Always on Desktop, Toggleable on Mobile) */}
                 <div
                   className={cn(
-                    "space-y-4",
+                    "space-y-2",
                     showPreview ? "hidden lg:block" : "block",
                   )}
                 >
