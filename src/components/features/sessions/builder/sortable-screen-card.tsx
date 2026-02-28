@@ -199,7 +199,7 @@ export function SortableScreenCard({
                           onMoveDown={() => handleMoveAction(action.id, "down")}
                           isFirst={idx === 0}
                           isLast={idx === screen.actions.length - 1}
-                          showPreview={showPreview}
+                          showPreview={false}
                         />
                         {activeActionInScreen &&
                           activeActionInScreen.id === action.id && (

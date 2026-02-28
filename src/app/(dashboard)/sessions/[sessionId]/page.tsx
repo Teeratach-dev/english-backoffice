@@ -539,7 +539,7 @@ export default function SessionDetailPage({
             <Button
               variant="outline"
               size="sm"
-              className="mr-2"
+              className="mr-2 lg:hidden"
               onClick={function () {
                 setShowPreview(!showPreview);
               }}
