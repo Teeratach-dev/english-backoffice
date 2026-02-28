@@ -15,6 +15,7 @@ import {
   SessionGroupItem,
 } from "@/components/features/session-groups/session-group-table";
 import { PageHeader } from "@/components/layouts/page-header";
+import { DeleteConfirmDialog } from "@/components/common/delete-confirm-dialog";
 import { toast } from "sonner";
 
 export default function SessionGroupsListPage() {
@@ -67,7 +68,6 @@ export default function SessionGroupsListPage() {
         }
       />
 
-      {/* Add Group Dialog */}
       <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
         <DialogContent>
           <DialogHeader>
@@ -77,7 +77,6 @@ export default function SessionGroupsListPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Group Dialog */}
       <Dialog
         open={!!editingGroup}
         onOpenChange={(open) => !open && setEditingGroup(null)}
@@ -95,32 +94,13 @@ export default function SessionGroupsListPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
-      <Dialog
+      <DeleteConfirmDialog
         open={!!deletingGroup}
         onOpenChange={(open) => !open && setDeletingGroup(null)}
-      >
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Are you sure?</DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p>
-              This action cannot be undone. This will permanently delete the
-              group <strong>{deletingGroup?.name}</strong> and all its
-              associated data.
-            </p>
-          </div>
-          <div className="flex justify-end gap-3">
-            <Button variant="ghost" onClick={() => setDeletingGroup(null)}>
-              Cancel
-            </Button>
-            <Button variant="destructive" onClick={handleDelete}>
-              Delete
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        onConfirm={handleDelete}
+        itemName={deletingGroup?.name}
+        entityLabel="group"
+      />
     </div>
   );
 }
