@@ -49,7 +49,7 @@ export default function SessionsListPage() {
   }
 
   return (
-    <div className="space-y-6 bg-pink-600">
+    <div className="space-y-6">
       <PageHeader title="Session Details" />
 
       <SessionsTable

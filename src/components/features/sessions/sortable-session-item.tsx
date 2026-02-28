@@ -75,10 +75,7 @@ export function SortableSessionItem({
 
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" asChild>
-          <Link
-            href={`/sessions/${session._id}/builder`}
-            title="Builder"
-          >
+          <Link href={`/sessions/${session._id}`} title="Builder">
             <PenTool className="h-4 w-4" />
           </Link>
         </Button>
