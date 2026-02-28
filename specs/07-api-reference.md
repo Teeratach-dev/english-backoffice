@@ -3,7 +3,7 @@
 ## Overview
 
 ระบบ REST API สร้างด้วย Next.js App Router (Route Handlers)
-ทุก endpoint (ยกเว้น auth/login) ต้องมี JWT token ใน header
+ทุก endpoint (ยกเว้น auth/login และ auth/refresh) ต้องมี valid `accessToken` cookie
 
 ## Base URL
 
@@ -13,28 +13,41 @@
 
 ## Authentication
 
-ทุก request (ยกเว้น login) ต้องแนบ JWT token:
-- ผ่าน Cookie: `token=<jwt_token>`
-- Backend verify token ด้วย `verifyToken()` จาก `src/lib/jwt.ts`
+ระบบใช้ **dual-token** เก็บใน httpOnly cookie:
+- `accessToken` — ใช้ยืนยันตัวตนทุก request (อายุ 1 วัน)
+- `refreshToken` — ใช้ขอ accessToken ใหม่เมื่อหมดอายุ (อายุ 7 วัน)
+- Middleware (`src/middleware.ts`) ตรวจสอบและ auto-refresh token โดยอัตโนมัติ
 
 ---
 
 ## Auth Endpoints
 
 ### POST `/api/auth/login`
-Login เข้าสู่ระบบ
+Login เข้าสู่ระบบ — set `accessToken` + `refreshToken` cookie
 
 **Request Body:**
 ```json
 { "email": "string", "password": "string" }
 ```
 
-**Response:** `{ user, token }`
+**Response:** `{ message, user: { id, email, name, role }, accessToken, refreshToken }`
 
 ### GET `/api/auth/me`
-ดึงข้อมูล user ที่ login อยู่
+ดึงข้อมูล user ที่ login อยู่ (อ่านจาก `accessToken` cookie)
 
-**Response:** `{ user: { id, email, name, role } }`
+**Response:** `{ id, email, name, role }`
+
+### POST `/api/auth/logout`
+ออกจากระบบ — clear `accessToken` + `refreshToken` cookie
+
+**Response:** `{ message: "Logged out successfully" }`
+
+### POST `/api/auth/refresh`
+ขอ `accessToken` ใหม่โดยใช้ `refreshToken` cookie (ไม่ต้องมี accessToken)
+
+**Response:** `{ message: "Token refreshed" }` พร้อม set `accessToken` cookie ใหม่
+
+**Error:** `401` ถ้าไม่มี refreshToken หรือ refreshToken invalid/หมดอายุ
 
 ### POST `/api/auth/change-password`
 เปลี่ยนรหัสผ่าน
