@@ -442,7 +442,7 @@ export default function SessionDetailPage({
             onOpenSaveTemplate={() => setIsTemplateDialogOpen(true)}
             hasScreens={screens.length > 0}
           />
-          <CardContent className="space-y-4 max-[550px]:px-2">
+          <CardContent className="space-y-4 p-2 max-[550px]:px-2">
             <div className="grid gap-2">
               <Label htmlFor="session-name">Session Name</Label>
               <Input

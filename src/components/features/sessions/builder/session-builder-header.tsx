@@ -25,7 +25,7 @@ export function SessionBuilderHeader({
   hasScreens,
 }: SessionBuilderHeaderProps) {
   return (
-    <div className="w-full mb-4">
+    <div className="w-full mb-[2px]">
       <div className="flex flex-row items-center gap-4 p-2 max-[550px]:p-2">
         <div className="flex-1 min-w-0">
           <h1 className="text-lg font-bold truncate">{sessionName}</h1>
