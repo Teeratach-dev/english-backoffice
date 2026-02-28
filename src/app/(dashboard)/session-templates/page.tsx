@@ -8,7 +8,6 @@ import {
   TemplateItem,
 } from "@/components/features/session-templates/template-table";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
 export default function SessionTemplatesPage() {
   const router = useRouter();

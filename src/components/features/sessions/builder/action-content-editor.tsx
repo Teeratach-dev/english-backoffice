@@ -17,8 +17,6 @@ import {
   WriteSentenceAction,
   WriteSentenceInChatAction,
 } from "@/types/action.types";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 import { ReadingActionForm } from "./forms/reading-action-form";
 import { ExplainActionForm } from "./forms/explain-action-form";

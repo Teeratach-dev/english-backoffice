@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
+
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useDispatch, useSelector } from "react-redux";

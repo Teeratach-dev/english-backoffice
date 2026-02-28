@@ -4,7 +4,6 @@ import { ChoiceAction, Word } from "@/types/action.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
 

@@ -1,7 +1,6 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 interface DeleteButtonProps extends ButtonProps {
   label?: string;

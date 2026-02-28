@@ -8,7 +8,7 @@ import {
   AudioAction,
 } from "@/types/action.types";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { ImageActionForm } from "./image-action-form";
 import { ReadingActionForm } from "./reading-action-form";
 import { AudioActionForm } from "./audio-action-form";

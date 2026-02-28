@@ -1,5 +1,5 @@
 import { Label } from "@/components/ui/label";
-import { ActionType, WriteSentenceInChatAction } from "@/types/action.types";
+import { WriteSentenceInChatAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";

@@ -11,11 +11,11 @@ import {
   Italic,
   Underline,
   Highlighter,
-  MessageSquarePlus,
+
   Trash2,
   Edit3,
   Check,
-  X,
+
   Plus,
 } from "lucide-react";
 import {

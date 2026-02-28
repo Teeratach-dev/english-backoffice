@@ -1,7 +1,6 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 interface CancelButtonProps extends ButtonProps {
   label?: string;

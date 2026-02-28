@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { ChevronUp, ChevronDown, Edit, Trash2, PenTool } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";

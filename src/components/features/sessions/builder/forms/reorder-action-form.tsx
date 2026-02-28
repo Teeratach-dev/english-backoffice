@@ -4,7 +4,7 @@ import { ReorderAction, Word } from "@/types/action.types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 
 interface ReorderActionFormProps {
   action: ReorderAction;

@@ -15,36 +15,6 @@ import { SortableActionItem } from "./sortable-action-item";
 import { ActionTypeSelector } from "./action-type-selector";
 import { ActionContentEditor } from "./action-content-editor";
 import { PhonePreview } from "./phone-preview";
-import {
-  Volume2,
-  Image as ImageIcon,
-  MessageCircle,
-  Info,
-  Type,
-  ListChecks,
-  ArrowLeftRight,
-  CreditCard,
-  Keyboard,
-  MousePointer2,
-  PenTool,
-  Columns2,
-} from "lucide-react";
-
-const ACTION_ICONS: Record<ActionType, React.ReactNode> = {
-  [ActionType.Explain]: <Info className="h-4 w-4" />,
-  [ActionType.Reading]: <Type className="h-4 w-4" />,
-  [ActionType.Audio]: <Volume2 className="h-4 w-4" />,
-  [ActionType.Chat]: <MessageCircle className="h-4 w-4" />,
-  [ActionType.Image]: <ImageIcon className="h-4 w-4" />,
-  [ActionType.Column]: <Columns2 className="h-4 w-4" />,
-  [ActionType.Choice]: <ListChecks className="h-4 w-4" />,
-  [ActionType.Reorder]: <ArrowLeftRight className="h-4 w-4" />,
-  [ActionType.MatchCard]: <CreditCard className="h-4 w-4" />,
-  [ActionType.FillSentenceByTyping]: <Keyboard className="h-4 w-4" />,
-  [ActionType.FillSentenceWithChoice]: <MousePointer2 className="h-4 w-4" />,
-  [ActionType.WriteSentence]: <PenTool className="h-4 w-4" />,
-  [ActionType.WriteSentenceInChat]: <MessageCircle className="h-4 w-4" />,
-};
 
 import { cn } from "@/lib/utils";
 
@@ -99,7 +69,7 @@ export function SortableScreenCard({
 
     if (newIndex < 0 || newIndex >= screen.actions.length) return;
 
-    const newActions = arrayMove(screen.actions, oldIndex, newIndex);
+    arrayMove(screen.actions, oldIndex, newIndex);
     // Since screen actions are passed from parent, we should use onReorderActions to inform parent
     onReorderActions(actionId, screen.actions[newIndex].id);
   }

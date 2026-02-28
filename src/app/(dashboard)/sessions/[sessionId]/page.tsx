@@ -74,7 +74,7 @@ export default function SessionDetailPage({
   async function handleSave() {
     setSaving(true);
     try {
-      const res = await fetch(`/api/sessions/${sessionId}`, {
+      await fetch(`/api/sessions/${sessionId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

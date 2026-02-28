@@ -28,12 +28,6 @@ interface Template {
   screens: any[];
 }
 
-interface LoadTemplateDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  templates: Template[];
-  onApplyTemplate: (template: Template) => void;
-}
 
 export function LoadTemplateDialog({
   open,

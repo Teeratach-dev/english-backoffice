@@ -1,7 +1,6 @@
 import { Button, ButtonProps } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { cn } from "@/lib/utils";
-import React from "react";
 
 interface SaveButtonProps extends ButtonProps {
   label?: string;

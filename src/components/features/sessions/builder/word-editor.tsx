@@ -8,8 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import {
   Plus,
   Trash2,
-  Type,
-  Music,
+
+
   Bold,
   Italic,
   Underline,
