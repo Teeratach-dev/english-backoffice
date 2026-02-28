@@ -157,10 +157,10 @@ export function SortableScreenCard({
         </CardHeader>
         {!isCollapsed && (
           <CardContent className="p-3 lg:p-6">
-            <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <div className="flex flex-col lg:flex-row gap-5 items-start">
               {/* Mobile View Sidebar (Hidden on mobile, sticky on desktop) */}
               <div className="hidden lg:block shrink-0 sticky top-6">
-                <div className="relative p-2 bg-muted/20 rounded-[3.2rem] border border-muted-foreground/10 shadow-inner">
+                <div>
                   <PhonePreview actions={screen.actions} />
                   <div className="absolute top-4 left-1/2 -translate-x-1/2 px-2 py-0.5 bg-black/5 rounded text-xxs uppercase tracking-tighter font-bold opacity-30 select-none">
                     Preview Mode
