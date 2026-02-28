@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useState, use } from "react";
 import { TopicSortableList } from "@/components/features/topics/topic-sortable-list";
 import { TopicForm } from "@/components/features/topics/topic-form";
 import { Button } from "@/components/ui/button";
@@ -14,16 +14,12 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
+import { PageHeader } from "@/components/layouts/page-header";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { DeleteButton } from "@/components/common/delete-button";
 import { SaveButton } from "@/components/common/save-button";
-import { PageHeader } from "@/components/layouts/page-header";
+import { UnitDetailForm } from "@/components/features/units/unit-detail-form";
+import { useEntityDetail } from "@/hooks/use-entity-detail";
 
 export default function UnitDetailPage({
   params,
@@ -31,98 +27,40 @@ export default function UnitDetailPage({
   params: Promise<{ unitId: string }>;
 }) {
   const { unitId } = use(params);
-  const router = useRouter();
-  const [topics, setTopics] = useState<any[]>([]);
-  const [unit, setUnit] = useState<any>(null);
-  const [unitForm, setUnitForm] = useState({
-    name: "",
-    description: "",
-    isActive: true,
-  });
-  const [loading, setLoading] = useState(true);
-  const [savingUnit, setSavingUnit] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<any>(null);
 
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch(`/api/units/${unitId}?include=children`);
-      if (!res.ok) throw new Error("Failed to fetch data");
-
-      const data = await res.json();
-
-      setTopics(data.children);
-      setUnit(data);
-      const initial = {
+  const {
+    entity: unit,
+    form: unitForm,
+    setForm: setUnitForm,
+    children: topics,
+    setChildren: setTopics,
+    loading,
+    saving,
+    save,
+    remove,
+    fetchData,
+  } = useEntityDetail({
+    apiPath: "/api/units",
+    entityId: unitId,
+    formDefaults: { name: "", description: "", isActive: true },
+    redirectPath: "/courses",
+    entityLabel: "Unit",
+    mapData: (data) => ({
+      form: {
         name: data.name || "",
         description: data.description || "",
         isActive: data.isActive ?? true,
-      };
-      setUnitForm(initial);
-    } catch (error) {
-      toast.error("Error loading data");
-    } finally {
-      setLoading(false);
-    }
-  }
+      },
+      children: data.children,
+      raw: data,
+    }),
+  });
 
   const parentPath = unit?.courseId ? `/courses/${unit.courseId}` : "/courses";
 
-  async function handleSaveUnit() {
-    setSavingUnit(true);
-    try {
-      const res = await fetch(`/api/units/${unitId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(unitForm),
-      });
-
-      if (!res.ok) throw new Error("Failed to save unit");
-
-      toast.success("Unit updated successfully");
-      router.push(parentPath);
-    } catch (error) {
-      toast.error("Error saving unit");
-    } finally {
-      setSavingUnit(false);
-    }
-  }
-
-  async function handleDeleteUnit() {
-    if (
-      !confirm(
-        "Are you sure you want to delete this unit? This will also delete all topics within it.",
-      )
-    )
-      return;
-
-    try {
-      const res = await fetch(`/api/units/${unitId}`, { method: "DELETE" });
-      if (!res.ok) throw new Error("Failed to delete unit");
-
-      toast.success("Unit deleted successfully");
-      router.push(parentPath);
-    } catch (error) {
-      toast.error("Error deleting unit");
-    }
-  }
-  useEffect(() => {
-    fetchData();
-  }, [unitId]);
-
-  function handleAdd() {
-    setSelectedTopic(null);
-    setIsDialogOpen(true);
-  }
-
-  function handleEdit(topic: any) {
-    setSelectedTopic(topic);
-    setIsDialogOpen(true);
-  }
-
-  async function handleDelete(id: string) {
+  async function handleDeleteChild(id: string) {
     if (!confirm("Are you sure?")) return;
     try {
       const res = await fetch(`/api/topics/${id}`, { method: "DELETE" });
@@ -154,46 +92,7 @@ export default function UnitDetailPage({
         ]}
       />
 
-      <Card>
-        <CardHeader className="max-[450px]:px-3">
-          <CardTitle>Unit Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 max-[450px]:px-3">
-          <div className="grid gap-2">
-            <Label htmlFor="unit-name">Unit Name</Label>
-            <Input
-              id="unit-name"
-              value={unitForm.name}
-              onChange={(e) =>
-                setUnitForm({ ...unitForm, name: e.target.value })
-              }
-              placeholder="Enter unit name"
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="unit-desc">Description</Label>
-            <Textarea
-              id="unit-desc"
-              value={unitForm.description}
-              onChange={(e) =>
-                setUnitForm({ ...unitForm, description: e.target.value })
-              }
-              placeholder="Enter unit description"
-              rows={3}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="unit-active"
-              checked={unitForm.isActive}
-              onCheckedChange={(checked) =>
-                setUnitForm({ ...unitForm, isActive: checked })
-              }
-            />
-            <Label htmlFor="unit-active">Active Status</Label>
-          </div>
-        </CardContent>
-      </Card>
+      <UnitDetailForm form={unitForm} onFormChange={setUnitForm} />
 
       <div className="pt-4 border-t">
         <TopicSortableList
@@ -201,11 +100,17 @@ export default function UnitDetailPage({
           unitId={unitId}
           topics={topics}
           onReorder={(newItems) => setTopics(newItems)}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onEdit={(topic) => {
+            setSelectedTopic(topic);
+            setIsDialogOpen(true);
+          }}
+          onDelete={handleDeleteChild}
           addButton={
             <Button
-              onClick={handleAdd}
+              onClick={() => {
+                setSelectedTopic(null);
+                setIsDialogOpen(true);
+              }}
               className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
               size="default"
             >
@@ -216,10 +121,9 @@ export default function UnitDetailPage({
         />
       </div>
 
-      {/* Sticky Footer */}
       <StickyFooter>
-        <DeleteButton onClick={handleDeleteUnit} />
-        <SaveButton onClick={handleSaveUnit} loading={savingUnit} />
+        <DeleteButton onClick={remove} />
+        <SaveButton onClick={save} loading={saving} />
       </StickyFooter>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

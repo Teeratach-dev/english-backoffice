@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useState, use } from "react";
 import { SessionSortableList } from "@/components/features/sessions/session-sortable-list";
 import { SessionForm } from "@/components/features/sessions/session-form";
 import { Button } from "@/components/ui/button";
@@ -15,15 +15,11 @@ import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 import { PageHeader } from "@/components/layouts/page-header";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 import { StickyFooter } from "@/components/layouts/sticky-footer";
 import { DeleteButton } from "@/components/common/delete-button";
 import { SaveButton } from "@/components/common/save-button";
+import { SessionGroupDetailForm } from "@/components/features/session-groups/session-group-detail-form";
+import { useEntityDetail } from "@/hooks/use-entity-detail";
 
 export default function SessionGroupDetailPage({
   params,
@@ -31,101 +27,40 @@ export default function SessionGroupDetailPage({
   params: Promise<{ groupId: string }>;
 }) {
   const { groupId } = use(params);
-  const router = useRouter();
-  const [sessions, setSessions] = useState<any[]>([]);
-  const [group, setGroup] = useState<any>(null);
-  const [groupForm, setGroupForm] = useState({
-    name: "",
-    description: "",
-    isActive: true,
-  });
-  const [loading, setLoading] = useState(true);
-  const [savingGroup, setSavingGroup] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSession, setSelectedSession] = useState<any>(null);
 
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `/api/session-groups/${groupId}?include=children`,
-      );
-      if (!res.ok) throw new Error("Failed to fetch data");
-
-      const data = await res.json();
-
-      setSessions(data.children);
-      setGroup(data);
-      const initial = {
+  const {
+    entity: group,
+    form: groupForm,
+    setForm: setGroupForm,
+    children: sessions,
+    setChildren: setSessions,
+    loading,
+    saving,
+    save,
+    remove,
+    fetchData,
+  } = useEntityDetail({
+    apiPath: "/api/session-groups",
+    entityId: groupId,
+    formDefaults: { name: "", description: "", isActive: true },
+    redirectPath: "/topics",
+    entityLabel: "Session group",
+    mapData: (data) => ({
+      form: {
         name: data.name || "",
         description: data.description || "",
         isActive: data.isActive ?? true,
-      };
-      setGroupForm(initial);
-    } catch (error) {
-      toast.error("Error loading data");
-    } finally {
-      setLoading(false);
-    }
-  }
+      },
+      children: data.children,
+      raw: data,
+    }),
+  });
 
   const parentPath = group?.topicId ? `/topics/${group.topicId}` : "/topics";
 
-  async function handleSaveGroup() {
-    setSavingGroup(true);
-    try {
-      const res = await fetch(`/api/session-groups/${groupId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(groupForm),
-      });
-
-      if (!res.ok) throw new Error("Failed to save group");
-
-      toast.success("Session group updated successfully");
-      router.push(parentPath);
-    } catch (error) {
-      toast.error("Error saving group");
-    } finally {
-      setSavingGroup(false);
-    }
-  }
-
-  async function handleDeleteGroup() {
-    if (
-      !confirm(
-        "Are you sure you want to delete this group? This will also delete all sessions within it.",
-      )
-    )
-      return;
-
-    try {
-      const res = await fetch(`/api/session-groups/${groupId}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Failed to delete group");
-
-      toast.success("Group deleted successfully");
-      router.push(parentPath);
-    } catch (error) {
-      toast.error("Error deleting group");
-    }
-  }
-  useEffect(() => {
-    fetchData();
-  }, [groupId]);
-
-  function handleAdd() {
-    setSelectedSession(null);
-    setIsDialogOpen(true);
-  }
-
-  function handleEdit(session: any) {
-    setSelectedSession(session);
-    setIsDialogOpen(true);
-  }
-
-  async function handleDelete(id: string) {
+  async function handleDeleteChild(id: string) {
     if (!confirm("Are you sure?")) return;
     try {
       const res = await fetch(`/api/sessions/${id}`, { method: "DELETE" });
@@ -152,53 +87,22 @@ export default function SessionGroupDetailPage({
       <PageHeader title="Session Group" />
       <Breadcrumb
         items={[
-          { label: "Courses", href: group?.courseId ? `/courses/${group.courseId}` : "/courses" },
-          { label: "Units", href: group?.unitId ? `/units/${group.unitId}` : "/units" },
+          {
+            label: "Courses",
+            href: group?.courseId
+              ? `/courses/${group.courseId}`
+              : "/courses",
+          },
+          {
+            label: "Units",
+            href: group?.unitId ? `/units/${group.unitId}` : "/units",
+          },
           { label: "Topics", href: parentPath },
           { label: "Group", href: "#" },
         ]}
       />
 
-      <Card>
-        <CardHeader className="max-[450px]:px-3">
-          <CardTitle>Session Group Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 max-[450px]:px-3">
-          <div className="grid gap-2">
-            <Label htmlFor="group-name">Group Name</Label>
-            <Input
-              id="group-name"
-              value={groupForm.name}
-              onChange={(e) =>
-                setGroupForm({ ...groupForm, name: e.target.value })
-              }
-              placeholder="Enter group name"
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="group-desc">Description</Label>
-            <Textarea
-              id="group-desc"
-              value={groupForm.description}
-              onChange={(e) =>
-                setGroupForm({ ...groupForm, description: e.target.value })
-              }
-              placeholder="Enter group description"
-              rows={3}
-            />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="group-active"
-              checked={groupForm.isActive}
-              onCheckedChange={(checked) =>
-                setGroupForm({ ...groupForm, isActive: checked })
-              }
-            />
-            <Label htmlFor="group-active">Active Status</Label>
-          </div>
-        </CardContent>
-      </Card>
+      <SessionGroupDetailForm form={groupForm} onFormChange={setGroupForm} />
 
       <div className="pt-4 border-t">
         <SessionSortableList
@@ -206,11 +110,17 @@ export default function SessionGroupDetailPage({
           groupId={groupId}
           sessions={sessions}
           onReorder={(newItems) => setSessions(newItems)}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onEdit={(session) => {
+            setSelectedSession(session);
+            setIsDialogOpen(true);
+          }}
+          onDelete={handleDeleteChild}
           addButton={
             <Button
-              onClick={handleAdd}
+              onClick={() => {
+                setSelectedSession(null);
+                setIsDialogOpen(true);
+              }}
               className="h-10 w-10 px-0 min-[450px]:w-auto min-[450px]:px-4"
               size="default"
             >
@@ -221,10 +131,9 @@ export default function SessionGroupDetailPage({
         />
       </div>
 
-      {/* Sticky Footer */}
       <StickyFooter>
-        <DeleteButton onClick={handleDeleteGroup} />
-        <SaveButton onClick={handleSaveGroup} loading={savingGroup} />
+        <DeleteButton onClick={remove} />
+        <SaveButton onClick={save} loading={saving} />
       </StickyFooter>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
