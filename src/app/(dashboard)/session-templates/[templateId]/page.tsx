@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/layouts/page-header";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
-import { TemplateBuilder } from "@/components/features/templates/builder/template-builder";
+import { TemplateBuilder } from "@/components/features/session-templates/builder/template-builder";
 
 export default function TemplateDetailPage({
   params,

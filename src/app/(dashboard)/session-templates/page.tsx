@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   TemplateTable,
   TemplateItem,
-} from "@/components/features/templates/template-table";
+} from "@/components/features/session-templates/template-table";
 import { PageHeader } from "@/components/layouts/page-header";
 import { Breadcrumb } from "@/components/layouts/breadcrumb";
 
