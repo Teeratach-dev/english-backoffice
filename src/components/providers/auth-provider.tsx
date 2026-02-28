@@ -15,19 +15,27 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     async function restoreSession() {
-      if (!user) {
-        try {
-          const response = await fetch("/api/auth/me");
-          if (response.ok) {
-            const userData = await response.json();
-            dispatch(setCredentials({ user: userData, token: "" }));
-          } else {
-            // If the token is invalid or expired, clear the state
-            dispatch(logout());
-          }
-        } catch (error) {
-          console.error("Failed to restore session:", error);
+      if (user) return;
+
+      // Try /api/auth/me — middleware will auto-refresh accessToken if needed
+      let response = await fetch("/api/auth/me").catch(() => null);
+
+      // If still 401, explicitly try refresh then retry once
+      if (response?.status === 401) {
+        const refreshRes = await fetch("/api/auth/refresh", {
+          method: "POST",
+        }).catch(() => null);
+
+        if (refreshRes?.ok) {
+          response = await fetch("/api/auth/me").catch(() => null);
         }
+      }
+
+      if (response?.ok) {
+        const userData = await response.json();
+        dispatch(setCredentials({ user: userData, token: "" }));
+      } else {
+        dispatch(logout());
       }
     }
 

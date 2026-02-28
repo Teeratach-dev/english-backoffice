@@ -25,7 +25,12 @@ export function UserProfileButton() {
   // @ts-ignore
   const user = useSelector((state: RootState) => state.auth.user);
 
-  function handleLogout() {
+  async function handleLogout() {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
     dispatch(logout());
     router.push("/login");
   }

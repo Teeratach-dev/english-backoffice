@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import { verifyPassword } from "@/lib/auth";
-import { createToken } from "@/lib/jwt";
+import { createAccessToken, createRefreshToken } from "@/lib/jwt";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -34,11 +34,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const token = await createToken({
+    const payload = {
       id: user._id.toString(),
       email: user.email,
       role: user.role,
-    });
+    };
+
+    const accessToken = await createAccessToken(payload);
+    const refreshToken = await createRefreshToken(payload);
 
     const response = NextResponse.json({
       message: "Login successful",
@@ -48,12 +51,21 @@ export async function POST(req: NextRequest) {
         name: user.name,
         role: user.role,
       },
+      accessToken, // Optional: return tokens in JSON if requested, but cookie is primary
+      refreshToken,
     });
 
-    response.cookies.set("token", token, {
+    response.cookies.set("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 60 * 24, // 1 day
+      path: "/",
+    });
+
+    response.cookies.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 60 * 60 * 24 * 7, // 7 days
       path: "/",
     });
 
