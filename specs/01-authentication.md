@@ -2,9 +2,10 @@
 
 ## Overview
 
-ระบบ Authentication ใช้ JWT Token-based แบบ **dual-token** (Access Token + Refresh Token)
-โดยทั้งสอง token ถูกเก็บใน **httpOnly cookie** เพื่อป้องกัน XSS
-Middleware ของ Next.js ทำหน้าที่ guard ทุก route และ auto-refresh access token โดยอัตโนมัติ
+ระบบ Authentication ใช้ JWT Token-based แบบ **single-token**
+โดย token ถูกเก็บใน **httpOnly cookie** ชื่อ `token` เพื่อป้องกัน XSS
+รองรับทั้ง **cookie** (สำหรับ browser) และ **Bearer token** ใน `Authorization` header (สำหรับ external client / mobile app)
+Middleware ของ Next.js (`src/proxy.ts`) ทำหน้าที่ guard ทุก route
 
 ---
 
@@ -15,7 +16,7 @@ Middleware ของ Next.js ทำหน้าที่ guard ทุก route �
 - **Route**: `src/app/(auth)/login/page.tsx`
 - **Component**: `LoginForm`
 - เข้าสู่ระบบด้วย Email + Password
-- เมื่อ login สำเร็จ server จะ set cookie `accessToken` และ `refreshToken` แล้ว redirect ไปหน้า Dashboard
+- เมื่อ login สำเร็จ server จะ set cookie `token` และ return `token` ใน response body แล้ว redirect ไปหน้า Dashboard
 - Redux store (`authSlice`) เก็บข้อมูล user ที่ login อยู่
 
 ### 2. Change Password Page (`/change-password`)
@@ -28,12 +29,22 @@ Middleware ของ Next.js ทำหน้าที่ guard ทุก route �
 
 ## Token System
 
-| Token         | Cookie Name    | อายุ    | Cookie Flags         |
-| ------------- | -------------- | ------- | -------------------- |
-| Access Token  | `accessToken`  | 1 วัน   | httpOnly, Secure*    |
-| Refresh Token | `refreshToken` | 7 วัน   | httpOnly, Secure*    |
+| Token | Cookie Name | อายุ  | Cookie Flags      |
+| ----- | ----------- | ----- | ----------------- |
+| JWT   | `token`     | 1 วัน | httpOnly, Secure* |
 
 > *Secure flag เปิดเฉพาะ production (`NODE_ENV === "production"`)
+
+### การส่ง Token
+
+API รองรับ 2 วิธีในการส่ง token (ลำดับความสำคัญ: cookie ก่อน, Bearer fallback):
+
+1. **Cookie** (สำหรับ browser) — browser จะแนบ cookie `token` ไปอัตโนมัติ
+2. **Authorization header** (สำหรับ external client) — `Authorization: Bearer <token>`
+
+Shared utility: `src/lib/auth-utils.ts`
+- `getTokenFromRequest(req)` — ดึง token จาก cookie หรือ Bearer header
+- `getUserIdFromRequest(req)` — ดึง token + verify แล้ว return userId
 
 ---
 
@@ -45,22 +56,22 @@ Middleware ของ Next.js ทำหน้าที่ guard ทุก route �
 1. User กรอก email + password ที่ /login
 2. POST /api/auth/login
 3. Backend ตรวจสอบ credentials ด้วย bcryptjs
-4. สร้าง accessToken (1d) + refreshToken (7d) ด้วย jose (HS256)
-5. Set cookie ทั้งสอง token (httpOnly)
+4. สร้าง JWT token (1d) ด้วย jose (HS256)
+5. Set cookie `token` (httpOnly) + return token ใน response body
 6. Return user data → Redux store บันทึก user
 7. Redirect ไปหน้า Dashboard
 ```
 
-### Token Verification (Middleware)
+### Token Verification (Middleware — `src/proxy.ts`)
 
 ```
 Request เข้ามาทุก route ที่ไม่ใช่ public:
   ↓
-มี accessToken cookie และ valid?
+มี token cookie และ valid?
   → ✅ ผ่าน
   ↓
-accessToken หมดอายุ/invalid + มี refreshToken valid?
-  → สร้าง accessToken ใหม่ ตั้ง cookie → ✅ ผ่าน (transparent to client)
+(เฉพาะ API route) มี Authorization: Bearer token และ valid?
+  → ✅ ผ่าน
   ↓
 ไม่มี token ที่ valid:
   → API route: return 401 Unauthorized
@@ -80,10 +91,11 @@ accessToken หมดอายุ/invalid + มี refreshToken valid?
 
 ```
 1. User กด Log out (UserProfileButton)
-2. POST /api/auth/logout → server clear cookies ทั้งสอง
-3. dispatch logout() → เคลียร์ Redux state
-4. Redirect ไปหน้า /login
+2. dispatch logout() → เคลียร์ Redux state
+3. Redirect ไปหน้า /login
 ```
+
+> **หมายเหตุ:** ยังไม่มี `/api/auth/logout` endpoint — ปัจจุบัน logout เป็นแค่ client-side (เคลียร์ Redux state + redirect)
 
 ---
 
@@ -100,22 +112,19 @@ accessToken หมดอายุ/invalid + มี refreshToken valid?
 
 | Method | Endpoint                    | Auth Required | Description                           |
 | ------ | --------------------------- | ------------- | ------------------------------------- |
-| POST   | `/api/auth/login`           | ❌            | เข้าสู่ระบบ set accessToken + refreshToken cookie |
+| POST   | `/api/auth/login`           | ❌            | เข้าสู่ระบบ set `token` cookie + return token ใน body |
 | GET    | `/api/auth/me`              | ✅            | ดึงข้อมูล user ที่ login อยู่          |
-| POST   | `/api/auth/logout`          | ✅            | ออกจากระบบ (clear cookies)            |
-| POST   | `/api/auth/refresh`         | refreshToken cookie | ขอ accessToken ใหม่              |
 | POST   | `/api/auth/change-password` | ✅            | เปลี่ยนรหัสผ่าน                       |
 
 ---
 
 ## Middleware Protection
 
-**File**: `src/middleware.ts`
+**File**: `src/proxy.ts` (เรียกจาก `src/middleware.ts`)
 
 **Public paths** (ไม่ต้องมี token):
 - `/_next/*` — Static assets
 - `/api/auth/login`
-- `/api/auth/refresh`
 - `/login`
 
 **Protected paths** (ทุกอย่างนอกจาก public):
@@ -147,16 +156,16 @@ logout()                          // เมื่อ logout หรือ session
 
 | File | Description |
 | ---- | ----------- |
-| `src/middleware.ts` | Route protection + auto token refresh |
+| `src/middleware.ts` | Route protection (เรียก proxy.ts) |
+| `src/proxy.ts` | Token verification logic (cookie + Bearer) |
 | `src/lib/auth.ts` | `hashPassword`, `verifyPassword` (bcryptjs) |
 | `src/lib/jwt.ts` | `createToken`, `verifyToken` (jose HS256) |
+| `src/lib/auth-utils.ts` | `getTokenFromRequest`, `getUserIdFromRequest` (shared utility) |
 | `src/store/slices/authSlice.ts` | Redux auth state |
 | `src/components/providers/auth-provider.tsx` | Session restore เมื่อ app โหลด |
 | `src/components/features/auth/login-form.tsx` | Login form |
 | `src/components/features/auth/change-password-form.tsx` | Change password form |
 | `src/components/layouts/user-profile-button.tsx` | Logout button + แสดง user info |
-| `src/app/api/auth/login/route.ts` | Login API |
-| `src/app/api/auth/logout/route.ts` | Logout API (clear cookies) |
-| `src/app/api/auth/refresh/route.ts` | Refresh token API |
+| `src/app/api/auth/login/route.ts` | Login API (set cookie + return token) |
 | `src/app/api/auth/me/route.ts` | Current user info API |
 | `src/app/api/auth/change-password/route.ts` | Change password API |

@@ -3,19 +3,8 @@ import SessionTemplate, {
   SessionTemplateZodSchema,
 } from "@/models/SessionTemplate";
 import dbConnect from "@/lib/db";
-import { verifyToken } from "@/lib/jwt";
+import { getUserIdFromRequest } from "@/lib/auth-utils";
 import { z } from "zod";
-
-async function getUserIdFromRequest(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
-  if (!token) return null;
-  try {
-    const payload = await verifyToken(token);
-    return payload.id as string;
-  } catch (error) {
-    return null;
-  }
-}
 
 export async function GET(
   req: NextRequest,

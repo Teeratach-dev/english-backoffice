@@ -4,6 +4,7 @@ import User from "@/models/User";
 import { hashPassword, comparePassword } from "@/lib/auth";
 import { z } from "zod";
 import { verifyToken } from "@/lib/jwt";
+import { getTokenFromRequest } from "@/lib/auth-utils";
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
@@ -12,9 +13,7 @@ const changePasswordSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
-    const token =
-      req.cookies.get("token")?.value ||
-      req.headers.get("Authorization")?.substring(7);
+    const token = getTokenFromRequest(req);
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }

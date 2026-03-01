@@ -3,6 +3,7 @@ import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import { hashPassword } from "@/lib/auth";
 import { verifyToken } from "@/lib/jwt";
+import { getTokenFromRequest } from "@/lib/auth-utils";
 import { z } from "zod";
 
 const updateUserSchema = z.object({
@@ -13,7 +14,7 @@ const updateUserSchema = z.object({
 });
 
 async function getUserFromRequest(req: NextRequest) {
-  const token = req.cookies.get("token")?.value;
+  const token = getTokenFromRequest(req);
   if (!token) return null;
   try {
     const payload = await verifyToken(token);

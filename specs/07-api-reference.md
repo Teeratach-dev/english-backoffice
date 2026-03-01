@@ -3,7 +3,7 @@
 ## Overview
 
 ระบบ REST API สร้างด้วย Next.js App Router (Route Handlers)
-ทุก endpoint (ยกเว้น auth/login และ auth/refresh) ต้องมี valid `accessToken` cookie
+ทุก endpoint (ยกเว้น auth/login) ต้องมี valid token
 
 ## Base URL
 
@@ -13,41 +13,44 @@
 
 ## Authentication
 
-ระบบใช้ **dual-token** เก็บใน httpOnly cookie:
-- `accessToken` — ใช้ยืนยันตัวตนทุก request (อายุ 1 วัน)
-- `refreshToken` — ใช้ขอ accessToken ใหม่เมื่อหมดอายุ (อายุ 7 วัน)
-- Middleware (`src/middleware.ts`) ตรวจสอบและ auto-refresh token โดยอัตโนมัติ
+ระบบใช้ **single JWT token** รองรับ 2 วิธี:
+
+1. **Cookie** (สำหรับ browser) — httpOnly cookie ชื่อ `token` (อายุ 1 วัน) จะถูกแนบไปอัตโนมัติ
+2. **Bearer token** (สำหรับ external client) — ส่งผ่าน `Authorization: Bearer <token>` header
+
+ลำดับการตรวจสอบ: cookie ก่อน → fallback เป็น Bearer header
+
+Token ดึงผ่าน shared utility `src/lib/auth-utils.ts`:
+- `getTokenFromRequest(req)` — ดึง token จาก cookie หรือ Bearer header
+- `getUserIdFromRequest(req)` — ดึง + verify token แล้ว return userId
 
 ---
 
 ## Auth Endpoints
 
 ### POST `/api/auth/login`
-Login เข้าสู่ระบบ — set `accessToken` + `refreshToken` cookie
+Login เข้าสู่ระบบ — set `token` cookie + return token ใน response body
 
 **Request Body:**
 ```json
 { "email": "string", "password": "string" }
 ```
 
-**Response:** `{ message, user: { id, email, name, role }, accessToken, refreshToken }`
+**Response:**
+```json
+{
+  "message": "Login successful",
+  "token": "eyJhb...",
+  "user": { "id": "string", "email": "string", "name": "string", "role": "string" }
+}
+```
+
+> External client สามารถเอา `token` จาก response body ไปใช้ส่งผ่าน `Authorization: Bearer <token>` header ได้
 
 ### GET `/api/auth/me`
-ดึงข้อมูล user ที่ login อยู่ (อ่านจาก `accessToken` cookie)
+ดึงข้อมูล user ที่ login อยู่ (อ่านจาก cookie หรือ Bearer token)
 
 **Response:** `{ id, email, name, role }`
-
-### POST `/api/auth/logout`
-ออกจากระบบ — clear `accessToken` + `refreshToken` cookie
-
-**Response:** `{ message: "Logged out successfully" }`
-
-### POST `/api/auth/refresh`
-ขอ `accessToken` ใหม่โดยใช้ `refreshToken` cookie (ไม่ต้องมี accessToken)
-
-**Response:** `{ message: "Token refreshed" }` พร้อม set `accessToken` cookie ใหม่
-
-**Error:** `401` ถ้าไม่มี refreshToken หรือ refreshToken invalid/หมดอายุ
 
 ### POST `/api/auth/change-password`
 เปลี่ยนรหัสผ่าน

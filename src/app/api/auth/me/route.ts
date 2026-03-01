@@ -2,10 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import dbConnect from "@/lib/db";
 import User from "@/models/User";
 import { verifyToken } from "@/lib/jwt";
+import { getTokenFromRequest } from "@/lib/auth-utils";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("token")?.value;
+    const token = getTokenFromRequest(req);
 
     if (!token) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
