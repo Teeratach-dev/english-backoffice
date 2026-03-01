@@ -1,6 +1,3 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import dbConnect from "./src/lib/db";
 import User from "./src/models/User";
 import { hashPassword } from "./src/lib/auth";
