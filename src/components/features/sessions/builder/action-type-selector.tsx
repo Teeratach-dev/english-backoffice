@@ -33,13 +33,13 @@ interface ActionTypeSelectorProps {
 
 const PREVIEWS: Record<ActionType, React.ReactNode> = {
   [ActionType.Explain]: (
-    <div className="space-y-3 p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto">
-      <div className="border rounded-md p-3 relative bg-card">
-        <div className="text-center font-bold text-lg  text-foreground">
+    <div className="space-y-3 w-full">
+      <div className="border rounded-md p-3 relative bg-background">
+        <div className="text-center font-bold text-lg text-foreground">
           Used to
         </div>
       </div>
-      <div className="border rounded-md p-3 relative bg-card">
+      <div className="border rounded-md p-3 relative bg-background">
         <p className="text-center text-sm text-card-foreground leading-loose">
           to talk about{" "}
           <span className="relative inline-block underline decoration-2 decoration-orange-400/50 underline-offset-5 font-semibold cursor-pointer text-orange-600 dark:text-orange-400">
@@ -52,10 +52,10 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
           past actions that you no longer do
         </p>
       </div>
-      <div className="border rounded-md p-3 bg-card text-center text-sm text-card-foreground">
+      <div className="border rounded-md p-3 bg-background text-center text-sm text-card-foreground">
         ใช้สำหรับสิ่งที่เคยกระทำในอนาคต แต่ปัจจุบันไม่ได้ทำแล้ว
       </div>
-      <div className="border rounded-md p-3 bg-card text-sm space-y-2 text-card-foreground">
+      <div className="border rounded-md p-3 bg-background text-sm space-y-2 text-card-foreground">
         <div className="flex items-start gap-2">
           <span>•</span>
           <p>
@@ -64,7 +64,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
           </p>
         </div>
       </div>
-      <div className="border rounded-md p-3 bg-card text-sm space-y-2 text-card-foreground">
+      <div className="border rounded-md p-3 bg-background text-sm space-y-2 text-card-foreground">
         <div className="flex items-start gap-2">
           <span>•</span>
           <p>
@@ -74,7 +74,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
           </p>
         </div>
       </div>
-      <div className="border rounded-md p-3 bg-card text-sm space-y-2 text-card-foreground">
+      <div className="border rounded-md p-3 bg-background text-sm space-y-2 text-card-foreground">
         <div className="text-right text-sm text-gray-500 mt-1">
           แต่ถ้ายังทำอยู่มาจนถึงปัจจุบัน จะไม่ใช้ used to
         </div>
@@ -82,29 +82,37 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
     </div>
   ),
   [ActionType.Reading]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto flex gap-4">
-      <div className="flex flex-col gap-3 shrink-0">
-        <Volume2 className="h-5 w-5 text-muted-foreground" />
-        <Snail className="h-5 w-5 text-muted-foreground" />
+    <div className="space-y-2">
+      <div className="p-4 border rounded-lg bg-background shadow-sm flex">
+        <p className="text-sm leading-relaxed text-card-foreground">
+          The English language is widespread and dynamic. It has become a global
+          language for business, science, and technology...
+        </p>
       </div>
-      <p className="text-[11px] leading-relaxed text-card-foreground">
-        The English language is widespread and dynamic. It has become a global
-        language for business, science, and technology...
-      </p>
+      <div className="flex justify-end gap-2 shrink-0">
+        <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+          <Volume2 className="h-5 w-5 text-muted-foreground" />
+        </div>
+        <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+          <Snail className="h-5 w-5 text-muted-foreground" />
+        </div>
+      </div>
     </div>
   ),
   [ActionType.Audio]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm flex justify-center max-w-xs mx-auto">
-      <div className="bg-muted rounded-2xl py-6 px-10 flex items-center gap-20">
-        <Volume2 className="h-10 w-10 text-muted-foreground" />
-        <div className="border border-border rounded-md p-1">
-          <Snail className="h-10 w-10 text-muted-foreground" />
+    <div className="w-full">
+      <div className="py-6 px-10 flex justify-center gap-10">
+        <div className="h-11 w-11 rounded-full border flex items-center justify-center bg-background">
+          <Volume2 className="h-6 w-6 text-muted-foreground" />
+        </div>
+        <div className="h-11 w-11 rounded-full border flex items-center justify-center bg-background">
+          <Snail className="h-6 w-6 text-muted-foreground" />
         </div>
       </div>
     </div>
   ),
   [ActionType.Chat]: (
-    <div className="space-y-8 p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto ">
+    <div className="space-y-8">
       <div className="flex items-start gap-2">
         <div className="shrink-0 flex flex-col items-center">
           <div className="h-10 w-10 rounded-full bg-purple-100 overflow-hidden flex items-center justify-center border border-purple-200">
@@ -114,25 +122,37 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="text-[10px] mt-1 text-foreground">Lily</span>
+          <span className="text-xxs mt-1 text-foreground">Lily</span>
         </div>
-        <div className="flex items-end gap-2 flex-1">
-          <div className="bg-muted rounded-2xl rounded-tl-none p-3 text-xs flex-1 text-card-foreground">
+        <div className="flex-1">
+          <div className="bg-background border rounded-2xl rounded-tl-none p-3 text-sm text-card-foreground">
             Thanks for contaction Nike! My name is Gian, how can I help you?
           </div>
-          <div className="h-7 w-7 rounded-full border flex items-center justify-center bg-muted/50 shrink-0">
-            <Volume2 className="h-4 w-4 text-muted-foreground" />
+          <div className="mt-1.5 flex gap-2">
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Volume2 className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Snail className="h-5 w-5 text-muted-foreground" />
+            </div>
           </div>
         </div>
       </div>
-      <div className="flex items-end gap-2 justify-end">
-        <div className="h-7 w-7 rounded-full border flex items-center justify-center bg-muted/50 shrink-0">
-          <Volume2 className="h-4 w-4 text-muted-foreground" />
-        </div>
-        <div className="flex items-center gap-2 flex-1 justify-end">
-          <div className="bg-primary/10 rounded-2xl rounded-br-none p-3 text-xs text-foreground">
-            Hello! I want to check if you recieved one product I returned to
-            you.
+      <div className="flex items-start gap-2 justify-end">
+        <div className="flex-1">
+          <div className="flex justify-end">
+            <div className="bg-background border rounded-2xl rounded-tr-none p-3 text-sm text-foreground">
+              Hello! I want to check if you recieved one product I returned to
+              you.
+            </div>
+          </div>
+          <div className="mt-1.5 flex justify-end gap-2">
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Volume2 className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Snail className="h-5 w-5 text-muted-foreground" />
+            </div>
           </div>
         </div>
         <div className="shrink-0 flex flex-col items-center">
@@ -143,170 +163,152 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
               className="w-full h-full object-cover"
             />
           </div>
-          <span className="text-[10px] mt-1 text-foreground">Lily</span>
+          <span className="text-xxs mt-1 text-foreground">Lily</span>
         </div>
       </div>
     </div>
   ),
   [ActionType.Image]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto">
-      <div className="aspect-video bg-muted rounded-md relative overflow-hidden flex items-center justify-center">
-        <ImageIcon className="h-12 w-12 text-muted-foreground" />
-        <div className="absolute inset-0 bg-black/5 flex items-end justify-center">
-          <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
-            alt="Character"
-            className="w-24 h-24  object-cover"
-          />
-        </div>
+    <div className="w-full h-full aspect-video relative overflow-hidden flex items-center justify-center">
+      <div className="flex items-end justify-center">
+        <img
+          src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
+          alt="Character"
+          className="w-full h-full object-cover"
+        />
       </div>
     </div>
   ),
   [ActionType.Column]: (
-    <div className="space-y-6 max-w-sm mx-auto">
+    <div className="space-y-6">
       <div className="space-y-2">
-        <p className="text-m font-medium text-muted-foreground ml-1">
+        <p className="text-sm font-medium text-muted-foreground ml-1">
           Action image + Action reading
         </p>
-        <div className="p-4 border rounded-xl bg-background shadow-sm flex items-center gap-4">
-          <div className="w-20 h-20 bg-purple-50 rounded-lg relative overflow-hidden shrink-0 flex items-center justify-center border border-purple-100">
+        <div className="flex items-center gap-4">
+          <div className="w-20 h-20 relative overflow-hidden shrink-0 flex justify-center mb-10">
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
               alt="Character"
-              className="w-16 h-16 absolute bottom-0 object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
-          <div className="flex-1 bg-muted/40 rounded-xl p-3 flex gap-3 h-full">
-            <div className="flex flex-col gap-3 shrink-0 py-1">
-              <Volume2 className="h-6 w-6 text-muted-foreground" />
-              <Snail className="h-6 w-6 text-muted-foreground" />
+          <div className="space-y-2">
+            <div className="p-4 border rounded-lg bg-background shadow-sm flex">
+              <p className="text-sm leading-relaxed text-card-foreground">
+                The English language is widespread and dynamic. It has become a
+                global language for business.
+              </p>
             </div>
-            <p className="text-sm leading-relaxed text-card-foreground">
-              Google Antigravity is an AI-powered integrated development
-              environment
-            </p>
+            <div className="flex justify-end gap-2 shrink-0">
+              <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+                <Volume2 className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+                <Snail className="h-5 w-5 text-muted-foreground" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
       <div className="space-y-2">
-        <p className="text-m font-medium text-muted-foreground ml-1">
+        <p className="text-sm font-medium text-muted-foreground ml-1">
           Action image + Action audio
         </p>
-        <div className="p-4 border rounded-xl bg-background shadow-sm flex items-center gap-4">
-          <div className="w-20 h-20 bg-purple-50 rounded-lg relative overflow-hidden shrink-0 flex items-center justify-center border border-purple-100">
+        <div className="flex items-center gap-4">
+          <div className="w-20 h-20 relative overflow-hidden shrink-0 flex justify-center">
             <img
               src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
               alt="Character"
-              className="w-16 h-16 absolute bottom-0 object-cover"
+              className="w-full h-full object-cover"
             />
           </div>
-          <div className="flex-1 bg-muted/40 rounded-xl p-4 flex items-center justify-center gap-20 h-20">
-            <Volume2 className="h-7 w-7 text-muted-foreground" />
-            <Snail className="h-7 w-7 text-muted-foreground" />
+          <div className="w-full rounded-lg">
+            <div className="py-6 px-10 flex justify-center gap-10">
+              <div className="h-11 w-11 rounded-full border flex items-center justify-center bg-background">
+                <Volume2 className="h-6 w-6 text-muted-foreground" />
+              </div>
+              <div className="h-11 w-11 rounded-full border flex items-center justify-center bg-background">
+                <Snail className="h-6 w-6 text-muted-foreground" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   ),
   [ActionType.Choice]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto flex flex-col items-center gap-3">
-      <div className="px-6 py-2 bg-muted/60 rounded-xl text-[11px] text-card-foreground shadow-sm">
+    <div className="flex flex-col items-center gap-y-3">
+      <div className="px-6 py-2 bg-background border rounded-full text-sm text-card-foreground shadow-sm">
         He is very lazy.
       </div>
-      <div className="px-6 py-2 bg-muted/60 rounded-xl text-[11px] text-card-foreground shadow-sm">
+      <div className="px-6 py-2 bg-background border rounded-full text-sm text-card-foreground shadow-sm">
         She wants to borrow Junior's game.
       </div>
-      <div className="px-6 py-2 bg-muted/60 rounded-xl text-[11px] text-card-foreground shadow-sm">
+      <div className="px-6 py-2 bg-background border rounded-full text-sm text-card-foreground shadow-sm">
         It's because the thunderstorm.
       </div>
     </div>
   ),
   [ActionType.Reorder]: (
-    <div className="space-y-4 max-w-sm mx-auto">
-      <div className="p-4 border rounded-lg bg-background shadow-sm space-y-6">
-        <div className="space-y-4">
-          <div className="border-b border-muted-foreground/30 h-1"></div>
-          <div className="border-b border-muted-foreground/30 h-1"></div>
+    <div className="space-y-2">
+      <div className="space-y-6">
+        <div className="flex gap-2 border-b border-muted-foreground/30 min-h-6">
+          <div className="px-3 py-1 mb-1 bg-background rounded-full text-sm text-card-foreground border">
+            Other
+          </div>
+          <div className="px-3 py-1 mb-1 bg-background rounded-full text-sm text-card-foreground border">
+            businessman
+          </div>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {["businessman", "me", "Other", "respect", "much", "much"].map(
-            (word, i) => (
-              <div
-                key={i}
-                className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground"
-              >
-                {word}
-              </div>
-            ),
-          )}
-        </div>
+        <div className="border-b border-muted-foreground/30 h-1"></div>
       </div>
-      <div className="p-4 border rounded-lg bg-background shadow-sm space-y-6">
-        <div className="space-y-4">
-          <div className="flex gap-2 border-b border-muted-foreground/30 min-h-6">
-            <div className="px-2 py-0.5 bg-muted/60 rounded-lg text-[10px] text-card-foreground">
-              Other
-            </div>
-            <div className="px-2 py-0.5 bg-muted/60 rounded-lg text-[10px] text-card-foreground">
-              businessman
-            </div>
-          </div>
-          <div className="border-b border-muted-foreground/30 h-1"></div>
+      <div className="flex justify-center flex-wrap gap-2">
+        <div className="w-12 h-6"></div>
+        <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground">
+          me
         </div>
-        <div className="flex justify-center flex-wrap gap-2">
-          <div className="w-12 h-6"></div>
-          <div className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground">
-            me
-          </div>
-          <div className="w-12 h-6"></div>
-          <div className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground">
-            respect
-          </div>
-          <div className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground">
-            much
-          </div>
-          <div className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground">
-            much
-          </div>
+        <div className="w-12 h-6"></div>
+        <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground">
+          respect
+        </div>
+        <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground">
+          much
+        </div>
+        <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground">
+          much
         </div>
       </div>
     </div>
   ),
   [ActionType.MatchCard]: (
     <div className="space-y-4 max-w-sm mx-auto">
-      <div className="p-4 border rounded-lg bg-background shadow-sm grid grid-cols-2 gap-x-8 gap-y-2">
+      <div className="grid grid-cols-2 gap-x-8 gap-y-2">
         {[
-          ["International", "ลำโพง"],
+          ["International", "วันหยุดพักผ่อน"],
           ["Vacations", "พายุฝนฟ้าคะนอง"],
-          ["Thunderstorm", "ลำโพง"],
-          ["New Year's Eve", "นานาชาติ"],
-          ["Speaker", "วันสิ้นปี"],
+          ["Thunderstorm", "นานาชาติ"],
         ].map(([en, th], i) => (
           <React.Fragment key={i}>
-            <div className="px-2 py-1 bg-muted/60 rounded-lg text-[10px] text-card-foreground text-center">
+            <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground text-center">
               {en}
             </div>
-            <div className="px-2 py-1 bg-muted/60 rounded-lg text-[10px] text-card-foreground text-center">
+            <div className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground text-center">
               {th}
             </div>
           </React.Fragment>
         ))}
       </div>
+      <div className="border-b" />
       {/* Text + Audio */}
-      <div className="p-4 border rounded-lg bg-background shadow-sm grid grid-cols-2 gap-x-8 gap-y-2">
-        {[
-          "International",
-          "Vacations",
-          "Thunderstorm",
-          "New Year's Eve",
-          "Speaker",
-        ].map((word, i) => (
+      <div className="grid grid-cols-2 gap-x-8 gap-y-2">
+        {["International", "Vacations", "Thunderstorm"].map((word, i) => (
           <React.Fragment key={i}>
-            <div className="px-2 py-1 bg-muted/60 rounded-lg text-[10px] text-card-foreground text-center">
+            <div className="px-2 py-1 bg-background border rounded-full text-sm text-card-foreground text-center">
               {word}
             </div>
-            <div className="px-2 py-1 bg-muted/60 rounded-lg text-muted-foreground flex justify-center">
-              <div className="p-1 bg-muted/60 rounded-lg w-10 flex justify-center">
+            <div className="px-2 py-1 bg-background border rounded-full text-muted-foreground flex justify-center">
+              <div className="p-1 flex justify-center">
                 <Volume2 className="h-3 w-3" />
               </div>
             </div>
@@ -316,7 +318,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
     </div>
   ),
   [ActionType.FillSentenceByTyping]: (
-    <div className="p-6 border rounded-lg bg-background shadow-sm max-w-sm mx-auto flex justify-center">
+    <div className="flex justify-center">
       <p className="text-sm text-card-foreground">
         He{" "}
         <span className="inline-block w-16 border-b border-foreground mx-1 translate-y-0.5"></span>{" "}
@@ -325,7 +327,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
     </div>
   ),
   [ActionType.FillSentenceWithChoice]: (
-    <div className="p-6 border rounded-lg bg-background shadow-sm max-w-sm mx-auto space-y-6">
+    <div className="space-y-6">
       <p className="text-sm text-center text-card-foreground">
         He{" "}
         <span className="inline-block w-16 border-b border-foreground mx-1 translate-y-0.5"></span>{" "}
@@ -336,7 +338,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
           (word, i) => (
             <div
               key={i}
-              className="px-3 py-1 bg-muted/60 border rounded-lg text-[10px] text-card-foreground"
+              className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground"
             >
               {word}
             </div>
@@ -346,40 +348,54 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
     </div>
   ),
   [ActionType.WriteSentence]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto">
-      <div className="p-4 border-2 border-orange-400/50 rounded-xl bg-muted/30">
-        <p className="text-sm text-card-foreground">
-          He always give me a bad grade.
-        </p>
-      </div>
+    <div className="w-full p-4 border-2 border-orange-400/50 rounded-xl bg-muted/30">
+      <p className="text-sm text-card-foreground">
+        He always give me a bad grade.
+      </p>
     </div>
   ),
   [ActionType.WriteSentenceInChat]: (
-    <div className="p-4 border rounded-lg bg-background shadow-sm max-w-sm mx-auto space-y-4">
+    <div className="space-y-4">
       <div className="flex items-start gap-2">
-        <div className="h-8 w-8 rounded-full bg-purple-100 overflow-hidden border border-purple-200 shrink-0">
-          <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
-            alt="Lily"
-            className="w-full h-full object-cover"
-          />
+        <div className="shrink-0 flex flex-col items-center">
+          <div className="h-10 w-10 rounded-full bg-purple-100 overflow-hidden flex items-center justify-center border border-purple-200">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
+              alt="Lily"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <span className="text-xxs mt-1 text-foreground">Lily</span>
         </div>
-        <div className="bg-muted rounded-2xl rounded-tl-none p-3 text-xs flex-1 text-card-foreground">
-          How are you?
+        <div className="flex-1">
+          <div className="bg-background border rounded-2xl rounded-tl-none p-3 text-sm text-card-foreground">
+            Thanks for contaction Nike! My name is Gian, how can I help you?
+          </div>
+          <div className="mt-1.5 flex gap-2">
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Volume2 className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+              <Snail className="h-5 w-5 text-muted-foreground" />
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex items-end gap-2 justify-end">
-        <div className="p-3 border-2 border-orange-400/50 rounded-xl bg-muted/30 flex-1">
+        <div className="p-3 border-2 border-orange-400/50 rounded-xl bg-muted/30 flex-1 self-start">
           <p className="text-xs text-card-foreground">
             He always give me a bad grade.
           </p>
         </div>
-        <div className="h-8 w-8 rounded-full bg-blue-100 overflow-hidden border border-blue-200 shrink-0">
-          <img
-            src="https://api.dicebear.com/7.x/avataaars/svg?seed=User"
-            alt="User"
-            className="w-full h-full object-cover"
-          />
+        <div className="shrink-0 flex flex-col items-center">
+          <div className="h-10 w-10 rounded-full bg-purple-100 overflow-hidden flex items-center justify-center border border-purple-200">
+            <img
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Lily"
+              alt="Lily"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <span className="text-xxs mt-1 text-foreground">You</span>
         </div>
       </div>
     </div>
@@ -435,13 +451,9 @@ export function ActionTypeSelector({
                     </h3>
                   </div>
 
-                  <div className="flex-1 bg-muted/30 rounded-lg overflow-hidden border border-muted flex items-center justify-center min-h-32 p-2">
-                    <div className="scale-90 sm:scale-100 origin-center transform-gpu w-full">
-                      {PREVIEWS[type]}
-                    </div>
+                  <div className="flex flex-1 overflow-hidden items-center justify-center min-h-32">
+                    {PREVIEWS[type]}
                   </div>
-
-                  {/* <div className="absolute inset-0 border-2 border-transparent group-hover:border-primary/20 rounded-xl pointer-events-none transition-colors" /> */}
                 </div>
               ))}
             </div>
