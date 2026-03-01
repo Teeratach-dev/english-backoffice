@@ -152,6 +152,7 @@ export type FillSentenceByTypingAction = {
   sentence: {
     text: string;
     isBlank: boolean;
+    inSentence: boolean;
   }[];
 };
 
