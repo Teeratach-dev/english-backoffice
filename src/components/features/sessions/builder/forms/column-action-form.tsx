@@ -71,93 +71,84 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-sm font-medium text-muted-foreground">
-            Columns ({actions.length})
-          </Label>
-          {actions.length < 2 && (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Column
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem
-                  onClick={() => handleAddAction(ActionType.Image as "image")}
-                >
-                  Image
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    handleAddAction(ActionType.Reading as "reading")
-                  }
-                >
-                  Reading
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleAddAction(ActionType.Audio as "audio")}
-                >
-                  Audio
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )}
-        </div>
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        {actions.length < 2 && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm" className="h-8">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Column
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => handleAddAction(ActionType.Image as "image")}
+              >
+                Image
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleAddAction(ActionType.Reading as "reading")}
+              >
+                Reading
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => handleAddAction(ActionType.Audio as "audio")}
+              >
+                Audio
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+      </div>
 
-        <div className="space-y-3">
-          {actions.map((subAction, index) => (
-            <div
-              key={`${subAction.type}-${index}`}
-              className="relative border rounded-lg p-2 bg-muted/10 group"
-            >
-              <div className="absolute right-2 top-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="space-y-3">
+        {actions.map((subAction, index) => (
+          <div key={`${subAction.type}-${index}`} className="relative group">
+            <div className="flex flex-row justify-between items-center">
+              <div className="rounded text-xxs text-muted-foreground uppercase tracking-wider font-medium">
+                Column {index + 1} • {subAction.type}
+              </div>
+              <div className="group-hover:opacity-100 transition-opacity">
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                  className="h-8 w-8 text-foreground/40 hover:text-primary"
                   onClick={() => handleRemoveAction(index)}
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-
-              <div className="pt-6 pr-2 pl-2 pb-2">
-                {subAction.type === ActionType.Image && (
-                  <ImageActionForm
-                    action={subAction as ImageAction}
-                    onChange={(updates) => handleUpdateAction(index, updates)}
-                  />
-                )}
-                {subAction.type === ActionType.Reading && (
-                  <ReadingActionForm
-                    action={subAction as ReadingAction}
-                    onChange={(updates) => handleUpdateAction(index, updates)}
-                  />
-                )}
-                {subAction.type === ActionType.Audio && (
-                  <AudioActionForm
-                    action={subAction as AudioAction}
-                    onChange={(updates) => handleUpdateAction(index, updates)}
-                  />
-                )}
-              </div>
-
-              <div className="absolute left-2 top-2 mx-auto px-2 py-0.5 bg-muted rounded text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
-                Column {index + 1} • {subAction.type}
-              </div>
             </div>
-          ))}
 
-          {actions.length === 0 && (
-            <div className="text-center py-8 border-2 border-dashed rounded-lg text-muted-foreground text-sm">
-              No items in this column. Add one to get started.
+            <div className="pt-0 pb-2">
+              {subAction.type === ActionType.Image && (
+                <ImageActionForm
+                  action={subAction as ImageAction}
+                  onChange={(updates) => handleUpdateAction(index, updates)}
+                />
+              )}
+              {subAction.type === ActionType.Reading && (
+                <ReadingActionForm
+                  action={subAction as ReadingAction}
+                  onChange={(updates) => handleUpdateAction(index, updates)}
+                />
+              )}
+              {subAction.type === ActionType.Audio && (
+                <AudioActionForm
+                  action={subAction as AudioAction}
+                  onChange={(updates) => handleUpdateAction(index, updates)}
+                />
+              )}
             </div>
-          )}
-        </div>
+          </div>
+        ))}
+
+        {actions.length === 0 && (
+          <div className="text-center py-8 border-2 border-dashed rounded-lg text-muted-foreground text-sm">
+            No items in this column. Add one to get started.
+          </div>
+        )}
       </div>
     </div>
   );

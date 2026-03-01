@@ -15,7 +15,7 @@ export function ImageActionForm({ action, onChange }: ImageActionFormProps) {
   }
 
   return (
-    <div className="p-4 bg-muted/30 rounded-lg border space-y-2">
+    <div className="space-y-2">
       <Label
         htmlFor="imageUrl"
         className="text-xs font-medium text-muted-foreground"

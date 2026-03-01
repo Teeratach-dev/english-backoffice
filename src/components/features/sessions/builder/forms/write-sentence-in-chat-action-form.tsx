@@ -18,7 +18,11 @@ export function WriteSentenceInChatActionForm({
   }
 
   function mapToSegments(strings: string[]): SentenceSegment[] {
-    return (strings || []).map((text) => ({ text, isBlank: false }));
+    return (strings || []).map((text) => ({
+      text,
+      isBlank: false,
+      inSentence: false,
+    }));
   }
 
   function handleSentenceChange(newSegments: SentenceSegment[]) {
@@ -30,15 +34,15 @@ export function WriteSentenceInChatActionForm({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between p-3 border rounded-xl bg-muted/30">
-        <Label className="text-[10px] font-bold uppercase text-muted-foreground">
+    <div className="space-y-6">
+      <div className="flex items-center justify-between mt-4">
+        <Label className="text-xs font-bold uppercase text-muted-foreground">
           Position
         </Label>
         <div className="flex items-center gap-2">
           <span
             className={cn(
-              "text-[10px]",
+              "text-xs",
               action.position !== "right"
                 ? "text-primary font-bold"
                 : "text-muted-foreground",
@@ -57,7 +61,7 @@ export function WriteSentenceInChatActionForm({
           />
           <span
             className={cn(
-              "text-[10px]",
+              "text-xs",
               action.position === "right"
                 ? "text-primary font-bold"
                 : "text-muted-foreground",
@@ -68,7 +72,7 @@ export function WriteSentenceInChatActionForm({
         </div>
       </div>
 
-      <div className="border rounded-xl p-4 bg-muted/5">
+      <div className="">
         <Label className="text-xs font-bold uppercase text-muted-foreground">
           Correct Sentence (Words)
         </Label>
@@ -78,7 +82,7 @@ export function WriteSentenceInChatActionForm({
         />
       </div>
 
-      <div className="border rounded-xl p-4 bg-muted/5">
+      <div className="">
         <Label className="text-xs font-bold uppercase text-muted-foreground">
           Expect Sentence (for hint and give solution)
         </Label>

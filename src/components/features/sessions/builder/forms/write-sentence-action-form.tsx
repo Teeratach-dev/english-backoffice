@@ -16,7 +16,11 @@ export function WriteSentenceActionForm({
   }
 
   function mapToSegments(strings: string[]): SentenceSegment[] {
-    return (strings || []).map((text) => ({ text, isBlank: false }));
+    return (strings || []).map((text) => ({
+      text,
+      isBlank: false,
+      inSentence: false,
+    }));
   }
 
   function handleSentenceChange(newSegments: SentenceSegment[]) {
@@ -29,29 +33,25 @@ export function WriteSentenceActionForm({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-3">
-        <Label className="text-[10px] font-bold uppercase text-muted-foreground">
+      <div className="space-y-2">
+        <Label className="text-xs font-bold uppercase text-muted-foreground">
           Correct Sentence (Words)
         </Label>
-        <div className="border rounded-xl p-4 bg-muted/5">
-          <SentenceBuilder
-            sentence={mapToSegments(action.sentence || [])}
-            onChange={handleSentenceChange}
-          />
-        </div>
+        <SentenceBuilder
+          sentence={mapToSegments(action.sentence || [])}
+          onChange={handleSentenceChange}
+        />
       </div>
 
-      <div className="space-y-3">
-        <Label className="text-[10px] font-bold uppercase text-muted-foreground">
+      <div className="space-y-2">
+        <Label className="text-xs font-bold uppercase text-muted-foreground">
           Expect Sentence (for hint and give solution)
         </Label>
-        <div className="border rounded-xl p-4 bg-muted/5">
-          <SentenceBuilder
-            sentence={mapToSegments(action.expectSentence || [])}
-            isShowSuggestion={false}
-            onChange={handleExpectSentenceChange}
-          />
-        </div>
+        <SentenceBuilder
+          sentence={mapToSegments(action.expectSentence || [])}
+          isShowSuggestion={false}
+          onChange={handleExpectSentenceChange}
+        />
       </div>
     </div>
   );

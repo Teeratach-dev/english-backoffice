@@ -196,7 +196,7 @@ export function SortableScreenCard({
                                   Close Editor
                                 </Button>
                               </CardHeader>
-                              <CardContent className="p-4 lg:p-6">
+                              <CardContent className="p-2">
                                 <ActionContentEditor
                                   action={activeActionInScreen}
                                   onChange={(updates) =>

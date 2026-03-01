@@ -7,6 +7,7 @@ import { Edit3, Check, MousePointerClick, Info } from "lucide-react";
 export interface SentenceSegment {
   text: string;
   isBlank: boolean;
+  inSentence: boolean;
   [key: string]: any; // Allow other properties
 }
 
@@ -41,6 +42,7 @@ export function SentenceBuilder({
       .map((text) => ({
         text,
         isBlank: false,
+        inSentence: true,
         // We lose other properties here because the structure changed completely
       }));
 
@@ -60,14 +62,14 @@ export function SentenceBuilder({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between pb-2 border-b">
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Label className="text-xs font-bold uppercase text-muted-foreground">
+          <Label className="text-[10px] font-bold uppercase text-muted-foreground">
             Sentence Editor
           </Label>
           {!isBulkEditing && (
-            <span className="text-[10px] bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+            <span className="text-xxs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
               {(sentence || []).length} words
             </span>
           )}
@@ -123,7 +125,7 @@ export function SentenceBuilder({
         </div>
       ) : (
         <div className="space-y-4 animate-in fade-in duration-200">
-          <div className="p-4 bg-muted/10 rounded-xl border min-h-25 flex flex-wrap gap-2 content-start">
+          <div className="p-2 bg-muted/10 rounded-xl border min-h-25 flex flex-wrap gap-2 content-start">
             {(sentence || []).length === 0 ? (
               <div className="w-full h-full flex flex-col items-center justify-center py-8 text-muted-foreground gap-2">
                 <p className="text-sm">No words yet.</p>
@@ -136,23 +138,25 @@ export function SentenceBuilder({
                 </Button>
               </div>
             ) : (
-              (sentence || []).map((segment, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => toggleBlank(idx)}
-                  className={cn(
-                    "px-3 py-1.5 rounded-lg text-sm font-medium cursor-pointer transition-all duration-200 select-none border border-transparent flex items-center gap-1.5",
-                    segment.isBlank
-                      ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800"
-                      : "bg-card border-border shadow-sm hover:border-primary/50 hover:shadow-md",
-                  )}
-                >
-                  {segment.text}
-                  {segment.isBlank && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                  )}
-                </div>
-              ))
+              (sentence || [])
+                .filter((segment) => segment.inSentence)
+                .map((segment, idx) => (
+                  <div
+                    key={idx}
+                    onClick={() => toggleBlank(idx)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 select-none border flex items-center gap-1.5 bg-background",
+                      segment.isBlank
+                        ? "bg-orange-100 text-orange-700 border-orange-200 dark:bg-orange-900/30 dark:text-orange-300 dark:border-orange-800"
+                        : "bg-card border-border shadow-sm hover:border-primary/50 hover:shadow-md",
+                    )}
+                  >
+                    {segment.text}
+                    {segment.isBlank && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+                    )}
+                  </div>
+                ))
             )}
           </div>
 

@@ -62,8 +62,8 @@ export function FillSentenceWithChoiceActionForm({
 
   return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <div className="bg-muted/10 p-4 rounded-xl border">
+      <div className="space-y-6">
+        <div className="">
           <Label className="text-xs font-bold uppercase text-muted-foreground mb-4 block">
             Step 1: Edit Sentence & Mark Blanks
           </Label>
@@ -74,7 +74,7 @@ export function FillSentenceWithChoiceActionForm({
         </div>
 
         {/* Step 2: Configure Properties (Distractors) */}
-        <div className="bg-muted/10 p-4 rounded-xl border space-y-4">
+        <div className="space-y-4">
           <Label className="text-xs font-bold uppercase text-muted-foreground block">
             Step 2: Configure Distractors (Hidden from Sentence)
           </Label>

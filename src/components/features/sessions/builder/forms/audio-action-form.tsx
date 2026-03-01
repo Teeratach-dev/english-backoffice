@@ -21,7 +21,7 @@ export function AudioActionForm({ action, onChange }: AudioActionFormProps) {
 
   return (
     <div className="space-y-4">
-      <div className="p-4 bg-muted/30 rounded-lg border space-y-2">
+      <div className="space-y-2">
         <Label
           htmlFor="audio"
           className="text-xs font-medium text-muted-foreground"
