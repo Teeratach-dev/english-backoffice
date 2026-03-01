@@ -1,3 +1,6 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import dbConnect from "./src/lib/db";
 import User from "./src/models/User";
 import { hashPassword } from "./src/lib/auth";
@@ -6,8 +9,12 @@ async function seed() {
   try {
     await dbConnect();
 
-    const email = "teeratach@english.com";
-    const password = "@TeN123456";
+    const email = process.env.SUPER_ADMIN_EMAIL;
+    const password = process.env.SUPER_ADMIN_PASSWORD;
+
+    if (!email || !password) {
+      throw new Error("SUPER_ADMIN_EMAIL and SUPER_ADMIN_PASSWORD must be set in .env");
+    }
     const name = "Super Admin";
 
     const existingUser = await User.findOne({ email });
