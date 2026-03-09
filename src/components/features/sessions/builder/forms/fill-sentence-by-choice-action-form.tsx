@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { FillSentenceWithChoiceAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
+import { MarginFields } from "./margin-fields";
 
 interface FillSentenceWithChoiceActionFormProps {
   action: FillSentenceWithChoiceAction;
@@ -62,6 +63,11 @@ export function FillSentenceWithChoiceActionForm({
 
   return (
     <div className="space-y-6">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="space-y-6">
         <div className="">
           <Label className="text-xs font-bold uppercase text-muted-foreground mb-4 block">

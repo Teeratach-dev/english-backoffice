@@ -80,9 +80,17 @@ export type Word = {
 };
 
 // =============================================
+// Action Common Fields
+// =============================================
+export type ActionCommon = {
+  marginTop: number;
+  marginBottom: number;
+};
+
+// =============================================
 // Action Types (Union)
 // =============================================
-export type ExplainAction = {
+export type ExplainAction = ActionCommon & {
   type: "explain";
   text: Word[];
   alignment: "left" | "center" | "right";
@@ -90,7 +98,7 @@ export type ExplainAction = {
   explanation?: string;
 };
 
-export type ReadingAction = {
+export type ReadingAction = ActionCommon & {
   type: "reading";
   text: Word[];
   audioUrl?: string;
@@ -98,12 +106,12 @@ export type ReadingAction = {
   isReadable: boolean;
 };
 
-export type AudioAction = {
+export type AudioAction = ActionCommon & {
   type: "audio";
   audio: string;
 };
 
-export type ChatAction = {
+export type ChatAction = ActionCommon & {
   type: "chat";
   sender: { name: string; imageUrl: string };
   position: "left" | "right";
@@ -113,17 +121,17 @@ export type ChatAction = {
   isReadable: boolean;
 };
 
-export type ImageAction = {
+export type ImageAction = ActionCommon & {
   type: "image";
   url: string;
 };
 
-export type ColumnAction = {
+export type ColumnAction = ActionCommon & {
   type: "column";
   actions: Array<ImageAction | ReadingAction | AudioAction>;
 };
 
-export type ChoiceAction = {
+export type ChoiceAction = ActionCommon & {
   type: "choice";
   items: {
     text: Word;
@@ -131,7 +139,7 @@ export type ChoiceAction = {
   }[];
 };
 
-export type ReorderAction = {
+export type ReorderAction = ActionCommon & {
   type: "reorder";
   items: {
     text: Word;
@@ -139,7 +147,7 @@ export type ReorderAction = {
   }[];
 };
 
-export type MatchCardAction = {
+export type MatchCardAction = ActionCommon & {
   type: "match_card";
   items: {
     left: { text?: string; audioUrl?: string };
@@ -147,7 +155,7 @@ export type MatchCardAction = {
   }[];
 };
 
-export type FillSentenceByTypingAction = {
+export type FillSentenceByTypingAction = ActionCommon & {
   type: "fill_sentence_by_typing";
   sentence: {
     text: string;
@@ -156,7 +164,7 @@ export type FillSentenceByTypingAction = {
   }[];
 };
 
-export type FillSentenceWithChoiceAction = {
+export type FillSentenceWithChoiceAction = ActionCommon & {
   type: "fill_sentence_with_choice";
   sentence: {
     text: Word;
@@ -165,13 +173,13 @@ export type FillSentenceWithChoiceAction = {
   }[];
 };
 
-export type WriteSentenceAction = {
+export type WriteSentenceAction = ActionCommon & {
   type: "write_sentence";
   sentence: string[];
   expectSentence?: string[];
 };
 
-export type WriteSentenceInChatAction = {
+export type WriteSentenceInChatAction = ActionCommon & {
   type: "write_sentence_in_chat";
   sentence: string[];
   expectSentence?: string[];
@@ -206,11 +214,19 @@ export type Screen = {
 // Default content for each action type
 // =============================================
 export function getDefaultContent(type: ActionType): Action {
+  const margins = { marginTop: 0, marginBottom: 0 };
   switch (type) {
     case ActionType.Explain:
-      return { type: "explain", text: [], alignment: "left", size: 16 };
+      return {
+        ...margins,
+        type: "explain",
+        text: [],
+        alignment: "left",
+        size: 16,
+      };
     case ActionType.Reading:
       return {
+        ...margins,
         type: "reading",
         text: [],
         audioUrl: "",
@@ -218,9 +234,10 @@ export function getDefaultContent(type: ActionType): Action {
         isReadable: true,
       };
     case ActionType.Audio:
-      return { type: "audio", audio: "" };
+      return { ...margins, type: "audio", audio: "" };
     case ActionType.Chat:
       return {
+        ...margins,
         type: "chat",
         sender: { name: "", imageUrl: "" },
         position: "left",
@@ -230,24 +247,35 @@ export function getDefaultContent(type: ActionType): Action {
         isReadable: true,
       };
     case ActionType.Image:
-      return { type: "image", url: "" };
+      return { ...margins, type: "image", url: "" };
     case ActionType.Column:
-      return { type: "column", actions: [] };
+      return { ...margins, type: "column", actions: [] };
     case ActionType.Choice:
-      return { type: "choice", items: [] };
+      return { ...margins, type: "choice", items: [] };
     case ActionType.Reorder:
-      return { type: "reorder", items: [] };
+      return { ...margins, type: "reorder", items: [] };
     case ActionType.MatchCard:
-      return { type: "match_card", items: [] };
+      return { ...margins, type: "match_card", items: [] };
     case ActionType.FillSentenceByTyping:
-      return { type: "fill_sentence_by_typing", sentence: [] };
+      return { ...margins, type: "fill_sentence_by_typing", sentence: [] };
     case ActionType.FillSentenceWithChoice:
-      return { type: "fill_sentence_with_choice", sentence: [] };
+      return { ...margins, type: "fill_sentence_with_choice", sentence: [] };
     case ActionType.WriteSentence:
-      return { type: "write_sentence", sentence: [] };
+      return { ...margins, type: "write_sentence", sentence: [] };
     case ActionType.WriteSentenceInChat:
-      return { type: "write_sentence_in_chat", sentence: [], position: "left" };
+      return {
+        ...margins,
+        type: "write_sentence_in_chat",
+        sentence: [],
+        position: "left",
+      };
     default:
-      return { type: "explain", text: [], alignment: "left", size: 16 };
+      return {
+        ...margins,
+        type: "explain",
+        text: [],
+        alignment: "left",
+        size: 16,
+      };
   }
 }

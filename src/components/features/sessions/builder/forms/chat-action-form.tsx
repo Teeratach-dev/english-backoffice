@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AlignLeft, AlignRight } from "lucide-react";
+import { MarginFields } from "./margin-fields";
 
 interface ChatActionFormProps {
   action: ChatAction;
@@ -30,6 +31,11 @@ export function ChatActionForm({ action, onChange }: ChatActionFormProps) {
 
   return (
     <div className="space-y-6">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="grid grid-cols-2 gap-4 p-4 bg-muted/30 rounded-lg border">
         {/* Sender Info */}
         <div className="space-y-4 col-span-2">

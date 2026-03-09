@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import React from "react";
+import { MarginFields } from "./margin-fields";
 
 const FONT_SIZES = Array.from(
   { length: (144 - 2) / 2 + 1 },
@@ -97,6 +98,11 @@ export function ExplainActionForm({
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1">
           <Label className="text-xs">Alignment</Label>

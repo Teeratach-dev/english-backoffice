@@ -1,5 +1,6 @@
 import { FillSentenceByTypingAction } from "@/types/action.types";
 import { SentenceBuilder } from "./common/sentence-builder";
+import { MarginFields } from "./margin-fields";
 
 interface FillSentenceByTypingActionFormProps {
   action: FillSentenceByTypingAction;
@@ -15,9 +16,16 @@ export function FillSentenceByTypingActionForm({
   };
 
   return (
-    <SentenceBuilder
-      sentence={action.sentence || []}
-      onChange={(newSentence) => updateAction({ sentence: newSentence })}
-    />
+    <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
+      <SentenceBuilder
+        sentence={action.sentence || []}
+        onChange={(newSentence) => updateAction({ sentence: newSentence })}
+      />
+    </div>
   );
 }

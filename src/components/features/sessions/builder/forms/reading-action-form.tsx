@@ -5,6 +5,7 @@ import { RichWordEditor } from "../rich-word-editor";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { MarginFields } from "./margin-fields";
 
 interface ReadingActionFormProps {
   action: ReadingAction;
@@ -21,6 +22,11 @@ export function ReadingActionForm({
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => handleChange(updates)}
+      />
       <div className="flex gap-4 p-4 bg-muted/30 rounded-lg border">
         {/* Is Hide Toggle */}
         <div className="flex items-center space-x-2">

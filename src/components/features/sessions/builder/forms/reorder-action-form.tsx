@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2 } from "lucide-react";
+import { MarginFields } from "./margin-fields";
 
 interface ReorderActionFormProps {
   action: ReorderAction;
@@ -62,6 +63,11 @@ export function ReorderActionForm({
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => onChange(updates)}
+      />
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-semibold">Reorder Items</Label>

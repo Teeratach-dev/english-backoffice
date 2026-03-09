@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Trash2 } from "lucide-react";
+import { MarginFields } from "./margin-fields";
 
 interface MatchCardActionFormProps {
   action: MatchCardAction;
@@ -84,6 +85,11 @@ export function MatchCardActionForm({
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="flex items-center justify-between">
         <Label className="text-xs uppercase font-bold text-muted-foreground">
           Pairs

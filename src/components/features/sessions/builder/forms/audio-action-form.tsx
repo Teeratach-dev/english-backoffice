@@ -3,6 +3,7 @@
 import { AudioAction } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MarginFields } from "./margin-fields";
 
 interface AudioActionFormProps {
   action: AudioAction;
@@ -21,6 +22,11 @@ export function AudioActionForm({ action, onChange }: AudioActionFormProps) {
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => handleChange(updates)}
+      />
       <div className="space-y-2">
         <Label
           htmlFor="audio"

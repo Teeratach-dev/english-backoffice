@@ -3,6 +3,7 @@ import { WriteSentenceInChatAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
+import { MarginFields } from "./margin-fields";
 
 interface WriteSentenceInChatActionFormProps {
   action: WriteSentenceInChatAction;
@@ -35,6 +36,11 @@ export function WriteSentenceInChatActionForm({
 
   return (
     <div className="space-y-6">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="flex items-center justify-between mt-4">
         <Label className="text-xs font-bold uppercase text-muted-foreground">
           Position

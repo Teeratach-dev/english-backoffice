@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Plus, Trash2, CheckCircle2, Circle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { MarginFields } from "./margin-fields";
 
 interface ChoiceActionFormProps {
   action: ChoiceAction;
@@ -66,6 +67,11 @@ export function ChoiceActionForm({ action, onChange }: ChoiceActionFormProps) {
 
   return (
     <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => onChange(updates)}
+      />
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-semibold">Choices</Label>

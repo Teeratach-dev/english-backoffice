@@ -19,6 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import { MarginFields } from "./margin-fields";
 
 interface ColumnActionFormProps {
   action: ColumnAction;
@@ -31,12 +32,14 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
   function handleAddAction(type: "image" | "reading" | "audio") {
     let newAction: ImageAction | ReadingAction | AudioAction;
 
+    const margins = { marginTop: 0, marginBottom: 0 };
     switch (type) {
       case "image":
-        newAction = { type: ActionType.Image, url: "" };
+        newAction = { ...margins, type: ActionType.Image, url: "" };
         break;
       case "reading":
         newAction = {
+          ...margins,
           type: ActionType.Reading,
           text: [],
           isHide: false,
@@ -44,7 +47,7 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
         };
         break;
       case "audio":
-        newAction = { type: ActionType.Audio, audio: "" };
+        newAction = { ...margins, type: ActionType.Audio, audio: "" };
         break;
     }
 
@@ -71,7 +74,12 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => onChange(updates)}
+      />
       <div className="flex items-center justify-between">
         {actions.length < 2 && (
           <DropdownMenu>

@@ -24,12 +24,15 @@ export function PhonePreview({ actions }: PhonePreviewProps) {
 
         {/* Screen Content */}
         <ScrollArea className="flex-1 w-full relative">
-          <div className="px-4 py-4 space-y-4 ">
+          <div className="px-4 py-4">
             {actions.map((action, idx) => (
               <div
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 key={(action as any).id || idx}
-                className=""
+                style={{
+                  marginTop: `${action.marginTop || 0}px`,
+                  marginBottom: `${action.marginBottom || 0}px`,
+                }}
               >
                 <SessionPreview
                   action={action}

@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { WriteSentenceAction } from "@/types/action.types";
 import { SentenceBuilder, SentenceSegment } from "./common/sentence-builder";
+import { MarginFields } from "./margin-fields";
 
 interface WriteSentenceActionFormProps {
   action: WriteSentenceAction;
@@ -33,6 +34,11 @@ export function WriteSentenceActionForm({
 
   return (
     <div className="space-y-6">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => updateAction(updates)}
+      />
       <div className="space-y-2">
         <Label className="text-xs font-bold uppercase text-muted-foreground">
           Correct Sentence (Words)

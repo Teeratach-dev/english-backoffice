@@ -3,6 +3,7 @@
 import { ImageAction } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MarginFields } from "./margin-fields";
 
 interface ImageActionFormProps {
   action: ImageAction;
@@ -15,7 +16,12 @@ export function ImageActionForm({ action, onChange }: ImageActionFormProps) {
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
+      <MarginFields
+        marginTop={action.marginTop}
+        marginBottom={action.marginBottom}
+        onChange={(updates) => handleChange(updates)}
+      />
       <Label
         htmlFor="imageUrl"
         className="text-xs font-medium text-muted-foreground"

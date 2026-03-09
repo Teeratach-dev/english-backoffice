@@ -16,6 +16,8 @@ export const WordSchema = z.object({
 const BaseActionSchema = z.object({
   id: z.string().optional(),
   sequence: z.number(),
+  marginTop: z.number().default(0),
+  marginBottom: z.number().default(0),
 });
 
 export const ExplainActionSchema = BaseActionSchema.extend({
