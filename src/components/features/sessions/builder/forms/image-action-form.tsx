@@ -22,19 +22,40 @@ export function ImageActionForm({ action, onChange }: ImageActionFormProps) {
         marginBottom={action.marginBottom}
         onChange={(updates) => handleChange(updates)}
       />
-      <Label
-        htmlFor="imageUrl"
-        className="text-xs font-medium text-muted-foreground"
-      >
-        Image URL
-      </Label>
-      <Input
-        id="imageUrl"
-        placeholder="https://example.com/image.png"
-        value={action.url || ""}
-        onChange={(e) => handleChange({ url: e.target.value })}
-        className="h-9 text-sm"
-      />
+      <div>
+        <Label
+          htmlFor="imageHeight"
+          className="text-xs font-medium text-muted-foreground"
+        >
+          Height (px)
+        </Label>
+        <Input
+          id="imageHeight"
+          type="number"
+          min={50}
+          placeholder="300"
+          value={action.height}
+          onChange={(e) =>
+            handleChange({ height: Number(e.target.value) || 200 })
+          }
+          className="h-9 text-sm"
+        />
+      </div>
+      <div>
+        <Label
+          htmlFor="imageUrl"
+          className="text-xs font-medium text-muted-foreground"
+        >
+          Image URL
+        </Label>
+        <Input
+          id="imageUrl"
+          placeholder="https://example.com/image.png"
+          value={action.url || ""}
+          onChange={(e) => handleChange({ url: e.target.value })}
+          className="h-9 text-sm"
+        />
+      </div>
     </div>
   );
 }

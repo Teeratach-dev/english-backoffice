@@ -35,9 +35,9 @@ interface SessionPreviewProps {
 
 export function SessionPreview({
   action,
-  isShowShadow = true,
+  isShowShadow = false,
   isHoverEffect = true,
-  useBorder = true,
+  useBorder = false,
 }: SessionPreviewProps) {
   if (!action) {
     return (

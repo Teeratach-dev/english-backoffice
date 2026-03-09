@@ -124,6 +124,7 @@ export type ChatAction = ActionCommon & {
 export type ImageAction = ActionCommon & {
   type: "image";
   url: string;
+  height: number;
 };
 
 export type ColumnRatio = "1:1" | "1:2" | "1:3";
@@ -250,7 +251,7 @@ export function getDefaultContent(type: ActionType): Action {
         isReadable: true,
       };
     case ActionType.Image:
-      return { ...margins, type: "image", url: "" };
+      return { ...margins, type: "image", url: "", height: 200 };
     case ActionType.Column:
       return { ...margins, type: "column", ratio: "1:1", actions: [] };
     case ActionType.Choice:

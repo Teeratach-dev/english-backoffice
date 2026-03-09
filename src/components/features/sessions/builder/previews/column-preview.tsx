@@ -13,8 +13,8 @@ interface ColumnPreviewProps {
 
 export function ColumnPreview({
   action,
-  isShowShadow = true,
-  useBorder = true,
+  isShowShadow = false,
+  useBorder = false,
 }: ColumnPreviewProps) {
   const actions = action.actions || [];
 
@@ -44,7 +44,7 @@ export function ColumnPreview({
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className={`grid ${gridClass} gap-4 items-center`}>
+      <div className={`grid ${gridClass} gap-4 items-start`}>
         {actions.map((subAction, index) => (
           <div key={index} className={`w-full ${colSpans[index] || ""}`}>
             {subAction.type === ActionType.Image && (

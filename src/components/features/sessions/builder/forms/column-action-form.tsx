@@ -43,7 +43,12 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
     const margins = { marginTop: 0, marginBottom: 0 };
     switch (type) {
       case "image":
-        newAction = { ...margins, type: ActionType.Image, url: "" };
+        newAction = {
+          ...margins,
+          type: ActionType.Image,
+          url: "",
+          height: 200,
+        };
         break;
       case "reading":
         newAction = {
