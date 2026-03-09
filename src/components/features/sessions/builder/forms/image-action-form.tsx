@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ImageAction } from "@/types/action.types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +12,12 @@ interface ImageActionFormProps {
 }
 
 export function ImageActionForm({ action, onChange }: ImageActionFormProps) {
+  const [heightValue, setHeightValue] = useState(String(action.height));
+
+  useEffect(() => {
+    setHeightValue(String(action.height));
+  }, [action.height]);
+
   function handleChange(updates: Partial<ImageAction>) {
     onChange(updates);
   }
@@ -34,10 +41,19 @@ export function ImageActionForm({ action, onChange }: ImageActionFormProps) {
           type="number"
           min={50}
           placeholder="300"
-          value={action.height}
-          onChange={(e) =>
-            handleChange({ height: Number(e.target.value) || 200 })
-          }
+          value={heightValue}
+          onChange={(e) => {
+            setHeightValue(e.target.value);
+            const num = Number(e.target.value);
+            if (!isNaN(num) && e.target.value !== "")
+              handleChange({ height: num });
+          }}
+          onBlur={() => {
+            const parsed = Number(heightValue);
+            const num = isNaN(parsed) || parsed < 0 ? 0 : parsed;
+            setHeightValue(String(num));
+            handleChange({ height: num });
+          }}
           className="h-9 text-sm"
         />
       </div>
