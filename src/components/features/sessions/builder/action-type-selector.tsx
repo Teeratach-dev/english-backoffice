@@ -46,7 +46,7 @@ const PREVIEWS: Record<ActionType, React.ReactNode> = {
             repeated
             <span className="absolute left-1/2 -translate-x-1/2 top-full mt-2.5 bg-orange-400 text-white text-[10px] font-bold px-3 py-1.5 rounded-xl shadow-lg whitespace-nowrap z-10 animate-in fade-in zoom-in duration-200">
               ซ้ำ ๆ
-              <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-400 rotate-45 rounded-sm"></div>
+              <span className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-orange-400 rotate-45 rounded-sm block"></span>
             </span>
           </span>{" "}
           past actions that you no longer do
