@@ -217,7 +217,7 @@ export type Screen = {
 // Default content for each action type
 // =============================================
 export function getDefaultContent(type: ActionType): Action {
-  const margins = { marginTop: 0, marginBottom: 0 };
+  const margins = { marginTop: 10, marginBottom: 0 };
   switch (type) {
     case ActionType.Explain:
       return {
