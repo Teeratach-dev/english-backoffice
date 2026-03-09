@@ -81,6 +81,8 @@ Session "Vocab 2":
           "id": "uuid-1-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "คำคุณศัพท์พื้นฐานที่ควรรู้", "translation": [], "isBlank": false, "bold": true }
           ],
@@ -91,10 +93,15 @@ Session "Vocab 2":
           "id": "uuid-1-2",
           "type": "column",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "actions": [
             {
               "type": "image",
-              "url": ""
+              "url": "",
+              "height": 200,
+              "marginTop": 10,
+              "marginBottom": 0
             },
             {
               "type": "reading",
@@ -103,9 +110,11 @@ Session "Vocab 2":
                 { "text": "=", "translation": [], "isBlank": false },
                 { "text": "ใหญ่", "translation": [], "isBlank": false }
               ],
-              "audioUrl": "",
+              "audioUrl": null,
               "isHide": false,
-              "isReadable": true
+              "isReadable": true,
+              "marginTop": 10,
+              "marginBottom": 0
             }
           ]
         }
@@ -119,6 +128,8 @@ Session "Vocab 2":
           "id": "uuid-2-1",
           "type": "reading",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "big", "translation": ["ใหญ่"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "(ใหญ่)", "translation": [], "isBlank": false },
@@ -128,7 +139,7 @@ Session "Vocab 2":
             { "text": "is", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "big.", "translation": ["ใหญ่"], "isBlank": false, "bold": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -136,6 +147,8 @@ Session "Vocab 2":
           "id": "uuid-2-2",
           "type": "reading",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "small", "translation": ["เล็ก"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "(เล็ก)", "translation": [], "isBlank": false },
@@ -145,7 +158,7 @@ Session "Vocab 2":
             { "text": "is", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "small.", "translation": ["เล็ก"], "isBlank": false, "bold": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -153,6 +166,8 @@ Session "Vocab 2":
           "id": "uuid-2-3",
           "type": "reading",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "tall", "translation": ["สูง"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "(สูง)", "translation": [], "isBlank": false },
@@ -161,7 +176,7 @@ Session "Vocab 2":
             { "text": "is", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "tall.", "translation": ["สูง"], "isBlank": false, "bold": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -169,6 +184,8 @@ Session "Vocab 2":
           "id": "uuid-2-4",
           "type": "reading",
           "sequence": 3,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "beautiful", "translation": ["สวยงาม"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "(สวยงาม)", "translation": [], "isBlank": false },
@@ -177,7 +194,7 @@ Session "Vocab 2":
             { "text": "is", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "beautiful.", "translation": ["สวยงาม"], "isBlank": false, "bold": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         }
@@ -191,6 +208,8 @@ Session "Vocab 2":
           "id": "uuid-3-1",
           "type": "match_card",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             { "left": { "text": "big" }, "right": { "text": "ใหญ่" } },
             { "left": { "text": "small" }, "right": { "text": "เล็ก" } },
@@ -208,6 +227,8 @@ Session "Vocab 2":
           "id": "uuid-4-1",
           "type": "choice",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "ใหญ่", "translation": [], "isBlank": false },

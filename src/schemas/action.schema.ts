@@ -25,6 +25,7 @@ export const ExplainActionSchema = BaseActionSchema.extend({
   text: z.array(WordSchema),
   alignment: z.enum(["left", "center", "right"]).default("left"),
   size: z.number().default(16),
+  explanation: z.string().optional(),
 });
 
 export const ReadingActionSchema = BaseActionSchema.extend({
@@ -56,6 +57,7 @@ export const ChatActionSchema = BaseActionSchema.extend({
 export const ImageActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.Image),
   url: z.string(),
+  height: z.number().default(200),
 });
 
 // Recursive schema for ColumnAction might be tricky in Zod.
@@ -115,6 +117,7 @@ export const FillSentenceByTypingActionSchema = BaseActionSchema.extend({
     z.object({
       text: z.string(),
       isBlank: z.boolean(),
+      inSentence: z.boolean().default(true),
     }),
   ),
 });

@@ -73,6 +73,8 @@ Screen 2: "Comprehension"
           "id": "uuid-1-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "ฟังบทสนทนาต่อไปนี้แล้วตอบคำถาม", "translation": [], "isBlank": false, "bold": true }
           ],
@@ -83,12 +85,16 @@ Screen 2: "Comprehension"
           "id": "uuid-1-2",
           "type": "audio",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "audio": ""
         },
         {
           "id": "uuid-1-3",
           "type": "chat",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Anna", "imageUrl": "" },
           "position": "left",
           "text": [
@@ -98,7 +104,7 @@ Screen 2: "Comprehension"
             { "text": "beautiful", "translation": ["สวยงาม"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "park.", "translation": ["สวนสาธารณะ"], "isBlank": false }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         },
@@ -106,6 +112,8 @@ Screen 2: "Comprehension"
           "id": "uuid-1-4",
           "type": "chat",
           "sequence": 3,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Ben", "imageUrl": "" },
           "position": "right",
           "text": [
@@ -116,7 +124,7 @@ Screen 2: "Comprehension"
             { "text": "are", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "colorful.", "translation": ["สีสันสดใส"], "isBlank": false, "bold": true, "highlight": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         }
@@ -130,12 +138,16 @@ Screen 2: "Comprehension"
           "id": "uuid-2-1",
           "type": "audio",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "audio": ""
         },
         {
           "id": "uuid-2-2",
           "type": "explain",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "Anna", "translation": [], "isBlank": false },
             { "text": "said", "translation": ["พูดว่า"], "isBlank": false },
@@ -151,6 +163,8 @@ Screen 2: "Comprehension"
           "id": "uuid-2-3",
           "type": "choice",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "beautiful", "translation": ["สวยงาม"], "isBlank": false },
@@ -176,12 +190,16 @@ Screen 2: "Comprehension"
           "id": "uuid-3-1",
           "type": "audio",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "audio": ""
         },
         {
           "id": "uuid-3-2",
           "type": "fill_sentence_with_choice",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             {
               "text": { "text": "The", "translation": [], "isBlank": false },
@@ -224,7 +242,7 @@ Screen 2: "Comprehension"
 ## Guidelines เฉพาะ Listening
 
 1. **Audio URL ใส่ "" เสมอ** — เป็น placeholder ยังไม่มี audio จริง
-2. **Chat actions ต้องมี audioUrl** — แม้จะเป็น "" เพื่อรองรับ audio ในอนาคต
+2. **Chat actions ต้องมี audioUrl** — ใส่ `null` เป็น placeholder เพื่อรองรับ audio ในอนาคต
 3. **คำถามต้องตอบได้จากสิ่งที่ฟัง** — ไม่ต้องเดา ไม่ต้องรู้นอกเหนือจากบทสนทนา
 4. **บทสนทนาต้องชัดเจน** — ใช้ประโยคง่าย ไม่กำกวม
 5. **fill_sentence_with_choice ต้องมี distractors** — items ที่ `inSentence: false` คือ distractors

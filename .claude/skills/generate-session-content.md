@@ -133,11 +133,11 @@ CEFR: A1 | Screens: X
 Script template:
 
 ```typescript
-import dbConnect from "./src/lib/db";
-import Topic from "./src/models/Topic";
-import SessionGroup from "./src/models/SessionGroup";
-import SessionDetail from "./src/models/SessionDetail";
-import User from "./src/models/User";
+import dbConnect from "../src/lib/db";
+import Topic from "../src/models/Topic";
+import SessionGroup from "../src/models/SessionGroup";
+import SessionDetail from "../src/models/SessionDetail";
+import User from "../src/models/User";
 import mongoose from "mongoose";
 
 const UNIT_ID = "<unitId>";
@@ -148,11 +148,11 @@ function uuid() {
 }
 
 function w(text: string, translation: string[] = [], options: Record<string, any> = {}): any {
-  return { text, translation, isBlank: false, audioUrl: "", ...options };
+  return { text, translation, isBlank: false, audioUrl: null, ...options };
 }
 
 function wBlank(text: string, translation: string[] = []): any {
-  return { text, translation, isBlank: true, audioUrl: "" };
+  return { text, translation, isBlank: true, audioUrl: null };
 }
 
 async function main() {
@@ -231,7 +231,7 @@ main().catch((err) => {
   "text": "beautiful",
   "translation": ["สวย", "งดงาม"],
   "isBlank": false,
-  "audioUrl": "",
+  "audioUrl": null,
   "bold": false,
   "italic": false,
   "underline": false,
@@ -249,6 +249,8 @@ main().catch((err) => {
       "id": "uuid-string",
       "type": "explain",
       "sequence": 0,
+      "marginTop": 10,
+      "marginBottom": 0,
       "text": [{ "text": "hello", "translation": ["สวัสดี"], "isBlank": false }],
       "alignment": "left",
       "size": 16

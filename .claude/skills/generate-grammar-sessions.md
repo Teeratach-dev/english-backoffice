@@ -75,6 +75,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-1-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "ตำแหน่งของ", "translation": [], "isBlank": false },
             { "text": "Adjective", "translation": ["คำคุณศัพท์"], "isBlank": false, "bold": true },
@@ -87,6 +89,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-1-2",
           "type": "explain",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "Adjective", "translation": ["คำคุณศัพท์"], "isBlank": false, "bold": true },
             { "text": "วางได้", "translation": [], "isBlank": false },
@@ -100,6 +104,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-1-3",
           "type": "explain",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "1.", "translation": [], "isBlank": false, "bold": true },
             { "text": "หน้า", "translation": [], "isBlank": false },
@@ -115,6 +121,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-1-4",
           "type": "explain",
           "sequence": 3,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "2.", "translation": [], "isBlank": false, "bold": true },
             { "text": "หลัง", "translation": [], "isBlank": false },
@@ -139,12 +147,17 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-2-1",
           "type": "image",
           "sequence": 0,
-          "url": ""
+          "marginTop": 10,
+          "marginBottom": 0,
+          "url": "",
+          "height": 200
         },
         {
           "id": "uuid-2-2",
           "type": "explain",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "Pattern:", "translation": [], "isBlank": false, "bold": true },
             { "text": "Subject", "translation": ["ประธาน"], "isBlank": false, "underline": true },
@@ -166,13 +179,15 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-3-1",
           "type": "reading",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "✓", "translation": [], "isBlank": false, "bold": true },
             { "text": "She", "translation": ["เธอ"], "isBlank": false },
             { "text": "is", "translation": ["คือ"], "isBlank": false },
             { "text": "beautiful.", "translation": ["สวยงาม"], "isBlank": false, "highlight": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -180,6 +195,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-3-2",
           "type": "reading",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "✓", "translation": [], "isBlank": false, "bold": true },
             { "text": "A", "translation": [], "isBlank": false },
@@ -188,7 +205,7 @@ Session "Grammar 2 - ข้อยกเว้น":
             { "text": "is", "translation": ["กำลัง"], "isBlank": false },
             { "text": "standing.", "translation": ["ยืน"], "isBlank": false }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -196,13 +213,15 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-3-3",
           "type": "reading",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "✗", "translation": [], "isBlank": false, "bold": true },
             { "text": "She", "translation": ["เธอ"], "isBlank": false },
             { "text": "is", "translation": ["คือ"], "isBlank": false },
             { "text": "beauty.", "translation": ["ความสวย (นาม)"], "isBlank": false, "highlight": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -210,6 +229,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-3-4",
           "type": "explain",
           "sequence": 3,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "→", "translation": [], "isBlank": false },
             { "text": "beauty", "translation": ["ความสวย"], "isBlank": false, "bold": true },
@@ -233,6 +254,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-4-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "ลองทำดู!", "translation": [], "isBlank": false, "bold": true }
           ],
@@ -243,6 +266,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-4-2",
           "type": "fill_sentence_with_choice",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             {
               "text": { "text": "The", "translation": [], "isBlank": false },
@@ -280,6 +305,8 @@ Session "Grammar 2 - ข้อยกเว้น":
           "id": "uuid-4-3",
           "type": "fill_sentence_with_choice",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             {
               "text": { "text": "He", "translation": ["เขา"], "isBlank": false },

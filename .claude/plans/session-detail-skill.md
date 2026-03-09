@@ -1,6 +1,13 @@
 แผน: Session Detail Skill
 วันที่: 2026-03-10
-สถานะ: ร่าง
+สถานะ: เสร็จสิ้น (updated 2026-03-10)
+
+> **หมายเหตุ (2026-03-10):** อัพเดท skill files ทั้งหมดให้ตรง schema ปัจจุบัน:
+> - เพิ่ม marginTop/marginBottom ใน JSON examples ทุก action
+> - เพิ่ม height: 200 ใน Image actions
+> - เปลี่ยน audioUrl: "" เป็น null ตาม Zod schema
+> - แก้ import paths ใน script template (./src → ../src)
+> - แก้ Zod schema bugs: ImageAction+height, FillSentenceByTyping+inSentence, ExplainAction+explanation
 
 ========================================
 สรุปภาพรวม

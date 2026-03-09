@@ -89,6 +89,8 @@ Screen 2: "Conversation"
           "id": "uuid-1-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "What", "translation": ["อะไร"], "isBlank": false },
             { "text": "is", "translation": ["คือ"], "isBlank": false },
@@ -102,6 +104,8 @@ Screen 2: "Conversation"
           "id": "uuid-1-2",
           "type": "explain",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "An", "translation": [], "isBlank": false },
             { "text": "adjective", "translation": ["คำคุณศัพท์"], "isBlank": false, "bold": true, "highlight": true },
@@ -126,6 +130,8 @@ Screen 2: "Conversation"
           "id": "uuid-2-1",
           "type": "reading",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "Tom", "translation": [], "isBlank": false },
             { "text": "has", "translation": ["มี"], "isBlank": false },
@@ -145,7 +151,7 @@ Screen 2: "Conversation"
             { "text": "colorful", "translation": ["สีสันสดใส"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "flowers.", "translation": ["ดอกไม้"], "isBlank": false }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isHide": false,
           "isReadable": true
         },
@@ -153,6 +159,8 @@ Screen 2: "Conversation"
           "id": "uuid-2-2",
           "type": "explain",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "คำคุณศัพท์ที่พบ:", "translation": [], "isBlank": false, "bold": true },
             { "text": "big", "translation": ["ใหญ่"], "isBlank": false, "highlight": true },
@@ -181,6 +189,8 @@ Screen 2: "Conversation"
           "id": "uuid-3-1",
           "type": "chat",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Anna", "imageUrl": "" },
           "position": "left",
           "text": [
@@ -190,7 +200,7 @@ Screen 2: "Conversation"
             { "text": "tall", "translation": ["สูง"], "isBlank": false, "bold": true, "highlight": true },
             { "text": "building!", "translation": ["อาคาร", "ตึก"], "isBlank": false }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         },
@@ -198,6 +208,8 @@ Screen 2: "Conversation"
           "id": "uuid-3-2",
           "type": "chat",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Ben", "imageUrl": "" },
           "position": "right",
           "text": [
@@ -206,7 +218,7 @@ Screen 2: "Conversation"
             { "text": "very", "translation": ["มาก"], "isBlank": false },
             { "text": "beautiful.", "translation": ["สวยงาม"], "isBlank": false, "bold": true, "highlight": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         },
@@ -214,6 +226,8 @@ Screen 2: "Conversation"
           "id": "uuid-3-3",
           "type": "chat",
           "sequence": 2,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Anna", "imageUrl": "" },
           "position": "left",
           "text": [
@@ -224,7 +238,7 @@ Screen 2: "Conversation"
             { "text": "temple", "translation": ["วัด"], "isBlank": false },
             { "text": "too.", "translation": ["ด้วย"], "isBlank": false }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         },
@@ -232,6 +246,8 @@ Screen 2: "Conversation"
           "id": "uuid-3-4",
           "type": "chat",
           "sequence": 3,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sender": { "name": "Ben", "imageUrl": "" },
           "position": "right",
           "text": [
@@ -241,7 +257,7 @@ Screen 2: "Conversation"
             { "text": "is", "translation": ["เป็น/อยู่/คือ"], "isBlank": false },
             { "text": "nice.", "translation": ["ดี", "สวย"], "isBlank": false, "bold": true, "highlight": true }
           ],
-          "audioUrl": "",
+          "audioUrl": null,
           "isDisplay": true,
           "isReadable": true
         }

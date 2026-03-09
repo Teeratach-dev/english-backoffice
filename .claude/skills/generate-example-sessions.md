@@ -76,6 +76,8 @@ Screen 3: "Summary"
           "id": "uuid-1-1",
           "type": "explain",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "text": [
             { "text": "คำไหนเป็น", "translation": [], "isBlank": false },
             { "text": "Adjective?", "translation": ["คำคุณศัพท์"], "isBlank": false, "bold": true }
@@ -87,6 +89,8 @@ Screen 3: "Summary"
           "id": "uuid-1-2",
           "type": "choice",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "beautiful", "translation": ["สวยงาม"], "isBlank": false },
@@ -112,6 +116,8 @@ Screen 3: "Summary"
           "id": "uuid-2-1",
           "type": "fill_sentence_with_choice",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             {
               "text": { "text": "He", "translation": ["เขา"], "isBlank": false },
@@ -155,6 +161,8 @@ Screen 3: "Summary"
           "id": "uuid-3-1",
           "type": "match_card",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             { "left": { "text": "big" }, "right": { "text": "ใหญ่" } },
             { "left": { "text": "happy" }, "right": { "text": "มีความสุข" } },
@@ -171,6 +179,8 @@ Screen 3: "Summary"
           "id": "uuid-4-1",
           "type": "reorder",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "a", "translation": [], "isBlank": false },

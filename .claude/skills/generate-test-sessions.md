@@ -83,6 +83,8 @@ Screen 4: "Reorder"
           "id": "uuid-1-1",
           "type": "choice",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "expensive", "translation": ["แพง"], "isBlank": false },
@@ -112,6 +114,8 @@ Screen 4: "Reorder"
           "id": "uuid-2-1",
           "type": "fill_sentence_by_typing",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             { "text": "The", "isBlank": false, "inSentence": true },
             { "text": "weather", "isBlank": false, "inSentence": true },
@@ -124,6 +128,8 @@ Screen 4: "Reorder"
           "id": "uuid-2-2",
           "type": "fill_sentence_by_typing",
           "sequence": 1,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             { "text": "She", "isBlank": false, "inSentence": true },
             { "text": "has", "isBlank": false, "inSentence": true },
@@ -141,6 +147,8 @@ Screen 4: "Reorder"
           "id": "uuid-3-1",
           "type": "fill_sentence_with_choice",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": [
             {
               "text": { "text": "She", "translation": ["เธอ"], "isBlank": false },
@@ -194,6 +202,8 @@ Screen 4: "Reorder"
           "id": "uuid-4-1",
           "type": "reorder",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "items": [
             {
               "text": { "text": "The", "translation": [], "isBlank": false },
@@ -227,6 +237,8 @@ Screen 4: "Reorder"
           "id": "uuid-5-1",
           "type": "write_sentence",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": ["I", "am", "happy"],
           "expectSentence": ["I", "am", "happy"]
         }
@@ -240,6 +252,8 @@ Screen 4: "Reorder"
           "id": "uuid-6-1",
           "type": "write_sentence_in_chat",
           "sequence": 0,
+          "marginTop": 10,
+          "marginBottom": 0,
           "sentence": ["The", "food", "is", "delicious"],
           "expectSentence": ["The", "food", "is", "delicious"],
           "position": "right"
