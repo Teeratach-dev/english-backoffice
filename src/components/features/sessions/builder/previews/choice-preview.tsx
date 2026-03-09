@@ -15,22 +15,15 @@ export function ChoicePreview({
   useBorder = true,
 }: ChoicePreviewProps) {
   return (
-    <div
-      className={cn(
-        "p-4 rounded-lg bg-background max-w-sm mx-auto flex flex-col items-center gap-3",
-        isShowShadow ? "shadow-sm" : "shadow-none",
-        useBorder ? "border" : "border-none",
-      )}
-    >
+    <div className="flex flex-col items-center gap-y-3 max-w-sm mx-auto">
       {action.items && action.items.length > 0 ? (
         action.items.map((item, index) => (
           <div
             key={index}
             className={cn(
-              "px-6 py-2 rounded-xl text-sm shadow-sm w-full text-center transition-colors",
-              item.isCorrect
-                ? "bg-green-100 text-green-800 border-green-200 border dark:bg-green-900/30 dark:text-green-400 dark:border-green-800"
-                : "bg-muted/60 text-card-foreground",
+              "px-6 py-2 bg-background border rounded-full text-sm text-card-foreground shadow-sm text-center",
+              item.isCorrect &&
+                "bg-green-100 text-green-800 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
             )}
           >
             {item.text.text || "Empty option"}

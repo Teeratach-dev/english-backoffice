@@ -11,14 +11,6 @@ interface ReadingPreviewProps {
   useBorder?: boolean;
 }
 
-/**
- * ReadingPreview Component
- *
- * แสดงผลพรีวิวสำหรับ Reading Action โดยมีเงื่อนไขดังนี้:
- * 1. ถ้า isHide = true && isReadable = false: แสดงเฉพาะแผงควบคุมเสียง
- * 2. ถ้า isHide = true && isReadable = true: แสดงข้อความแบบเบลอ (ค่าเริ่มต้น) และมีปุ่มลูกตาเพื่อ Toggle
- * 3. ถ้า isHide = false: แสดงข้อความปกติ ไม่สนใจ IsReadable และไม่มีปุ่มลูกตา
- */
 export function ReadingPreview({
   action,
   isShowShadow = true,
@@ -26,75 +18,64 @@ export function ReadingPreview({
 }: ReadingPreviewProps) {
   const [isRevealed, setIsRevealed] = useState(false);
 
-  // เงื่อนไข: ถ้า isHide=true && isReadable=false ให้แสดงเฉพาะแผงควบคุมเสียง (Placeholder)
   if (action.isHide && !action.isReadable) {
     return (
-      <div className="space-y-3 w-full max-w-sm mx-auto">
-        <div
-          className={cn(
-            "p-4 rounded-lg bg-muted flex items-center justify-center gap-10 relative overflow-hidden",
-            isShowShadow ? "shadow-sm" : "shadow-none",
-            useBorder ? "border" : "border-none",
-          )}
-        >
-          <Volume2
+      <div className="space-y-2 w-full max-w-sm mx-auto">
+        <div className="py-6 px-10 flex justify-center gap-10">
+          <div
             className={cn(
-              "h-6 w-6 transition-colors",
+              "h-11 w-11 rounded-full border flex items-center justify-center",
               action.audioUrl
-                ? "text-primary animate-pulse"
-                : "text-muted-foreground",
+                ? "bg-primary/10 border-primary/30"
+                : "bg-background",
             )}
-          />
-          <Snail
+          >
+            <Volume2
+              className={cn(
+                "h-6 w-6 transition-colors",
+                action.audioUrl
+                  ? "text-primary animate-pulse"
+                  : "text-muted-foreground",
+              )}
+            />
+          </div>
+          <div
             className={cn(
-              "h-6 w-6 transition-colors",
+              "h-11 w-11 rounded-full border flex items-center justify-center",
               action.audioUrl
-                ? "text-primary animate-pulse"
-                : "text-muted-foreground",
+                ? "bg-primary/10 border-primary/30"
+                : "bg-background",
             )}
-          />
+          >
+            <Snail
+              className={cn(
+                "h-6 w-6 transition-colors",
+                action.audioUrl
+                  ? "text-primary animate-pulse"
+                  : "text-muted-foreground",
+              )}
+            />
+          </div>
         </div>
       </div>
     );
   }
 
-  // กำหนดสถานะการแสดงผล
   const shouldShowEye = action.isHide;
   const isBlurry = action.isHide && !isRevealed;
 
   return (
-    <div className="space-y-3 w-full max-w-sm mx-auto">
+    <div className="space-y-2 w-full max-w-sm mx-auto">
       <div
         className={cn(
-          "p-4 rounded-lg bg-muted flex gap-4 relative overflow-hidden",
+          "p-4 rounded-lg bg-muted relative overflow-hidden",
           isShowShadow ? "shadow-sm" : "shadow-none",
           useBorder ? "border" : "border-none",
         )}
       >
-        {/* ส่วนควบคุมเสียง (Audio Controls) */}
-        <div className="flex flex-col gap-3 shrink-0 py-0.5">
-          <Volume2
-            className={cn(
-              "h-5 w-5",
-              action.audioUrl
-                ? "text-primary animate-pulse"
-                : "text-muted-foreground",
-            )}
-          />
-          <Snail
-            className={cn(
-              "h-5 w-5 text-muted-foreground",
-              action.audioUrl
-                ? "text-primary animate-pulse"
-                : "text-muted-foreground",
-            )}
-          />
-        </div>
-
-        {/* ส่วนเนื้อหาข้อความ (Text Content) */}
         <div
           className={cn(
-            "flex-1 transition-all duration-300",
+            "transition-all duration-300",
             isBlurry &&
               "blur-xs opacity-40 grayscale select-none pointer-events-none",
           )}
@@ -128,7 +109,6 @@ export function ReadingPreview({
           </p>
         </div>
 
-        {/* ปุ่ม Toggle รูปตา (Eye Toggle Button) */}
         {shouldShowEye && (
           <button
             type="button"
@@ -143,6 +123,43 @@ export function ReadingPreview({
             )}
           </button>
         )}
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <div
+          className={cn(
+            "h-9 w-9 rounded-full border flex items-center justify-center",
+            action.audioUrl
+              ? "bg-primary/10 border-primary/30"
+              : "bg-background",
+          )}
+        >
+          <Volume2
+            className={cn(
+              "h-5 w-5 transition-colors",
+              action.audioUrl
+                ? "text-primary animate-pulse"
+                : "text-muted-foreground",
+            )}
+          />
+        </div>
+        <div
+          className={cn(
+            "h-9 w-9 rounded-full border flex items-center justify-center",
+            action.audioUrl
+              ? "bg-primary/10 border-primary/30"
+              : "bg-background",
+          )}
+        >
+          <Snail
+            className={cn(
+              "h-5 w-5 transition-colors",
+              action.audioUrl
+                ? "text-primary animate-pulse"
+                : "text-muted-foreground",
+            )}
+          />
+        </div>
       </div>
     </div>
   );

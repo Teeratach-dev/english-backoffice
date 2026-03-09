@@ -15,16 +15,8 @@ export function WriteSentencePreview({
   const sentence = action.sentence?.join(" ") || "Type your sentence here...";
 
   return (
-    <div
-      className={cn(
-        "p-8 rounded-lg bg-background max-w-sm mx-auto relative overflow-hidden group",
-        isShowShadow ? "shadow-lg" : "shadow-none",
-        useBorder ? "border" : "border-none",
-      )}
-    >
-      <p className="text-sm font-medium text-foreground leading-relaxed italic">
-        {sentence}
-      </p>
+    <div className="w-full p-4 border-2 border-orange-400/50 rounded-xl bg-muted/30 max-w-sm mx-auto">
+      <p className="text-sm text-card-foreground">{sentence}</p>
     </div>
   );
 }

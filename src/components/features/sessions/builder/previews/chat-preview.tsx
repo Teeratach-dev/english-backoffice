@@ -11,13 +11,6 @@ interface ChatPreviewProps {
   useBorder?: boolean;
 }
 
-/**
- * ChatPreview Component
- * Logic:
- * 1. isDisplay=false && isReadable=false: Show only audio control panel (horizontal)
- * 2. isDisplay=false && isReadable=true: Show blurred text (default) + Eye toggle + Audio panel
- * 3. isDisplay=true: Show normal text, ignore isReadable, no Eye toggle
- */
 export function ChatPreview({
   action,
   isShowShadow = true,
@@ -25,64 +18,80 @@ export function ChatPreview({
 }: ChatPreviewProps) {
   const [isRevealed, setIsRevealed] = React.useState(false);
 
-  // Conditions based on prompt
   const isAudioOnly = !action.isDisplay && !action.isReadable;
   const isBlurryMode = !action.isDisplay && action.isReadable;
   const isNormalMode = action.isDisplay;
-
-  // Determine if content should be blurred
   const shouldBlur = isBlurryMode && !isRevealed;
+  const isRight = action.position === "right";
 
   return (
-    <div
-      className={cn(
-        "space-y-6 p-4 rounded-lg bg-background max-w-sm mx-auto flex flex-col justify-end relative overflow-hidden group/chat",
-        isShowShadow ? "shadow-md" : "shadow-none",
-        useBorder ? "border" : "border-none",
-      )}
-    >
-      <BackgroundDecor />
-
+    <div className="space-y-2 max-w-sm mx-auto">
       <div
         className={cn(
-          "flex items-start gap-4",
-          action.position === "right" ? "flex-row-reverse" : "flex-row",
+          "flex items-start gap-2",
+          isRight ? "flex-row-reverse" : "flex-row",
         )}
       >
         <ChatAvatar sender={action.sender} />
 
-        <ChatBubble
-          action={action}
-          shouldBlur={shouldBlur}
-          isAudioOnly={isAudioOnly}
-        />
+        <div className="flex-1">
+          <div
+            className={cn(
+              "bg-background border rounded-2xl p-3 text-sm text-card-foreground relative",
+              isRight ? "rounded-tr-none" : "rounded-tl-none",
+              shouldBlur &&
+                "blur-sm opacity-50 select-none grayscale cursor-help",
+            )}
+          >
+            {isAudioOnly ? (
+              <div className="flex justify-center gap-6 py-1">
+                <AudioCircleButton />
+                <AudioCircleButton isSnail />
+              </div>
+            ) : (
+              <ChatTextContent action={action} />
+            )}
 
-        {(isNormalMode || isBlurryMode) && (
-          <SideControls
-            position={action.position}
-            isBlurryMode={isBlurryMode}
-            isRevealed={isRevealed}
-            onToggleReveal={() => setIsRevealed(!isRevealed)}
-          />
-        )}
+            {isBlurryMode && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsRevealed(!isRevealed);
+                }}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-muted/50 hover:bg-muted text-muted-foreground transition-colors z-20"
+                title={isRevealed ? "Hide content" : "Reveal content"}
+              >
+                {isRevealed ? (
+                  <EyeOff className="h-3.5 w-3.5" />
+                ) : (
+                  <Eye className="h-3.5 w-3.5" />
+                )}
+              </button>
+            )}
+          </div>
+
+          {(isNormalMode || isBlurryMode) && (
+            <div
+              className={cn(
+                "mt-1.5 flex gap-2",
+                isRight ? "justify-end" : "justify-start",
+              )}
+            >
+              <AudioCircleButton />
+              <AudioCircleButton isSnail />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
-function BackgroundDecor() {
-  return (
-    <>
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-32 h-32 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-    </>
-  );
-}
-
 function ChatAvatar({ sender }: { sender?: ChatAction["sender"] }) {
   return (
-    <div className="shrink-0 flex flex-col items-center self-end">
-      <div className="h-10 w-10 rounded-4xl bg-linear-to-br from-indigo-500 to-primary overflow-hidden flex items-center justify-center text-white font-bold text-lg shadow-lg border-2 border-background ring-2 ring-muted/20">
+    <div className="shrink-0 flex flex-col items-center">
+      <div className="h-10 w-10 rounded-full bg-purple-100 overflow-hidden flex items-center justify-center border border-purple-200">
         {sender?.imageUrl ? (
           <img
             src={sender.imageUrl}
@@ -90,57 +99,23 @@ function ChatAvatar({ sender }: { sender?: ChatAction["sender"] }) {
             className="w-full h-full object-cover"
           />
         ) : (
-          sender?.name?.[0]?.toUpperCase() || "U"
+          <span className="text-purple-600 font-bold text-lg">
+            {sender?.name?.[0]?.toUpperCase() || "U"}
+          </span>
         )}
       </div>
-      <span className="text-[8px] mt-1.5 font-bold text-muted-foreground uppercase tracking-widest max-w-15 truncate text-center">
+      <span className="text-xxs mt-1 text-foreground max-w-15 truncate text-center">
         {sender?.name || "User"}
       </span>
     </div>
   );
 }
 
-function AudioActionButtons({ className }: { className?: string }) {
-  const iconClass = cn(
-    "h-5 w-5 hover:text-primary cursor-pointer transition-colors text-primary animate-pulse",
-    className,
-  );
+function AudioCircleButton({ isSnail = false }: { isSnail?: boolean }) {
+  const Icon = isSnail ? Snail : Volume2;
   return (
-    <>
-      <Volume2 className={iconClass} />
-      <Snail className={iconClass} />
-    </>
-  );
-}
-
-function ChatBubble({
-  action,
-  shouldBlur,
-  isAudioOnly,
-}: {
-  action: ChatAction;
-  shouldBlur: boolean;
-  isAudioOnly: boolean;
-}) {
-  return (
-    <div className="flex relative self-end">
-      <div
-        className={cn(
-          "rounded-2xl p-4 text-sm shadow-xs transition-all duration-300 relative min-w-30",
-          action.position === "right"
-            ? "bg-muted text-foreground rounded-tr-none border border-muted-foreground/10"
-            : "bg-muted text-foreground rounded-tl-none border border-muted-foreground/10",
-          shouldBlur && "blur-sm opacity-50 select-none grayscale cursor-help",
-        )}
-      >
-        {isAudioOnly && (
-          <div className="flex justify-around">
-            <AudioActionButtons />
-          </div>
-        )}
-
-        {!isAudioOnly && <ChatTextContent action={action} />}
-      </div>
+    <div className="h-9 w-9 rounded-full border flex items-center justify-center bg-background">
+      <Icon className="h-5 w-5 text-muted-foreground" />
     </div>
   );
 }
@@ -171,48 +146,6 @@ function ChatTextContent({ action }: { action: ChatAction }) {
           {word.text}
         </span>
       ))}
-    </div>
-  );
-}
-
-function SideControls({
-  position,
-  isBlurryMode,
-  isRevealed,
-  onToggleReveal,
-}: {
-  position: string;
-  isBlurryMode: boolean;
-  isRevealed: boolean;
-  onToggleReveal: () => void;
-}) {
-  return (
-    <div
-      className={cn(
-        "flex flex-col gap-1 shrink-0 self-end pb-1",
-        position === "right" ? "items-end" : "items-start",
-      )}
-    >
-      {isBlurryMode && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleReveal();
-          }}
-          className={cn(
-            "hover:text-primary cursor-pointer transition-colors text-muted-foreground active:scale-95 flex items-center justify-center",
-          )}
-          title={isRevealed ? "Hide content" : "Reveal content"}
-        >
-          {isRevealed ? (
-            <EyeOff className="h-5 w-5" />
-          ) : (
-            <Eye className="h-5 w-5" />
-          )}
-        </button>
-      )}
-      <AudioActionButtons />
     </div>
   );
 }

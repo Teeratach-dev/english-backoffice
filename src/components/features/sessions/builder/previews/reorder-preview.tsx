@@ -46,77 +46,36 @@ export function ReorderPreview({
   }, [action.items]); // Re-shuffle when items change
 
   return (
-    <div className="space-y-4 max-w-sm mx-auto">
-      {/* Pool of words (Full Set Shuffled) */}
-      <div
-        className={cn(
-          "p-4 rounded-lg bg-background space-y-6",
-          isShowShadow ? "shadow-sm" : "shadow-none",
-          useBorder ? "border" : "border-none",
-        )}
-      >
-        <div className="space-y-4">
-          <div className="border-b border-muted-foreground/30 h-1"></div>
-          <div className="border-b border-muted-foreground/30 h-1"></div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {shuffledPool.length > 0 ? (
-            shuffledPool.map((word, i) => (
-              <div
-                key={i}
-                className="px-3 py-1 bg-muted/60 border rounded-lg text-sm text-card-foreground"
-              >
-                {word}
-              </div>
-            ))
-          ) : (
-            <div className="text-sm text-muted-foreground italic">
-              No items added
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Target Area (Simulation) */}
-      <div
-        className={cn(
-          "p-4 rounded-lg bg-background space-y-6",
-          isShowShadow ? "shadow-sm" : "shadow-none",
-          useBorder ? "border" : "border-none",
-        )}
-      >
-        <div className="space-y-4">
-          <div className="flex gap-2 border-b border-muted-foreground/30 min-h-6">
-            {/* Simulate some dropped items (Correct Order) */}
-            {targetWords.map((word, i) => (
-              <div
-                key={i}
-                className="px-2 py-0.5 bg-muted/60 rounded-lg text-sm text-card-foreground"
-              >
-                {word}
-              </div>
-            ))}
-          </div>
-          <div className="border-b border-muted-foreground/30 h-1"></div>
-        </div>
-        <div className="flex justify-center flex-wrap gap-2">
-          {/* Simulate remaining items (Shuffled) */}
-          {shuffledRemaining.map((word, i) => (
+    <div className="space-y-2 max-w-sm mx-auto">
+      <div className="space-y-6">
+        <div className="flex gap-2 border-b border-muted-foreground/30 min-h-6">
+          {targetWords.map((word, i) => (
             <div
               key={i}
-              className="px-3 py-1 bg-muted/60 border rounded-lg text-sm text-card-foreground"
+              className="px-3 py-1 mb-1 bg-background rounded-full text-sm text-card-foreground border"
             >
               {word}
             </div>
           ))}
-          {/* Just some empty placeholders if no words */}
-          {words.length === 0 && (
-            <>
-              <div className="w-12 h-6 border bg-muted/20 rounded-lg"></div>
-              <div className="w-12 h-6 border bg-muted/20 rounded-lg"></div>
-            </>
-          )}
         </div>
+        <div className="border-b border-muted-foreground/30 h-1"></div>
+      </div>
+      <div className="flex justify-center flex-wrap gap-2">
+        {shuffledRemaining.length > 0 ? (
+          shuffledRemaining.map((word, i) => (
+            <div
+              key={i}
+              className="px-3 py-1 bg-background border rounded-full text-sm text-card-foreground"
+            >
+              {word}
+            </div>
+          ))
+        ) : words.length === 0 ? (
+          <>
+            <div className="w-12 h-6"></div>
+            <div className="w-12 h-6"></div>
+          </>
+        ) : null}
       </div>
     </div>
   );

@@ -14,22 +14,12 @@ export function FillSentenceByTypingPreview({
   useBorder = true,
 }: FillSentenceByTypingPreviewProps) {
   return (
-    <div
-      className={cn(
-        "p-6 rounded-lg bg-background max-w-sm mx-auto flex justify-center",
-        isShowShadow ? "shadow-sm" : "shadow-none",
-        useBorder ? "border" : "border-none",
-      )}
-    >
+    <div className="flex justify-center max-w-sm mx-auto">
       <p className="text-sm text-card-foreground">
         {(action.sentence || []).map((segment, index) => (
           <React.Fragment key={index}>
             {segment.isBlank ? (
-              <span className="tracking-widest">
-                {segment.text.split("").map((_, i) => (
-                  <span key={i}>_</span>
-                ))}
-              </span>
+              <span className="inline-block w-16 border-b border-foreground mx-1 translate-y-0.5" />
             ) : (
               <span>{segment.text}</span>
             )}{" "}
