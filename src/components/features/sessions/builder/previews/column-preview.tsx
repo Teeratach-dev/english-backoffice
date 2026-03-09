@@ -26,11 +26,27 @@ export function ColumnPreview({
     );
   }
 
+  const ratioClassMap: Record<string, string> = {
+    "1:1": "grid-cols-2",
+    "1:2": "grid-cols-3",
+    "1:3": "grid-cols-4",
+  };
+
+  const ratioColSpanMap: Record<string, [string, string]> = {
+    "1:1": ["col-span-1", "col-span-1"],
+    "1:2": ["col-span-1", "col-span-2"],
+    "1:3": ["col-span-1", "col-span-3"],
+  };
+
+  const ratio = action.ratio || "1:1";
+  const gridClass = ratioClassMap[ratio] || "grid-cols-2";
+  const colSpans = ratioColSpanMap[ratio] || ["col-span-1", "col-span-1"];
+
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+      <div className={`grid ${gridClass} gap-4 items-center`}>
         {actions.map((subAction, index) => (
-          <div key={index} className="w-full">
+          <div key={index} className={`w-full ${colSpans[index] || ""}`}>
             {subAction.type === ActionType.Image && (
               <ImagePreview
                 action={subAction as any}

@@ -63,6 +63,7 @@ export const ImageActionSchema = BaseActionSchema.extend({
 // ColumnAction actions: Array<ImageAction | ReadingAction | AudioAction>
 export const ColumnActionSchema = BaseActionSchema.extend({
   type: z.literal(ActionType.Column),
+  ratio: z.enum(["1:1", "1:2", "1:3"]).default("1:1"),
   actions: z.array(
     z.union([
       ImageActionSchema.omit({ sequence: true, id: true }),

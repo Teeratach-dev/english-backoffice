@@ -126,8 +126,11 @@ export type ImageAction = ActionCommon & {
   url: string;
 };
 
+export type ColumnRatio = "1:1" | "1:2" | "1:3";
+
 export type ColumnAction = ActionCommon & {
   type: "column";
+  ratio: ColumnRatio;
   actions: Array<ImageAction | ReadingAction | AudioAction>;
 };
 
@@ -249,7 +252,7 @@ export function getDefaultContent(type: ActionType): Action {
     case ActionType.Image:
       return { ...margins, type: "image", url: "" };
     case ActionType.Column:
-      return { ...margins, type: "column", actions: [] };
+      return { ...margins, type: "column", ratio: "1:1", actions: [] };
     case ActionType.Choice:
       return { ...margins, type: "choice", items: [] };
     case ActionType.Reorder:

@@ -2,6 +2,7 @@
 
 import {
   ColumnAction,
+  ColumnRatio,
   ActionType,
   ImageAction,
   ReadingAction,
@@ -20,6 +21,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { MarginFields } from "./margin-fields";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ColumnActionFormProps {
   action: ColumnAction;
@@ -80,6 +88,24 @@ export function ColumnActionForm({ action, onChange }: ColumnActionFormProps) {
         marginBottom={action.marginBottom}
         onChange={(updates) => onChange(updates)}
       />
+
+      <div className="space-y-1.5">
+        <Label className="text-xs">Column Ratio</Label>
+        <Select
+          value={action.ratio || "1:1"}
+          onValueChange={(value: ColumnRatio) => onChange({ ratio: value })}
+        >
+          <SelectTrigger className="h-8 text-xs w-30">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1:1">1 : 1</SelectItem>
+            <SelectItem value="1:2">1 : 2</SelectItem>
+            <SelectItem value="1:3">1 : 3</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="flex items-center justify-between">
         {actions.length < 2 && (
           <DropdownMenu>
